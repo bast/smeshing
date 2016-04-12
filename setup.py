@@ -54,7 +54,7 @@ install_requires = [
     'matplotlib>=1.2',
 ]
 
-long_description = open('README.rst').read()
+long_description = open('README.md').read()
 
 setup(name='PyDistMesh',
       version=__version__,
