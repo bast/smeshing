@@ -24,6 +24,18 @@ import distmesh as dm
 # Demo functions
 #-----------------------------------------------------------------------------
 
+
+def save_p_t(p, t, file_name):
+    print(len(p), len(t))
+    with open(file_name, 'w') as f:
+        f.write('{}\n'.format(len(p)))
+        for px, py in p:
+            f.write('{} {}\n'.format(px, py))
+        f.write('{}\n'.format(len(t)))
+        for t1, t2, t3 in t:
+            f.write('{} {} {}\n'.format(t1, t2, t3))
+
+
 def uniform_mesh_on_unit_circle():
     """Uniform Mesh on Unit Circle"""
     fd = lambda p: np.sqrt((p**2).sum(1))-1.0
@@ -82,10 +94,10 @@ def naca0012_airfoil():
     h0 = min(hlead, htrail, hmax)
     return dm.distmesh2d(fd, fh, h0, box, fix)
 
-def meshdemo2d(pause=None):
+def meshdemo2d():
     """Run all Distmesh 2D examples."""
-    if pause is None:
-        pause = lambda : None
+
+    generate_tests = True
 
     plt.ion()
     np.random.seed(1) # Always the same results
@@ -97,36 +109,43 @@ def meshdemo2d(pause=None):
     print('Uniform Mesh on Unit Circle')
     p, t = uniform_mesh_on_unit_circle()
     fstats(p,t)
-    pause(); print('')
+    if generate_tests:
+        save_p_t(p, t, 'test/circle.txt')
+    print('')
 
     print('Rectangle with circular hole, refined at circle boundary')
     p, t = rectangle_with_circular_hole()
+    if generate_tests:
+        save_p_t(p, t, 'test/rectangle.txt')
     fstats(p, t)
-    pause(); print('')
+    print('')
 
     print('Polygon')
     p, t = polygon()
+    if generate_tests:
+        save_p_t(p, t, 'test/polygon.txt')
     fstats(p, t)
-    pause(); print('')
+    print('')
 
     print('Ellipse')
     p, t = ellipse()
+    if generate_tests:
+        save_p_t(p, t, 'test/ellipse.txt')
     fstats(p, t)
-    pause(); print('')
+    print('')
 
     print('Square, with size function point and line sources')
     p, t = square()
+    if generate_tests:
+        save_p_t(p, t, 'test/square.txt')
     fstats(p, t)
-    pause(); print('')
+    print('')
 
     print('NACA0012 airfoil')
     p, t = naca0012_airfoil()
+    if generate_tests:
+        save_p_t(p, t, 'test/airfoil.txt')
     fstats(p, t)
 
 if __name__ == "__main__":
-    # Py3k
-    try: input = raw_input
-    except: pass
-
-    pause = lambda : input('(press enter to continue)')
-    meshdemo2d(pause)
+    meshdemo2d()
