@@ -19,3 +19,5 @@ develop-eggs
 pip-log.txt
 
 venv/
+
+.cache/
