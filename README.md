@@ -22,38 +22,14 @@ python setup.py install
 ```
 
 
-## 2-D Examples
+## Running tests
 
-- Uniform Mesh on Unit Circle:
-```python
->>> import distmesh as dm
->>> import numpy as np
->>> fd = lambda p: np.sqrt((p**2).sum(1))-1.0
->>> p, t = dm.distmesh2d(fd, dm.huniform, 0.2, (-1,-1,1,1))
+```
+python distmesh/demo2d.py
 ```
 
-- Rectangle with circular hole, refined at circle boundary:
-```python
->>> import distmesh as dm
->>> fd = lambda p: dm.ddiff(dm.drectangle(p,-1,1,-1,1),
-...                         dm.dcircle(p,0,0,0.5))
->>> fh = lambda p: 0.05+0.3*dm.dcircle(p,0,0,0.5)
->>> p, t = dm.distmesh2d(fd, fh, 0.05, (-1,-1,1,1),
-...                      [(-1,-1),(-1,1),(1,-1),(1,1)])
-```
-
-
-## Demos
-
-For a quick demonstration, run:
-```
-$ python -m distmesh.demo2d
-```
-
-or:
-```
-$ python -m distmesh.demond
-```
+If the tests fail, it will stop with an AssertionError.  Soon we will switch to
+pytest but for this we need to get rid of Cython and switch to CFFI.
 
 
 ## References
