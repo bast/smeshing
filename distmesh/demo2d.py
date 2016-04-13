@@ -26,7 +26,6 @@ import distmesh as dm
 
 
 def save_p_t(p, t, file_name):
-    print(len(p), len(t))
     with open(file_name, 'w') as f:
         f.write('{}\n'.format(len(p)))
         for px, py in p:
@@ -34,6 +33,42 @@ def save_p_t(p, t, file_name):
         f.write('{}\n'.format(len(t)))
         for t1, t2, t3 in t:
             f.write('{} {} {}\n'.format(t1, t2, t3))
+
+
+def matches_with_reference(p, t, file_name):
+
+    tol = 1.0e-12
+
+    with open(file_name, 'r') as f:
+        lines = f.readlines()
+
+    offset = 0
+
+    p_len_ref = int(lines[offset])
+    assert len(p) == p_len_ref
+    offset += 1
+
+    for i, (px, py) in enumerate(p):
+        px_ref = float(lines[i + offset].split()[0])
+        py_ref = float(lines[i + offset].split()[1])
+        assert abs(px - px_ref) < tol
+        assert abs(py - py_ref) < tol
+    offset += len(p)
+
+    t_len_ref = int(lines[offset])
+    assert len(t) == t_len_ref
+    offset += 1
+
+    for i, (t1, t2, t3) in enumerate(t):
+        t1_ref = int(lines[i + offset].split()[0])
+        t2_ref = int(lines[i + offset].split()[1])
+        t3_ref = int(lines[i + offset].split()[2])
+        assert t1 == t1_ref
+        assert t2 == t2_ref
+        assert t3 == t3_ref
+    offset += len(t)
+
+    return True
 
 
 def uniform_mesh_on_unit_circle():
@@ -97,7 +132,7 @@ def naca0012_airfoil():
 def meshdemo2d():
     """Run all Distmesh 2D examples."""
 
-    generate_tests = True
+    generate_tests = False
 
     plt.ion()
     np.random.seed(1) # Always the same results
@@ -111,41 +146,47 @@ def meshdemo2d():
     fstats(p,t)
     if generate_tests:
         save_p_t(p, t, 'test/circle.txt')
+    assert matches_with_reference(p, t, 'test/circle.txt')
     print('')
 
     print('Rectangle with circular hole, refined at circle boundary')
     p, t = rectangle_with_circular_hole()
+    fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/rectangle.txt')
-    fstats(p, t)
+    assert matches_with_reference(p, t, 'test/rectangle.txt')
     print('')
 
     print('Polygon')
     p, t = polygon()
+    fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/polygon.txt')
-    fstats(p, t)
+    assert matches_with_reference(p, t, 'test/polygon.txt')
     print('')
 
     print('Ellipse')
     p, t = ellipse()
+    fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/ellipse.txt')
-    fstats(p, t)
+    assert matches_with_reference(p, t, 'test/ellipse.txt')
     print('')
 
     print('Square, with size function point and line sources')
     p, t = square()
+    fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/square.txt')
-    fstats(p, t)
+    assert matches_with_reference(p, t, 'test/square.txt')
     print('')
 
     print('NACA0012 airfoil')
     p, t = naca0012_airfoil()
+    fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/airfoil.txt')
-    fstats(p, t)
+    assert matches_with_reference(p, t, 'test/airfoil.txt')
 
 if __name__ == "__main__":
     meshdemo2d()
