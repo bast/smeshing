@@ -12,6 +12,16 @@ Like [DistMesh](http://persson.berkeley.edu/distmesh/) and
 based, this code is distributed under the [GNU GPL](../master/LICENSE).
 
 
+## Installing the code and its dependencies
+
+```
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python setup.py install
+```
+
+
 ## 2-D Examples
 
 - Uniform Mesh on Unit Circle:
