@@ -3,10 +3,8 @@
 This version of the code is based on
 [PyDistMesh](https://github.com/bfroehle/pydistmesh) developed by [Bradley M.
 Froehle](https://github.com/bfroehle).
-
 This code generates unstructured triangular and tetrahedral meshes using signed
 distance functions.
-
 Like [DistMesh](http://persson.berkeley.edu/distmesh/) and
 [PyDistMesh](https://github.com/bfroehle/pydistmesh) upon which this work is
 based, this code is distributed under the [GNU GPL](../master/LICENSE).
