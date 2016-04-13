@@ -1,12 +1,15 @@
 # Fork of PyDistMesh: A Simple Mesh Generator in Python
 
-This code is based on [PyDistMesh](https://github.com/bfroehle/pydistmesh),
-a simple Python code for generating unstructured
-triangular and tetrahedral meshes using *signed distance functions*. It
-intends to have the same functionality as and similar interface to the
-MATLAB-based [DistMesh](http://persson.berkeley.edu/distmesh/).
-Like DistMesh and PyDistMesh upon which this work is based,
-this code is distributed under the [GNU GPL](../master/LICENSE).
+This version of the code is based on
+[PyDistMesh](https://github.com/bfroehle/pydistmesh) developed by [Bradley M.
+Froehle](https://github.com/bfroehle).
+
+This code generates unstructured triangular and tetrahedral meshes using signed
+distance functions.
+
+Like [DistMesh](http://persson.berkeley.edu/distmesh/) and
+[PyDistMesh](https://github.com/bfroehle/pydistmesh) upon which this work is
+based, this code is distributed under the [GNU GPL](../master/LICENSE).
 
 
 ## 2-D Examples
@@ -55,6 +58,3 @@ below.
 
 - P.-O. Persson, **Mesh Generation for Implicit Geometries**.
   Ph.D. thesis, *Department of Mathematics, MIT*, Dec 2004 [PDF](http://persson.berkeley.edu/thesis/persson-thesis-color.pdf)
-
-This version of the code is based on [PyDistMesh](https://github.com/bfroehle/pydistmesh)
-developed by [Bradley M. Froehle](https://github.com/bfroehle).
