@@ -28,7 +28,7 @@ script:
   - cmake ..
   - make
   - cd ..
-  - py.test -vv distmesh/demo2d.py
+  - py.test -vv distmesh/test.py
 
 notifications:
   email: false

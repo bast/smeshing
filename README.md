@@ -35,7 +35,7 @@ pip install -r requirements.txt
 ## Running tests
 
 ```
-py.test -vv distmesh/demo2d.py
+py.test -vv distmesh/test.py
 ```
 
 
