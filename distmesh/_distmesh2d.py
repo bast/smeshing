@@ -29,7 +29,7 @@ __all__ = ['distmesh2d']
 # Functions
 #-----------------------------------------------------------------------------
 
-def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
+def distmesh2d(fd, fh, h0, bbox, pfix=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -44,7 +44,6 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
     h0:        Initial edge length
     bbox:      Bounding box, (xmin, ymin, xmax, ymax)
     pfix:      Fixed node positions, shape (nfix, 2)
-    fig:       Figure to use for plotting, or None to disable plotting.
 
     Returns
     -------
@@ -103,10 +102,6 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
     >>> p, t = dm.distmesh2d(fd, fh, h0, box, fix)
     """
 
-    if fig == 'gcf':
-        import matplotlib.pyplot as plt
-        fig = plt.gcf()
-
     dptol=.001; ttol=.1; Fscale=1.2; deltat=.2; geps=.001*h0;
     deps=np.sqrt(np.finfo(np.double).eps)*h0;
     densityctrlfreq=30;
@@ -115,19 +110,6 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
     xmin, ymin, xmax, ymax = bbox
     if pfix is not None:
         pfix = np.array(pfix, dtype='d')
-
-    # 0. Prepare a figure.
-    if fig is not None:
-        from plotting import SimplexCollection
-        fig.clf()
-        ax = fig.gca()
-        c = SimplexCollection()
-        ax.add_collection(c)
-        ax.set_xlim(xmin, xmax)
-        ax.set_ylim(ymin, ymax)
-        ax.set_aspect('equal')
-        ax.set_axis_off()
-        fig.canvas.draw()
 
     # 1. Create initial distribution in bounding box (equilateral triangles)
     x, y = np.mgrid[xmin:(xmax+h0):h0,
@@ -167,9 +149,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
             bars.sort(axis=1)
             bars = ml.unique_rows(bars)              # Bars as node pairs
             # 5. Graphical output of the current mesh
-            if fig is not None:
-                c.set_simplices((p, t))
-                fig.canvas.draw()
+            # removed
 
         # 6. Move mesh points based on bar lengths L and forces F
         barvec = p[bars[:,0]] - p[bars[:,1]]         # List of bar vectors
@@ -208,9 +188,5 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
 
     # Clean up and plot final mesh
     p, t = dmutils.fixmesh(p, t)
-
-    if fig is not None:
-        c.set_simplices((p, t))
-        fig.canvas.draw()
 
     return p, t
