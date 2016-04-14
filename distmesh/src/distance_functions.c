@@ -2,17 +2,10 @@
 
 #include <math.h>
 
+#include "distance_functions.h"
+
 #define szint int
 
-// LAPACK
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void dhseqr_(char*,char*,szint*,szint*,szint*,double*,szint*,double*,
-               double*,void*,szint*,double*,void*,szint*);
-#ifdef __cplusplus
-}
-#endif
 
 // Quick routines
 static inline double sqr(double x)
