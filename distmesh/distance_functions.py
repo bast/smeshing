@@ -102,7 +102,8 @@ def dpoly(p,pv):
     or an array of shape (nv, 2).
     """
     from matplotlib.path import Path
-    return (-1)**Path(pv).contains_points(p) * dsegment(p, pv).min(1)
+    d = dsegment(p, pv)
+    return (-1)**Path(pv).contains_points(p) * d.min(1)
 
 def drectangle0(p,x1,x2,y1,y2):
     """Signed distance function for rectangle with corners (x1,y1), (x2,y1),
@@ -142,7 +143,38 @@ def drectangle(p,x1,x2,y1,y2):
     """
     return -min(min(min(-y1+p[:,1],y2-p[:,1]),-x1+p[:,0]),x2-p[:,0])
 
-from distmesh._distance_functions import dsegment
+def dsegment(ps, vs):
+    """
+    d = dsegment(p, v)
+
+    Parameters
+    ----------
+    p : array, shape (np, 2)
+        points
+    v : array, shape (nv, 2)
+        vertices of a closed array, whose edges are v[0]..v[1],
+        ... v[nv-2]..v[nv-1]
+
+    Output
+    ------
+    ds : array, shape (np, nv-1)
+        distance from each point to each edge
+    """
+    from c_interface import lib
+
+    ds = []
+    for iv in range(len(vs)- 1):
+        p1x = vs[iv][0]
+        p1y = vs[iv][1]
+        p2x = vs[iv+1][0]
+        p2y = vs[iv+1][1]
+
+        d_row = []
+        for i in range(len(ps)):
+            d = lib.dsegment(ps[i][0], ps[i][1], p1x, p1y, p2x, p2y)
+            d_row.append(d)
+        ds.append(d_row)
+    return np.transpose(np.asarray(ds))
 
 def dsphere(p,xc,yc,zc,r):
     """Signed distance function for a sphere centered at xc,yc,zc with radius
