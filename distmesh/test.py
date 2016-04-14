@@ -130,63 +130,59 @@ def naca0012_airfoil():
     h0 = min(hlead, htrail, hmax)
     return distmesh2d(fd, fh, h0, box, fix)
 
-def meshdemo2d():
-    """Run all Distmesh 2D examples."""
 
-    generate_tests = False
+generate_tests = False
+np.random.seed(1) # Always the same results
 
-    np.random.seed(1) # Always the same results
 
-    def fstats(p, t):
-        print('%d nodes, %d elements, min quality %.2f'
-              % (len(p), len(t), simpqual(p,t).min()))
+def fstats(p, t):
+    print('%d nodes, %d elements, min quality %.2f'
+          % (len(p), len(t), simpqual(p,t).min()))
 
-    print('Uniform Mesh on Unit Circle')
+
+def test_circle():
     p, t = uniform_mesh_on_unit_circle()
     fstats(p,t)
     if generate_tests:
         save_p_t(p, t, 'test/circle.txt')
     assert matches_with_reference(p, t, 'test/circle.txt')
-    print('')
 
-    print('Rectangle with circular hole, refined at circle boundary')
+
+def test_rectangle():
     p, t = rectangle_with_circular_hole()
     fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/rectangle.txt')
     assert matches_with_reference(p, t, 'test/rectangle.txt')
-    print('')
 
-    print('Polygon')
+
+def test_polygon():
     p, t = polygon()
     fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/polygon.txt')
     assert matches_with_reference(p, t, 'test/polygon.txt')
-    print('')
 
-    print('Ellipse')
+
+def test_ellipse():
     p, t = ellipse()
     fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/ellipse.txt')
     assert matches_with_reference(p, t, 'test/ellipse.txt')
-    print('')
 
-    print('Square, with size function point and line sources')
+
+def test_square():
     p, t = square()
     fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/square.txt')
     assert matches_with_reference(p, t, 'test/square.txt')
-    print('')
 
-    print('NACA0012 airfoil')
+
+def test_airfoil():
     p, t = naca0012_airfoil()
     fstats(p, t)
     if generate_tests:
         save_p_t(p, t, 'test/airfoil.txt')
     assert matches_with_reference(p, t, 'test/airfoil.txt')
-
-def test_meshdemo2d():
-    meshdemo2d()
