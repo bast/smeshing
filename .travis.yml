@@ -17,9 +17,12 @@ addons:
       - cmake
       - libblas-dev
       - liblapack-dev
+      - python-numpy
+      - python-scipy
+      - python-matplotlib
 
 install:
-  - pip install -r requirements.txt
+  - pip install pep8 pytest cffi
 
 script:
   - mkdir build
