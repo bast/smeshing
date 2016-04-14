@@ -13,14 +13,13 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - gcc-4.9
-      - gfortran-4.9
       - cmake
-      - libblas-dev
-      - liblapack-dev
       - python-numpy
       - python-scipy
 
 install:
+  - virtualenv --system-site-packages venv
+  - source venv/bin/activate
   - pip install pep8 pytest cffi matplotlib
 
 script:
