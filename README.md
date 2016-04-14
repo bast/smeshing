@@ -32,11 +32,8 @@ pip install -r requirements.txt
 ## Running tests
 
 ```
-python distmesh/demo2d.py
+py.test -vv distmesh/demo2d.py
 ```
-
-If the tests fail, it will stop with an AssertionError. Soon we will switch to
-pytest (and rename files) but for this we need to get rid of Cython and switch to CFFI.
 
 
 ## References

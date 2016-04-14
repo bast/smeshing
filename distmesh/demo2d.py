@@ -190,5 +190,5 @@ def meshdemo2d():
         save_p_t(p, t, 'test/airfoil.txt')
     assert matches_with_reference(p, t, 'test/airfoil.txt')
 
-if __name__ == "__main__":
+def test_meshdemo2d():
     meshdemo2d()
