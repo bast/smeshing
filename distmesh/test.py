@@ -15,7 +15,6 @@
 #-----------------------------------------------------------------------------
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 # Local imports.
 from _distmesh2d import distmesh2d
@@ -136,7 +135,6 @@ def meshdemo2d():
 
     generate_tests = False
 
-    plt.ion()
     np.random.seed(1) # Always the same results
 
     def fstats(p, t):
