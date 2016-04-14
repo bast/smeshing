@@ -19,10 +19,9 @@ addons:
       - liblapack-dev
       - python-numpy
       - python-scipy
-      - python-matplotlib
 
 install:
-  - pip install pep8 pytest cffi
+  - pip install pep8 pytest cffi matplotlib
 
 script:
   - mkdir build
