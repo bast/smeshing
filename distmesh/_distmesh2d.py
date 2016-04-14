@@ -20,8 +20,8 @@ import numpy as np
 import scipy.spatial as spspatial
 
 # Local imports
-import distmesh.mlcompat as ml
-import distmesh.utils as dmutils
+import mlcompat as ml
+import utils as dmutils
 
 __all__ = ['distmesh2d']
 
@@ -118,7 +118,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None, fig='gcf'):
 
     # 0. Prepare a figure.
     if fig is not None:
-        from distmesh.plotting import SimplexCollection
+        from plotting import SimplexCollection
         fig.clf()
         ax = fig.gca()
         c = SimplexCollection()

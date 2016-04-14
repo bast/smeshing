@@ -25,7 +25,7 @@ from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 
 # Local imports.
-import distmesh.utils as dmutils
+import utils as dmutils
 
 # Py3k
 try: range = xrange

@@ -16,7 +16,6 @@ based, this code is distributed under the [GNU GPL](../master/LICENSE).
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python setup.py install
 ```
 
 

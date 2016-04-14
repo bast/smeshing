@@ -20,7 +20,7 @@ import itertools
 import numpy as np
 
 # Local imports.
-import distmesh.mlcompat as ml
+import mlcompat as ml
 
 # Py3k
 try: range = xrange
