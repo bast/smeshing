@@ -20,6 +20,16 @@ python setup.py install
 ```
 
 
+## Building the C lib used by the Python code
+
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+
+
 ## Running tests
 
 ```
