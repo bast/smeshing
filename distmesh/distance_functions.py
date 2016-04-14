@@ -21,9 +21,6 @@ __all__ = [
     'dblock',
     'dcircle',
     'ddiff',
-    'dellipse',
-    'dellipsoid',
-#    'dexpr',
     'dintersect',
     'dmatrix3d',
     'dmatrix',
@@ -68,9 +65,6 @@ def ddiff(d1,d2):
     """
     return max(d1,-d2)
 
-from distmesh._distance_functions import dellipse
-
-from distmesh._distance_functions import dellipsoid
 
 # dexpr not implemented
 
