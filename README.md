@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/uit-no/pydistmesh.svg?branch=master)](https://travis-ci.org/uit-no/pydistmesh/builds)
+
+
 # Fork of PyDistMesh: A Simple Mesh Generator in Python
 
 This version of the code is based on
