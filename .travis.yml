@@ -13,6 +13,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - gcc-4.9
+      - gfortran-4.9
       - cmake
       - libblas-dev
       - liblapack-dev
