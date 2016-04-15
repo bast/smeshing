@@ -16,7 +16,6 @@ addons:
     packages:
       - gcc-4.9
       - cmake
-      - python-numpy
       - python-scipy
 
 install:
