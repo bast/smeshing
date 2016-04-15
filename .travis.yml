@@ -8,7 +8,6 @@ python:
 
 os:
   - linux
-  - osx
 
 addons:
   apt:
@@ -18,13 +17,6 @@ addons:
       - gcc-4.9
       - cmake
       - python-scipy
-
-before_install:
-  - if test ${TRAVIS_OS_NAME} = osx; then brew update; fi
-  - if test ${TRAVIS_OS_NAME} = osx; then brew outdated xctool || brew upgrade xctool; fi
-  - if test ${TRAVIS_OS_NAME} = osx; then brew unlink gcc; fi
-  - if test ${TRAVIS_OS_NAME} = osx; then brew install python gcc; fi
-  - if test ${TRAVIS_OS_NAME} = osx; then brew linkapps python; fi
 
 install:
   - virtualenv --system-site-packages venv
