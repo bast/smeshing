@@ -19,3 +19,13 @@ def read_data(file_name):
             triangles.append([t1, t2, t3])
 
     return x, y, triangles
+
+
+def write_data(p, t, file_name):
+    with open(file_name, 'w') as f:
+        f.write('{}\n'.format(len(p)))
+        for px, py in p:
+            f.write('{} {}\n'.format(px, py))
+        f.write('{}\n'.format(len(t)))
+        for t1, t2, t3 in t:
+            f.write('{} {} {}\n'.format(t1, t2, t3))

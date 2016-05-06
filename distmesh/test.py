@@ -21,19 +21,11 @@ from _distmesh2d import distmesh2d
 from distance_functions import huniform, drectangle, dcircle, ddiff, dpoly
 from utils import simpqual
 
+from file_io import write_data
+
 #-----------------------------------------------------------------------------
 # Demo functions
 #-----------------------------------------------------------------------------
-
-
-def save_p_t(p, t, file_name):
-    with open(file_name, 'w') as f:
-        f.write('{}\n'.format(len(p)))
-        for px, py in p:
-            f.write('{} {}\n'.format(px, py))
-        f.write('{}\n'.format(len(t)))
-        for t1, t2, t3 in t:
-            f.write('{} {} {}\n'.format(t1, t2, t3))
 
 
 def matches_with_reference(p, t, file_name):
@@ -144,7 +136,7 @@ def test_circle():
     p, t = uniform_mesh_on_unit_circle()
     fstats(p,t)
     if generate_tests:
-        save_p_t(p, t, 'test/circle.txt')
+        write_data(p, t, 'test/circle.txt')
     assert matches_with_reference(p, t, 'test/circle.txt')
 
 
@@ -152,7 +144,7 @@ def test_rectangle():
     p, t = rectangle_with_circular_hole()
     fstats(p, t)
     if generate_tests:
-        save_p_t(p, t, 'test/rectangle.txt')
+        write_data(p, t, 'test/rectangle.txt')
     assert matches_with_reference(p, t, 'test/rectangle.txt')
 
 
@@ -160,7 +152,7 @@ def test_polygon():
     p, t = polygon()
     fstats(p, t)
     if generate_tests:
-        save_p_t(p, t, 'test/polygon.txt')
+        write_data(p, t, 'test/polygon.txt')
     assert matches_with_reference(p, t, 'test/polygon.txt')
 
 
@@ -168,7 +160,7 @@ def test_ellipse():
     p, t = ellipse()
     fstats(p, t)
     if generate_tests:
-        save_p_t(p, t, 'test/ellipse.txt')
+        write_data(p, t, 'test/ellipse.txt')
     assert matches_with_reference(p, t, 'test/ellipse.txt')
 
 
@@ -176,7 +168,7 @@ def test_square():
     p, t = square()
     fstats(p, t)
     if generate_tests:
-        save_p_t(p, t, 'test/square.txt')
+        write_data(p, t, 'test/square.txt')
     assert matches_with_reference(p, t, 'test/square.txt')
 
 
@@ -184,5 +176,5 @@ def test_airfoil():
     p, t = naca0012_airfoil()
     fstats(p, t)
     if generate_tests:
-        save_p_t(p, t, 'test/airfoil.txt')
+        write_data(p, t, 'test/airfoil.txt')
     assert matches_with_reference(p, t, 'test/airfoil.txt')
