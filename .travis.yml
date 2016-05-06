@@ -21,7 +21,11 @@ addons:
 install:
   - virtualenv --system-site-packages venv
   - source venv/bin/activate
-  - pip install pep8 pytest cffi matplotlib
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]];
+    then pip install pytest-cov python-coveralls;
+    else pip install pytest;
+    fi
+  - pip install pep8 cffi matplotlib
 
 script:
   - mkdir build
@@ -29,7 +33,15 @@ script:
   - cmake ..
   - make
   - cd ..
-  - py.test -vv distmesh/test.py
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]];
+    then py.test -vv distmesh/test.py --cov distmesh;
+    else py.test -vv distmesh/test.py;
+    fi
+
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]];
+    then coveralls;
+    fi
 
 notifications:
   email: false
