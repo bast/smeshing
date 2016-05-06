@@ -43,7 +43,7 @@ py.test -vv distmesh/test.py
 
 Example:
 ```
-python tools/plot.py test/circle.txt circle.png
+python distmesh/plot.py test/circle.txt circle.png
 ```
 
 
