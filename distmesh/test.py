@@ -21,47 +21,55 @@ from _distmesh2d import distmesh2d
 from distance_functions import huniform, drectangle, dcircle, ddiff, dpoly
 from utils import simpqual
 
-from file_io import write_data
+from file_io import read_data, write_data
 
 #-----------------------------------------------------------------------------
 # Demo functions
 #-----------------------------------------------------------------------------
 
 
-def matches_with_reference(p, t, file_name):
-
+def is_same_point(p1, p2):
     tol = 1.0e-12
-
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
-
-    offset = 0
-
-    p_len_ref = int(lines[offset])
-    assert len(p) == p_len_ref
-    offset += 1
-
-    for i, (px, py) in enumerate(p):
-        px_ref = float(lines[i + offset].split()[0])
-        py_ref = float(lines[i + offset].split()[1])
-        assert abs(px - px_ref) < tol
-        assert abs(py - py_ref) < tol
-    offset += len(p)
-
-    t_len_ref = int(lines[offset])
-    assert len(t) == t_len_ref
-    offset += 1
-
-    for i, (t1, t2, t3) in enumerate(t):
-        t1_ref = int(lines[i + offset].split()[0])
-        t2_ref = int(lines[i + offset].split()[1])
-        t3_ref = int(lines[i + offset].split()[2])
-        assert t1 == t1_ref
-        assert t2 == t2_ref
-        assert t3 == t3_ref
-    offset += len(t)
-
+    if abs(p1[0] - p2[0]) > tol:
+        return False
+    if abs(p1[1] - p2[1]) > tol:
+        return False
     return True
+
+
+def get_triangle_midpoints(xs, ys, ts):
+    ms = []
+    for (t1, t2, t3) in ts:
+        mx = xs[t1] + xs[t2] + xs[t3]
+        my = ys[t1] + ys[t2] + ys[t3]
+        ms.append((mx, my))
+    return ms
+
+
+def matches_with_reference(ps, ts, file_name):
+    """
+    We compare triangle midpoints.
+    """
+    xs = []
+    ys = []
+    for p in ps:
+        xs.append(p[0])
+        ys.append(p[1])
+
+    ms = get_triangle_midpoints(xs, ys, ts)
+
+    xs_ref, ys_ref, ts_ref = read_data(file_name)
+    ms_ref = get_triangle_midpoints(xs_ref, ys_ref, ts_ref)
+
+    for m in ms:
+        # we search m in m_ref, as soon as we find it, we pop it
+        for i, m_ref in enumerate(ms_ref):
+            if is_same_point(m, m_ref):
+                ms_ref.pop(i)
+                break
+
+    # the points match if ms_ref is emptied
+    return len(ms_ref) == 0
 
 
 def uniform_mesh_on_unit_circle():
