@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/uit-no/pydistmesh.svg?branch=master)](https://travis-ci.org/uit-no/pydistmesh/builds)
+[![Coverage Status](https://coveralls.io/repos/uit-no/pydistmesh/badge.png?branch=master)](https://coveralls.io/r/uit-no/pydistmesh?branch=master)
 
 
 # Fork of PyDistMesh: A Simple Mesh Generator in Python
