@@ -39,6 +39,14 @@ py.test -vv distmesh/test.py
 ```
 
 
+## Plotting
+
+Example:
+```
+python tools/plot.py test/circle.txt circle.png
+```
+
+
 ## References
 
 The DistMesh algorithm is described in the following two references.
