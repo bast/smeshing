@@ -25,7 +25,7 @@ install:
     then pip install pytest-cov python-coveralls;
     else pip install pytest;
     fi
-  - pip install pep8 cffi matplotlib
+  - pip install pep8 cffi numpy matplotlib
 
 script:
   - mkdir build
