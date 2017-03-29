@@ -16,6 +16,8 @@ addons:
     packages:
       - gcc-4.9
       - cmake
+      - python-matplotlib
+      - python-scipy
 
 install:
   - virtualenv --system-site-packages venv
@@ -24,7 +26,7 @@ install:
     then pip install pytest-cov python-coveralls;
     else pip install pytest;
     fi
-  - pip install pep8 cffi scipy numpy matplotlib
+  - pip install pep8 cffi
 
 script:
   - mkdir build
