@@ -90,7 +90,9 @@ def polygon():
                    (1.6,0.8),(0.5,0.5),(0.2,1.0),(0.1,0.4),(-0.7,0.7),
                    (-0.4,-0.5)])
     fd = lambda p: dpoly(p, pv)
-    return distmesh2d(fd, huniform, 0.1, (-1,-1, 2,1), pv)
+    fh = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
+    return distmesh2d(fd, fh, 0.1, (-1,-1, 2,1), pv)
+  # return distmesh2d(fd, huniform, 0.1, (-1,-1, 2,1), pv)
 
 def ellipse():
     """Ellipse"""
@@ -140,49 +142,9 @@ def fstats(p, t):
           % (len(p), len(t), simpqual(p,t).min()))
 
 
-def test_circle():
-    p, t = uniform_mesh_on_unit_circle()
-    fstats(p,t)
-    if generate_tests:
-        write_data(p, t, 'test/circle.txt')
-    assert matches_with_reference(p, t, 'test/circle.txt')
-
-
-def test_rectangle():
-    p, t = rectangle_with_circular_hole()
-    fstats(p, t)
-    if generate_tests:
-        write_data(p, t, 'test/rectangle.txt')
-    assert matches_with_reference(p, t, 'test/rectangle.txt')
-
-
 def test_polygon():
     p, t = polygon()
     fstats(p, t)
     if generate_tests:
         write_data(p, t, 'test/polygon.txt')
     assert matches_with_reference(p, t, 'test/polygon.txt')
-
-
-def test_ellipse():
-    p, t = ellipse()
-    fstats(p, t)
-    if generate_tests:
-        write_data(p, t, 'test/ellipse.txt')
-    assert matches_with_reference(p, t, 'test/ellipse.txt')
-
-
-def test_square():
-    p, t = square()
-    fstats(p, t)
-    if generate_tests:
-        write_data(p, t, 'test/square.txt')
-    assert matches_with_reference(p, t, 'test/square.txt')
-
-
-def test_airfoil():
-    p, t = naca0012_airfoil()
-    fstats(p, t)
-    if generate_tests:
-        write_data(p, t, 'test/airfoil.txt')
-    assert matches_with_reference(p, t, 'test/airfoil.txt')
