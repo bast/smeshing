@@ -11,6 +11,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
+            - gfortran-4.9
             - gcc-4.9
             - g++-4.9
             - python-numpy
