@@ -18,6 +18,10 @@ addons:
       - cmake
       - python-scipy
 
+env:
+  - CC='gcc-4.9'
+  - CXX='g++-4.9'
+
 install:
   - virtualenv --system-site-packages venv
   - source venv/bin/activate
