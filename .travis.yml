@@ -1,49 +1,39 @@
-language:
-  - python
+language: python
 
-python:
-  - 2.6
-  - 2.7
-  - 3.5
+sudo: false
 
-os:
-  - linux
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-4.9
-      - cmake
-      - python-scipy
-
-env:
-  - CC='gcc-4.9'
-  - CXX='g++-4.9'
+matrix:
+  include:
+    - os: linux
+      python: 2.7
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-4.9
+            - g++-4.9
+            - python-scipy
+      env:
+        - CC='gcc-4.9'
+        - CXX='g++-4.9'
 
 install:
-  - virtualenv --system-site-packages venv
-  - source venv/bin/activate
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]];
-    then pip install pytest-cov python-coveralls;
-    else pip install pytest;
-    fi
-  - pip install pep8 cffi git+https://github.com/bast/inpoly.git
+  - pip install -r requirements.txt
 
 script:
-  - mkdir build
   - cd build
   - cmake ..
   - make
   - cd ..
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]];
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
     then py.test -vv distmesh/test.py --cov distmesh;
     else py.test -vv distmesh/test.py;
     fi
+  - INPOLY_BUILD_DIR=$PWD/build py.test -s -vv test.py
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]];
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
     then coveralls;
     fi
 
