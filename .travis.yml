@@ -13,6 +13,7 @@ matrix:
           packages:
             - gcc-4.9
             - g++-4.9
+            - python-numpy
             - python-scipy
       env:
         - CC='gcc-4.9'
