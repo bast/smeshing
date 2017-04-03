@@ -23,7 +23,7 @@ matrix:
         - CXX='g++-4.9'
 
 install:
-  - pip install -r requirements.txt
+  - pip install git+https://github.com/bast/inpoly.git cffi pytest pytest-cov python-coveralls
 
 script:
   - cd build
