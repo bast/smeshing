@@ -4,3 +4,4 @@ matplotlib
 pep8
 pytest
 cffi
+git+https://github.com/bast/inpoly.git
