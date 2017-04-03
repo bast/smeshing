@@ -16,7 +16,6 @@ addons:
     packages:
       - gcc-4.9
       - cmake
-      - python-matplotlib
       - python-scipy
 
 install:
@@ -26,7 +25,7 @@ install:
     then pip install pytest-cov python-coveralls;
     else pip install pytest;
     fi
-  - pip install pep8 cffi
+  - pip install pep8 cffi git+https://github.com/bast/inpoly.git
 
 script:
   - mkdir build

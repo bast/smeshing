@@ -1,6 +1,5 @@
 numpy
 scipy
-matplotlib
 pep8
 pytest
 cffi

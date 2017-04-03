@@ -15,6 +15,7 @@
 #-----------------------------------------------------------------------------
 
 import numpy as np
+import inpoly
 
 __all__ = [
     # Distance functions:
@@ -95,9 +96,19 @@ def dpoly(p,pv):
     pv should be provided as a list of coordinates [(x0,y0), (x1,y1), ...]
     or an array of shape (nv, 2).
     """
-    from matplotlib.path import Path
+    context = inpoly.new_context()  # FIXME move this up
+    inpoly.add_polygon(context, pv)
+    contains = inpoly.contains_points(context, p)
+
     d = dsegment(p, pv)
-    return (-1)**Path(pv).contains_points(p) * d.min(1)
+    result = d.min(1)
+    for i in range(len(result)):
+        if contains[i]:
+            result[i] *= -1.0
+
+    inpoly.free_context(context)
+
+    return result
 
 def drectangle0(p,x1,x2,y1,y2):
     """Signed distance function for rectangle with corners (x1,y1), (x2,y1),
