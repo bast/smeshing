@@ -16,6 +16,8 @@
 
 import numpy as np
 import inpoly
+from c_interface import lib
+from cffi import FFI
 
 #-----------------------------------------------------------------------------
 # Signed distance functions
@@ -61,22 +63,16 @@ def dsegment(ps, vs):
     ds : array, shape (np, nv-1)
         distance from each point to each edge
     """
-    from c_interface import lib
 
-    ds = []
-    for iv in range(len(vs)- 1):
-        p1x = vs[iv][0]
-        p1y = vs[iv][1]
-        p2x = vs[iv+1][0]
-        p2y = vs[iv+1][1]
-
-        d_row = []
-        for i in range(len(ps)):
-            d = lib.dsegment(ps[i][0], ps[i][1], p1x, p1y, p2x, p2y)
-            d_row.append(d)
-        ds.append(d_row)
-    result = np.transpose(np.asarray(ds)).min(1)
-    return result
+    ffi = FFI()
+    distances_np = np.zeros(len(ps), dtype=np.float64)
+    distances_p = ffi.cast("double *", distances_np.ctypes.data)
+    ps_x, ps_y = zip(*ps)
+    vs_x, vs_y = zip(*vs)
+    # FIXME we should send in numpy arrays and not normal arrays
+    # otherwise there can be memory issues for very large arrays
+    lib.vdsegment(len(ps), ps_x, ps_y, len(vs), vs_x, vs_y, distances_p)
+    return distances_np
 
 
 def huniform(p):
