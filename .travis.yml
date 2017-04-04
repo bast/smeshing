@@ -14,8 +14,6 @@ matrix:
             - gfortran-4.9
             - gcc-4.9
             - g++-4.9
-            - python-numpy
-            - python-scipy
             - libblas-dev
             - liblapack-dev
       env:
@@ -23,6 +21,7 @@ matrix:
         - CXX='g++-4.9'
 
 install:
+  - pip install --only-binary=numpy,scipy numpy scipy
   - pip install git+https://github.com/bast/inpoly.git cffi pytest pytest-cov python-coveralls
 
 script:
