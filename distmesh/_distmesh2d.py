@@ -97,10 +97,8 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None):
                               t[:, [2,0]]))          # Interior bars duplicated
             bars.sort(axis=1)
             bars = ml.unique_rows(bars)              # Bars as node pairs
-            # 5. Graphical output of the current mesh
-            # removed
 
-        # 6. Move mesh points based on bar lengths L and forces F
+        # 5. Move mesh points based on bar lengths L and forces F
         barvec = p[bars[:,0]] - p[bars[:,1]]         # List of bar vectors
         L = np.sqrt((barvec**2).sum(1))              # L = Bar lengths
         hbars = fh(p[bars].sum(1)/2)
@@ -123,7 +121,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None):
         Ftot[:nfix] = 0                              # Force = 0 at fixed points
         p += deltat*Ftot                             # Update node positions
 
-        # 7. Bring outside points back to the boundary
+        # 6. Bring outside points back to the boundary
         d = fd(p); ix = d>0                          # Find points outside (d>0)
         if ix.any():
             dgradx = (fd(p[ix]+[deps,0])-d[ix])/deps # Numerical
@@ -131,7 +129,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None):
             dgrad2 = dgradx**2 + dgrady**2
             p[ix] -= (d[ix]*np.vstack((dgradx, dgrady))/dgrad2).T # Project
 
-        # 8. Termination criterion: All interior nodes move less than dptol (scaled)
+        # 7. Termination criterion: All interior nodes move less than dptol (scaled)
         if (np.sqrt((deltat*Ftot[d<-geps]**2).sum(1))/h0).max() < dptol:
             break
 
