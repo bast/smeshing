@@ -49,57 +49,6 @@ def distmesh2d(fd, fh, h0, bbox, pfix=None):
     -------
     p:         Node positions (Nx2)
     t:         Triangle indices (NTx3)
-
-    Example: (Uniform Mesh on Unit Circle)
-    >>> fd = lambda p: sqrt((p**2).sum(1))-1.0
-    >>> p, t = distmesh2d(fd, huniform, 2, (-1,-1,1,1))
-
-    Example: (Rectangle with circular hole, refined at circle boundary)
-    >>> fd = lambda p: ddiff(drectangle(p,-1,1,-1,1), dcircle(p,0,0,0.5))
-    >>> fh = lambda p: 0.05+0.3*dcircle(p,0,0,0.5)
-    >>> p, t = distmesh2d(fd, fh, 0.05, (-1,-1,1,1),
-                          [(-1,-1), (-1,1), (1,-1), (1,1)])
-
-    Example: (Polygon)
-    >>> pv=[(-0.4, -0.5), (0.4, -0.2), (0.4, -0.7), (1.5, -0.4), (0.9, 0.1),
-            (1.6, 0.8), (0.5, 0.5), (0.2, 1.0), (0.1, 0.4), (-0.7, 0.7),
-            (-0.4, -0.5)]
-    >>> fd = lambda p: dpoly(p, pv)
-    >>> p, t = distmesh2d(fd, huniform, 0.1, (-1,-1, 2,1), pv)
-
-    Example: (Ellipse)
-    >>> fd = lambda p: p[:,0]**2/2**2 + p[:,1]**2/1**2 - 1
-    >>> p, t = dm.distmesh2d(fd, dm.huniform, 0.2, (-2,-1, 2,1))
-
-    Example: (Square, with size function point and line sources)
-    >>> fd = lambda p: dm.drectangle(p,0,1,0,1)
-    >>> fh = lambda p: np.minimum(np.minimum(
-            0.01+0.3*abs(dm.dcircle(p,0,0,0)),
-            0.025+0.3*abs(dm.dpoly(p,[(0.3,0.7),(0.7,0.5)]))), 0.15)
-    >>> p, t = dm.distmesh2d(fd, fh, 0.01, (0,0,1,1), [(0,0),(1,0),(0,1),(1,1)])
-
-    Example: (NACA0012 airfoil)
-    >>> hlead=0.01; htrail=0.04; hmax=2; circx=2; circr=4
-    >>> a=.12/.2*np.array([0.2969,-0.1260,-0.3516,0.2843,-0.1036])
-    >>> a0=a[0]; a1=np.hstack((a[5:0:-1], 0.0))
-    >>> fd = lambda p: dm.ddiff(
-        dm.dcircle(p,circx,0,circr),
-        (abs(p[:,1])-np.polyval(a1, p[:,0]))**2-a0**2*p[:,0])
-    >>> fh = lambda p: np.minimum(np.minimum(
-            hlead+0.3*dm.dcircle(p,0,0,0),
-            htrail+0.3*dm.dcircle(p,1,0,0)), hmax)
-
-    >>> fixx = 1.0-htrail*np.cumsum(1.3**np.arange(5))
-    >>> fixy = a0*np.sqrt(fixx)+np.polyval(a1, fixx)
-    >>> fix = np.vstack((
-            np.array([(circx-circr,0),(circx+circr,0),
-                      (circx,-circr),(circx,circr),
-                      (0,0),(1,0)]),
-            np.vstack((fixx, fixy)).T,
-            np.vstack((fixx, -fixy)).T))
-    >>> box = (circx-circr,-circr, circx+circr,circr)
-    >>> h0 = min(hlead, htrail, hmax)
-    >>> p, t = dm.distmesh2d(fd, fh, h0, box, fix)
     """
 
     dptol=.001; ttol=.1; Fscale=1.2; deltat=.2; geps=.001*h0;
