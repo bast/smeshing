@@ -84,10 +84,12 @@ def polygon(file_name, uniform=False):
 
     if uniform:
          f = huniform
+         h0 = 0.03
     else:
          f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
+         h0 = 0.1
 
-    _p, _t = distmesh2d(pv, f, 0.1, (-1,-1, 2,1), pv)
+    _p, _t = distmesh2d(pv, f, h0, (-1,-1, 2,1), pv)
     return _p, _t
 
 
