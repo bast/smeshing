@@ -36,8 +36,7 @@ def dpoly(p, pv, context):
     """
     contains = inpoly.contains_points(context, p)
 
-    d = dsegment(p, pv)
-    result = d.min(1)
+    result = dsegment(p, pv)
     for i in range(len(result)):
         if contains[i]:
             result[i] *= -1.0
@@ -76,7 +75,9 @@ def dsegment(ps, vs):
             d = lib.dsegment(ps[i][0], ps[i][1], p1x, p1y, p2x, p2y)
             d_row.append(d)
         ds.append(d_row)
-    return np.transpose(np.asarray(ds))
+    result = np.transpose(np.asarray(ds)).min(1)
+    return result
+
 
 def huniform(p):
     """Implements the trivial uniform mesh size function h=1."""
