@@ -38,40 +38,19 @@ def dpoly(p, pv, context):
     """
     contains = inpoly.contains_points(context, p)
 
-    result = dsegment(p, pv)
-    for i in range(len(result)):
-        if contains[i]:
-            result[i] *= -1.0
-
-    return result
-
-
-def dsegment(ps, vs):
-    """
-    d = dsegment(p, v)
-
-    Parameters
-    ----------
-    p : array, shape (np, 2)
-        points
-    v : array, shape (nv, 2)
-        vertices of a closed array, whose edges are v[0]..v[1],
-        ... v[nv-2]..v[nv-1]
-
-    Output
-    ------
-    ds : array, shape (np, nv-1)
-        distance from each point to each edge
-    """
-
     ffi = FFI()
-    distances_np = np.zeros(len(ps), dtype=np.float64)
+    distances_np = np.zeros(len(p), dtype=np.float64)
     distances_p = ffi.cast("double *", distances_np.ctypes.data)
-    ps_x, ps_y = zip(*ps)
-    vs_x, vs_y = zip(*vs)
+    ps_x, ps_y = zip(*p)
+    vs_x, vs_y = zip(*pv)
     # FIXME we should send in numpy arrays and not normal arrays
     # otherwise there can be memory issues for very large arrays
-    lib.vdsegment(len(ps), ps_x, ps_y, len(vs), vs_x, vs_y, distances_p)
+    lib.vdsegment(len(p), ps_x, ps_y, len(pv), vs_x, vs_y, distances_p)
+
+    for i in range(len(p)):
+        if contains[i]:
+            distances_np[i] *= -1.0
+
     return distances_np
 
 
