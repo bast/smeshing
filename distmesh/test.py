@@ -18,7 +18,7 @@ import numpy as np
 
 # Local imports.
 from _distmesh2d import distmesh2d
-from distance_functions import huniform, drectangle, dcircle, ddiff, dpoly
+from distance_functions import huniform, dcircle, dpoly
 from utils import simpqual
 
 from file_io import read_data, write_data
