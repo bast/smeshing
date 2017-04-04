@@ -5,13 +5,6 @@
 extern "C" {
 #endif
 
-double dsegment(const double x0,
-                const double y0,
-                const double p1x,
-                const double p1y,
-                const double p2x,
-                const double p2y);
-
 double vdsegment(const int num_points,
                  const double ps_x[],
                  const double ps_y[],
