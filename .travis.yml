@@ -36,7 +36,6 @@ script:
     then py.test -vv distmesh/test.py --cov distmesh;
     else py.test -vv distmesh/test.py;
     fi
-  - INPOLY_BUILD_DIR=$PWD/build py.test -s -vv test.py
 
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
