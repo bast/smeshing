@@ -26,6 +26,7 @@ install:
   - pip install git+https://github.com/bast/inpoly.git cffi pytest pytest-cov python-coveralls
 
 script:
+  - python -c "import scipy; print(scipy.__version__)"
   - mkdir build
   - cd build
   - cmake ..
