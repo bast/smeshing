@@ -72,7 +72,7 @@ def matches_with_reference(ps, ts, file_name):
     return len(ms_ref) == 0
 
 
-def polygon(file_name):
+def polygon(file_name, uniform=False):
 
     pv = []
     with open(file_name, 'r') as f:
@@ -82,9 +82,13 @@ def polygon(file_name):
             pv.append((x, y))
     pv = np.array(pv)
     fd = lambda p: dpoly(p, pv)
-    fh = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
-    return distmesh2d(fd, fh, 0.1, (-1,-1, 2,1), pv)
-  # return distmesh2d(fd, huniform, 0.1, (-1,-1, 2,1), pv)
+
+    if uniform:
+         f = huniform
+    else:
+         f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
+
+    return distmesh2d(fd, f, 0.1, (-1,-1, 2,1), pv)
 
 
 
@@ -103,8 +107,3 @@ def test_polygon():
     if generate_tests:
         write_data(p, t, 'test/result.txt')
     assert matches_with_reference(p, t, 'test/result.txt')
-
-
-def test_benchmark():
-    p, t = polygon('test/benchmark.txt')
-    fstats(p, t)
