@@ -72,10 +72,10 @@ def matches_with_reference(ps, ts, file_name):
     return len(ms_ref) == 0
 
 
-def polygon():
+def polygon(file_name):
 
     pv = []
-    with open('test/polygon.txt', 'r') as f:
+    with open(file_name, 'r') as f:
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
@@ -98,8 +98,13 @@ def fstats(p, t):
 
 
 def test_polygon():
-    p, t = polygon()
+    p, t = polygon('test/polygon.txt')
     fstats(p, t)
     if generate_tests:
         write_data(p, t, 'test/result.txt')
     assert matches_with_reference(p, t, 'test/result.txt')
+
+
+def test_benchmark():
+    p, t = polygon('test/benchmark.txt')
+    fstats(p, t)
