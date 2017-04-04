@@ -73,10 +73,14 @@ def matches_with_reference(ps, ts, file_name):
 
 
 def polygon():
-    """Polygon"""
-    pv = np.array([(-0.4,-0.5),(0.4,-0.2),(0.4,-0.7),(1.5,-0.4),(0.9,0.1),
-                   (1.6,0.8),(0.5,0.5),(0.2,1.0),(0.1,0.4),(-0.7,0.7),
-                   (-0.4,-0.5)])
+
+    pv = []
+    with open('test/polygon.txt', 'r') as f:
+        for line in f:
+            x = float(line.split()[0])
+            y = float(line.split()[1])
+            pv.append((x, y))
+    pv = np.array(pv)
     fd = lambda p: dpoly(p, pv)
     fh = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
     return distmesh2d(fd, fh, 0.1, (-1,-1, 2,1), pv)
