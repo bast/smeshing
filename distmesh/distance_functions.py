@@ -17,35 +17,6 @@
 import numpy as np
 import inpoly
 
-__all__ = [
-    # Distance functions:
-    'dblock',
-    'dcircle',
-    'ddiff',
-    'dintersect',
-    'dmatrix3d',
-    'dmatrix',
-    'dpoly',
-    'drectangle',
-    'drectangle0',
-    'dsegment',
-    'dsphere',
-    'dunion',
-
-    # Mesh size functions:
-    'hmatrix3d',
-    'hmatrix',
-    'huniform',
-
-    # Generic node manipulation:
-    'protate',
-    'pshift',
-    ]
-
-# These are used very often:
-min = np.minimum
-max = np.maximum
-
 #-----------------------------------------------------------------------------
 # Signed distance functions
 #-----------------------------------------------------------------------------
