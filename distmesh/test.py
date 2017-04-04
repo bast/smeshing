@@ -72,7 +72,7 @@ def matches_with_reference(ps, ts, file_name):
     return len(ms_ref) == 0
 
 
-def polygon(file_name, uniform=False):
+def polygon(file_name, benchmark=False):
 
     pv = []
     with open(file_name, 'r') as f:
@@ -82,7 +82,7 @@ def polygon(file_name, uniform=False):
             pv.append((x, y))
     pv = np.array(pv)
 
-    if uniform:
+    if benchmark:
          f = huniform
          h0 = 0.03
     else:
