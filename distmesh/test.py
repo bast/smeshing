@@ -97,5 +97,5 @@ def test_polygon():
     p, t = polygon()
     fstats(p, t)
     if generate_tests:
-        write_data(p, t, 'test/polygon.txt')
-    assert matches_with_reference(p, t, 'test/polygon.txt')
+        write_data(p, t, 'test/result.txt')
+    assert matches_with_reference(p, t, 'test/result.txt')
