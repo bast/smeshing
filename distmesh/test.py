@@ -81,14 +81,14 @@ def polygon(file_name, uniform=False):
             y = float(line.split()[1])
             pv.append((x, y))
     pv = np.array(pv)
-    fd = lambda p: dpoly(p, pv)
 
     if uniform:
          f = huniform
     else:
          f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
 
-    return distmesh2d(fd, f, 0.1, (-1,-1, 2,1), pv)
+    _p, _t = distmesh2d(pv, f, 0.1, (-1,-1, 2,1), pv)
+    return _p, _t
 
 
 
