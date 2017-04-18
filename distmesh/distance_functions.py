@@ -28,7 +28,7 @@ def dcircle(p,xc,yc,r):
     return np.sqrt(((p-np.array([xc,yc]))**2).sum(-1))-r
 
 
-def dpoly(p, pv, inpoly_context):
+def dpoly(p, pv, inpoly_context, polygons_context):
     """Signed distance function for polygon with vertices pv.
 
     Usually pv should also be provided as fixed points in distmesh2d.
