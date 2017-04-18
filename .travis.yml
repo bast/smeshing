@@ -26,11 +26,6 @@ install:
   - pip install git+https://github.com/bast/inpoly.git cffi pytest pytest-cov python-coveralls
 
 script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
-  - cd ..
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
     then py.test -vv distmesh/test.py --cov distmesh;
     else py.test -vv distmesh/test.py;

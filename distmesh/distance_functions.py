@@ -17,7 +17,6 @@
 import numpy as np
 import inpoly
 import polygons
-#from c_interface import lib
 
 #-----------------------------------------------------------------------------
 # Signed distance functions
@@ -38,14 +37,6 @@ def dpoly(p, pv, inpoly_context, polygons_context):
     """
     contains = inpoly.contains_points(inpoly_context, p)
 
-#   ffi = FFI()
-#   distances_np = np.zeros(len(p), dtype=np.float64)
-#   distances_p = ffi.cast("double *", distances_np.ctypes.data)
-#   ps_x, ps_y = zip(*p)
-#   vs_x, vs_y = zip(*pv)
-#   # FIXME we should send in numpy arrays and not normal arrays
-#   # otherwise there can be memory issues for very large arrays
-#   lib.vdsegment(len(p), ps_x, ps_y, len(pv), vs_x, vs_y, distances_p)
     distances = polygons.get_distances(polygons_context, p)
 
     for i in range(len(p)):
