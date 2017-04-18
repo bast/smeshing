@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/bast/smeshing/badge.svg?branch=master)](https://coveralls.io/github/bast/smeshing?branch=master)
 
 
-# Fork of PyDistMesh: A Simple Mesh Generator in Python
+# Simple mesh generator in Python (fork of PyDistMesh)
 
 This version of the code is based on
 [PyDistMesh](https://github.com/bfroehle/pydistmesh) developed by [Bradley M.
