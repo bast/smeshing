@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/uit-no/pydistmesh.svg?branch=master)](https://travis-ci.org/uit-no/pydistmesh/builds)
-[![Coverage Status](https://coveralls.io/repos/github/uit-no/pydistmesh/badge.svg?branch=master)](https://coveralls.io/github/uit-no/pydistmesh?branch=master)
+[![Build Status](https://travis-ci.org/bast/smeshing.svg?branch=master)](https://travis-ci.org/bast/smeshing/builds)
+[![Coverage Status](https://coveralls.io/repos/github/bast/smeshing/badge.svg?branch=master)](https://coveralls.io/github/bast/smeshing?branch=master)
 
 
 # Fork of PyDistMesh: A Simple Mesh Generator in Python
