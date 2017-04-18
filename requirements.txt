@@ -4,3 +4,4 @@ pep8
 pytest
 cffi
 git+https://github.com/bast/inpoly.git
+git+https://github.com/bast/polygons.git
