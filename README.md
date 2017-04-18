@@ -14,16 +14,6 @@ Like [DistMesh](http://persson.berkeley.edu/distmesh/) and
 based, this code is distributed under the [GNU GPL](../master/LICENSE).
 
 
-## Building the C lib used by the Python code
-
-```
-mkdir build
-cd build
-cmake ..
-make
-```
-
-
 ## Installing the code and its dependencies
 
 ```
