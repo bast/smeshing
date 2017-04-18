@@ -23,7 +23,9 @@ matrix:
 install:
   - pip install --upgrade pip setuptools wheel  # https://github.com/travis-ci/travis-ci/issues/2650#issuecomment-266721196
   - pip install --only-binary=numpy,scipy numpy scipy
-  - pip install git+https://github.com/bast/inpoly.git cffi pytest pytest-cov python-coveralls
+  - pip install cffi pytest pytest-cov python-coveralls
+  - pip install git+https://github.com/bast/inpoly.git
+  - pip install git+https://github.com/bast/polygons.git
 
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
