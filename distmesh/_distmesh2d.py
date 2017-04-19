@@ -51,9 +51,13 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     inpoly.add_polygon(inpoly_context, pv)
     polygons.add_polygon(polygons_context, pv)
 
-    dptol=.001; ttol=.1; Fscale=1.2; deltat=.2; geps=.001*h0;
-    deps=np.sqrt(np.finfo(np.double).eps)*h0;
-    densityctrlfreq=30;
+    dptol = .001
+    ttol = .1
+    Fscale = 1.2
+    deltat = .2
+    geps = .001*h0
+    deps = np.sqrt(np.finfo(np.double).eps)*h0
+    densityctrlfreq = 30
 
     # Extract bounding box
     xmin, ymin, xmax, ymax = bbox
