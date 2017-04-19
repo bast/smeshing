@@ -54,7 +54,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     dptol = .001
     ttol = .1
     Fscale = 1.2
-    deltat = .2
+    delta_t = 0.2
     geps = .001*h0
     deps = np.sqrt(np.finfo(np.double).eps)*h0
     densityctrlfreq = 30
@@ -116,14 +116,24 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
             N = p.shape[0]; pold = float('inf')
             continue
 
-        F = L0-L; F[F<0] = 0                         # Bar forces (scalars)
-        Fvec = F[:,None]/L[:,None].dot([[1,1]])*barvec # Bar forces (x,y components)
+        # Bar forces (scalars)
+        F = L0 - L
+
+        # we ignore attractive forces and only keep repulsion
+        F[F < 0.0] = 0.0
+
+        Fvec = F[:, None]/L[:, None].dot([[1, 1]])*barvec # Bar forces (x,y components)
+
         Ftot = ml.dense(bars[:,[0,0,1,1]],
                         np.repeat([[0,1,0,1]], len(F), axis=0),
                         np.hstack((Fvec, -Fvec)),
                         shape=(N, 2))
-        Ftot[:nfix] = 0                              # Force = 0 at fixed points
-        p += deltat*Ftot                             # Update node positions
+
+        # set force to 0 at fixed points
+        Ftot[:nfix] = 0.0
+
+        # update node positions
+        p += delta_t*Ftot
 
         # 6. Bring outside points back to the boundary
         d = dpoly(p, pv, inpoly_context, polygons_context); ix = d>0                          # Find points outside (d>0)
@@ -134,7 +144,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
             p[ix] -= (d[ix]*np.vstack((dgradx, dgrady))/dgrad2).T # Project
 
         # 7. Termination criterion: All interior nodes move less than dptol (scaled)
-        if (np.sqrt((deltat*Ftot[d<-geps]**2).sum(1))/h0).max() < dptol:
+        if (np.sqrt((delta_t*Ftot[d<-geps]**2).sum(1))/h0).max() < dptol:
             break
 
     # Clean up and plot final mesh
