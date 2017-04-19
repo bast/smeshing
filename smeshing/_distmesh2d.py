@@ -122,14 +122,23 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         # we ignore attractive forces and only keep repulsion
         F[F < 0.0] = 0.0
 
-        Fvec = F[:, None]/L[:, None].dot([[1, 1]])*barvec # Bar forces (x,y components)
+        # compute forces along bars
+        Fvec = np.zeros((len(F), 2))
+        for i in range(len(F)):
+            r = F[i]/L[i]
+            Fvec[i][0] = r*barvec[i][0]
+            Fvec[i][1] = r*barvec[i][1]
 
-        Ftot = ml.dense(bars[:,[0,0,1,1]],
-                        np.repeat([[0,1,0,1]], len(F), axis=0),
-                        np.hstack((Fvec, -Fvec)),
-                        shape=(N, 2))
+        # compute resulting force on each point from all adjacent bars
+        Ftot = np.zeros((len(p), 2))
+        for k, bar in enumerate(bars):
+            i, j = bar
+            Ftot[i][0] += Fvec[k][0]
+            Ftot[i][1] += Fvec[k][1]
+            Ftot[j][0] -= Fvec[k][0]
+            Ftot[j][1] -= Fvec[k][1]
 
-        # set force to 0 at fixed points
+        # set force to zero at fixed points
         Ftot[:nfix] = 0.0
 
         # update node positions

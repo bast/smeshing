@@ -1,13 +1,11 @@
 """
 MATLAB compatibility methods
 
-dense          : Similar to full(sparse(I, J, S, ...))
 unique_rows    : Similar to unique(..., 'rows')
 setdiff_rows   : Similar to setdiff(..., 'rows')
 """
 
 __all__ = [
-    'dense',
     'setdiff_rows',
     'unique_rows',
     ]
@@ -15,31 +13,6 @@ __all__ = [
 import numpy as np
 import scipy.sparse as spsparse
 import scipy.interpolate as spinterp
-
-def dense(I, J, S, shape=None, dtype=None):
-    """
-    Similar to MATLAB's SPARSE(I, J, S, ...), but instead returning a
-    dense array.
-
-    Usage
-    -----
-    >>> shape = (m, n)
-    >>> A = dense(I, J, S, shape, dtype)
-    """
-
-    # Advanced usage: allow J and S to be scalars.
-    if np.isscalar(J):
-        x = J
-        J = np.empty(I.shape, dtype=int)
-        J.fill(x)
-    if np.isscalar(S):
-        x = S
-        S = np.empty(I.shape)
-        S.fill(x)
-
-    # Turn these into 1-d arrays for processing.
-    S = S.flat; I = I.flat; J = J.flat
-    return spsparse.coo_matrix((S, (I, J)), shape, dtype).toarray()
 
 def setdiff_rows(A, B, return_index=False):
     """
@@ -105,4 +78,3 @@ def unique_rows(A, return_index=False, return_inverse=False):
             return B, J
         else:
             return B
-
