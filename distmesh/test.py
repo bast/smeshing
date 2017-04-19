@@ -19,7 +19,6 @@ import numpy as np
 # Local imports.
 from _distmesh2d import distmesh2d
 from distance_functions import huniform, dcircle, dpoly
-from utils import simpqual
 
 from file_io import read_data, write_data
 
@@ -98,14 +97,8 @@ generate_tests = False
 np.random.seed(1) # Always the same results
 
 
-def fstats(p, t):
-    print('%d nodes, %d elements, min quality %.2f'
-          % (len(p), len(t), simpqual(p,t).min()))
-
-
 def test_polygon():
     p, t = polygon('test/polygon.txt')
-    fstats(p, t)
     if generate_tests:
         write_data(p, t, 'test/result.txt')
     assert matches_with_reference(p, t, 'test/result.txt')
