@@ -26,7 +26,7 @@ pip install -r requirements.txt
 ## Running tests
 
 ```
-py.test -vv distmesh/test.py
+py.test -vv smeshing/test.py
 ```
 
 
@@ -34,7 +34,7 @@ py.test -vv distmesh/test.py
 
 Example:
 ```
-python distmesh/plot.py test/circle.txt circle.png
+python smeshing/plot.py test/circle.txt circle.png
 ```
 
 

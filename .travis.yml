@@ -29,8 +29,8 @@ install:
 
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
-    then py.test -vv distmesh/test.py --cov distmesh;
-    else py.test -vv distmesh/test.py;
+    then py.test -vv smeshing/test.py --cov smeshing;
+    else py.test -vv smeshing/test.py;
     fi
 
 after_success:
