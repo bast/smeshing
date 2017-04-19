@@ -2,16 +2,12 @@
 MATLAB compatibility methods
 
 dense          : Similar to full(sparse(I, J, S, ...))
-interp2_linear : Similar to interp2(..., 'linear')
-interp3_linear : Similar to interpn(..., 'linear') for dim=3
 unique_rows    : Similar to unique(..., 'rows')
 setdiff_rows   : Similar to setdiff(..., 'rows')
 """
 
 __all__ = [
     'dense',
-    'interp2_linear',
-    'interp3_linear',
     'setdiff_rows',
     'unique_rows',
     ]
@@ -44,37 +40,6 @@ def dense(I, J, S, shape=None, dtype=None):
     # Turn these into 1-d arrays for processing.
     S = S.flat; I = I.flat; J = J.flat
     return spsparse.coo_matrix((S, (I, J)), shape, dtype).toarray()
-
-def interp2_linear(x,y,z,xi,yi):
-    """
-    Similar to interp2(..., '*linear') in MATLAB.
-
-    Uses x,y,z to construct f, a linear function satisfying
-        z[i, j] = f(x[i], y[j])
-
-    Then returns zi, and array found by evaluating f:
-        zi[i] = f(xi[i], yi[i])
-
-    Parameters
-    ----------
-    x, y : array, ndim=1
-    z : array, shape (x.size, y.size)
-    xi, yi : array, shape (n,)
-
-    Returns
-    -------
-    zi : array, shape (n,)
-    """
-    return spinterp.RectBivariateSpline(x,y,z,kx=1,ky=1).ev(xi,yi)
-
-def interp3_linear(x,y,z, w, xi,yi,zi):
-    """Similar to interpn(..., '*linear') in MATLAB for dim=3"""
-    p = np.vstack((x.flat, y.flat, z.flat)).T
-    v = w.flaten()
-    f = spinterp.LinearNDInterpolator(p, v)
-
-    pi = np.vstack((xi.flat, yi.flat, zi.flat)).T
-    return f(pi)
 
 def setdiff_rows(A, B, return_index=False):
     """
