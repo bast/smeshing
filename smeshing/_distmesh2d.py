@@ -12,7 +12,6 @@
 
 import numpy as np
 import scipy.spatial as spspatial
-import inpoly
 import polygons
 
 # Local imports
@@ -45,10 +44,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     t:         Triangle indices (NTx3)
     """
 
-    inpoly_context = inpoly.new_context()
     polygons_context = polygons.new_context()
 
-    inpoly.add_polygon(inpoly_context, pv)
     polygons.add_polygon(polygons_context, pv)
 
     dptol = .001
@@ -71,7 +68,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     p = np.vstack((x.flat, y.flat)).T                # List of node coordinates
 
     # 2. Remove points outside the region, apply the rejection method
-    p = p[dpoly(p, pv, inpoly_context, polygons_context) < geps]                                # Keep only d<0 points
+    p = p[dpoly(p, pv, polygons_context) < geps]                                # Keep only d<0 points
     r0 = 1/fh(p)**2                                  # Probability to keep point
     p = p[np.random.random(p.shape[0])<r0/r0.max()]  # Rejection method
     if pfix is not None:
@@ -94,7 +91,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
             pold = p.copy()                          # Save current positions
             t = spspatial.Delaunay(p).vertices       # List of triangles
             pmid = p[t].sum(1)/3                     # Compute centroids
-            t = t[dpoly(pmid, pv, inpoly_context, polygons_context) < -geps]                  # Keep interior triangles
+            t = t[dpoly(pmid, pv, polygons_context) < -geps]                  # Keep interior triangles
             # 4. Describe each bar by a unique pair of nodes
             bars = np.vstack((t[:, [0,1]],
                               t[:, [1,2]],
@@ -145,10 +142,10 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         p += delta_t*Ftot
 
         # 6. Bring outside points back to the boundary
-        d = dpoly(p, pv, inpoly_context, polygons_context); ix = d>0                          # Find points outside (d>0)
+        d = dpoly(p, pv, polygons_context); ix = d>0                          # Find points outside (d>0)
         if ix.any():
-            dgradx = (dpoly(p[ix]+[deps,0], pv, inpoly_context, polygons_context)-d[ix])/deps # Numerical
-            dgrady = (dpoly(p[ix]+[0,deps], pv, inpoly_context, polygons_context)-d[ix])/deps # gradient
+            dgradx = (dpoly(p[ix]+[deps,0], pv, polygons_context)-d[ix])/deps # Numerical
+            dgrady = (dpoly(p[ix]+[0,deps], pv, polygons_context)-d[ix])/deps # gradient
             dgrad2 = dgradx**2 + dgrady**2
             p[ix] -= (d[ix]*np.vstack((dgradx, dgrady))/dgrad2).T # Project
 
@@ -159,7 +156,6 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     # Clean up and plot final mesh
     p, t = dmutils.fixmesh(p, t)
 
-    inpoly.free_context(inpoly_context)
     polygons.free_context(polygons_context)
 
     return p, t
