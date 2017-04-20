@@ -27,12 +27,8 @@ def dcircle(p,xc,yc,r):
 
 
 def dpoly(p, polygons_context):
-    """Signed distance function for polygon with vertices pv.
-
-    Usually pv should also be provided as fixed points in distmesh2d.
-
-    pv should be provided as a list of coordinates [(x0,y0), (x1,y1), ...]
-    or an array of shape (nv, 2).
+    """
+    Signed distance function to polygon.
     """
     contains = polygons.contains_points(polygons_context, p)
     distances = polygons.get_distances(polygons_context, p)
