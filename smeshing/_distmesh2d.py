@@ -78,7 +78,14 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     p = p[np.random.random(p.shape[0])<r0/r0.max()]  # Rejection method
     if pfix is not None:
         p = ml.setdiff_rows(p, pfix)                 # Remove duplicated nodes
-        pfix = ml.unique_rows(pfix); nfix = pfix.shape[0]
+
+        _pfix = pfix.tolist()
+        _pfix = [tuple(x) for x in _pfix]
+        _pfix = set(_pfix)
+        _pfix = list(_pfix)
+        pfix = np.array(_pfix)
+
+        nfix = pfix.shape[0]
         p = np.vstack((pfix, p))                     # Prepend fix points
     else:
         nfix = 0

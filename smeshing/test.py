@@ -58,17 +58,14 @@ def matches_with_reference(ps, ts, file_name):
     ms = get_triangle_midpoints(xs, ys, ts)
 
     xs_ref, ys_ref, ts_ref = read_data(file_name)
-    ms_ref = get_triangle_midpoints(xs_ref, ys_ref, ts_ref)
+    for i, t in enumerate(ts):
+        assert t[0] == ts_ref[i][0]
+        assert t[1] == ts_ref[i][1]
+        assert t[2] == ts_ref[i][2]
 
-    for m in ms:
-        # we search m in m_ref, as soon as we find it, we pop it
-        for i, m_ref in enumerate(ms_ref):
-            if is_same_point(m, m_ref):
-                ms_ref.pop(i)
-                break
-
-    # the points match if ms_ref is emptied
-    return len(ms_ref) == 0
+    for i in range(len(xs)):
+        assert abs((xs[i] - xs_ref[i])/xs[i]) < 1.0e-5
+        assert abs((ys[i] - ys_ref[i])/ys[i]) < 1.0e-5
 
 
 def polygon(file_name, benchmark=False):
@@ -85,7 +82,8 @@ def polygon(file_name, benchmark=False):
          f = huniform
          h0 = 0.03
     else:
-         f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
+       # f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
+         f = huniform
          h0 = 0.1
 
     _p, _t = distmesh2d(pv, f, h0, (-1,-1, 2,1), pv)
@@ -101,4 +99,4 @@ def test_polygon():
     p, t = polygon('test/polygon.txt')
     if generate_tests:
         write_data(p, t, 'test/result.txt')
-    assert matches_with_reference(p, t, 'test/result.txt')
+    matches_with_reference(p, t, 'test/result.txt')
