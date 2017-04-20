@@ -142,7 +142,9 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         p += delta_t*Ftot
 
         # 6. Bring outside points back to the boundary
-        d = dpoly(p, polygons_context); ix = d>0                          # Find points outside (d>0)
+        d = dpoly(p, polygons_context)
+        # Find points outside (d>0)
+        ix = d > 0.0
         if ix.any():
             dgradx = (dpoly(p[ix]+[deps,0], polygons_context)-d[ix])/deps # Numerical
             dgrady = (dpoly(p[ix]+[0,deps], polygons_context)-d[ix])/deps # gradient
