@@ -26,20 +26,6 @@ def dcircle(p,xc,yc,r):
     return np.sqrt(((p-np.array([xc,yc]))**2).sum(-1))-r
 
 
-def dpoly(p, polygons_context):
-    """
-    Signed distance function to polygon.
-    """
-    contains = polygons.contains_points(polygons_context, p)
-    distances = polygons.get_distances(polygons_context, p)
-
-    for i in range(len(p)):
-        if contains[i]:
-            distances[i] *= -1.0
-
-    return np.asarray(distances)
-
-
 def huniform(p):
     """Implements the trivial uniform mesh size function h=1."""
     return np.ones(p.shape[0])

@@ -19,8 +19,6 @@ import math
 import mlcompat as ml
 import utils as dmutils
 
-from distance_functions import dpoly
-
 __all__ = ['distmesh2d']
 
 #-----------------------------------------------------------------------------
@@ -66,10 +64,17 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     x, y = np.mgrid[xmin:(xmax+h0):h0,
                     ymin:(ymax+h0*np.sqrt(3)/2):h0*np.sqrt(3)/2]
     x[:, 1::2] += h0/2                               # Shift even rows
-    p = np.vstack((x.flat, y.flat)).T                # List of node coordinates
+    _points = np.vstack((x.flat, y.flat)).T                # List of node coordinates
 
     # 2. Remove points outside the region, apply the rejection method
-    p = p[dpoly(p, polygons_context) < geps]                                # Keep only d<0 points
+
+    contains = polygons.contains_points(polygons_context, _points)
+    p = []
+    for i, point in enumerate(_points):
+        if contains[i]:
+            p.append(point)
+    p = np.array(p)
+
     r0 = 1/fh(p)**2                                  # Probability to keep point
     p = p[np.random.random(p.shape[0])<r0/r0.max()]  # Rejection method
     if pfix is not None:
@@ -90,9 +95,19 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         dist = lambda p1, p2: np.sqrt(((p1-p2)**2).sum(1))
         if (dist(p, pold)/h0).max() > ttol:          # Any large movement?
             pold = p.copy()                          # Save current positions
-            t = spspatial.Delaunay(p).vertices       # List of triangles
-            pmid = p[t].sum(1)/3                     # Compute centroids
-            t = t[dpoly(pmid, polygons_context) < -geps]                  # Keep interior triangles
+            _triangles = spspatial.Delaunay(p).vertices       # List of triangles
+            pmid = p[_triangles].sum(1)/3                     # Compute centroids
+
+            # Keep interior triangles
+            # in contrast to original implementation we do not use a tolerance at boundary
+            # to avoid a distance computation
+            contains = polygons.contains_points(polygons_context, pmid)
+            t = []
+            for i, triangle in enumerate(_triangles):
+                if contains[i]:
+                    t.append(triangle)
+            t = np.array(t)
+
             # 4. Describe each bar by a unique pair of nodes
             bars = np.vstack((t[:, [0,1]],
                               t[:, [1,2]],
