@@ -145,11 +145,15 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         d = dpoly(p, polygons_context)
         # Find points outside (d>0)
         ix = d > 0.0
-        if ix.any():
-            dgradx = (dpoly(p[ix]+[deps,0], polygons_context)-d[ix])/deps # Numerical
-            dgrady = (dpoly(p[ix]+[0,deps], polygons_context)-d[ix])/deps # gradient
-            dgrad2 = dgradx**2 + dgrady**2
-            p[ix] -= (d[ix]*np.vstack((dgradx, dgrady))/dgrad2).T # Project
+        for i in range(len(p)):
+            if ix[i]:
+                px = p[i] + [deps, 0]
+                py = p[i] + [0, deps]
+                dgradx = (dpoly([px], polygons_context) - d[i])/deps
+                dgrady = (dpoly([py], polygons_context) - d[i])/deps
+                dgrad2 = dgradx**2 + dgrady**2
+                p[i][0] -= d[i]*dgradx/dgrad2
+                p[i][1] -= d[i]*dgrady/dgrad2
 
         # 7. Termination criterion: All interior nodes move less than dptol (scaled)
         if (np.sqrt((delta_t*Ftot[d<-geps]**2).sum(1))/h0).max() < dptol:
