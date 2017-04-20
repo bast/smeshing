@@ -108,11 +108,22 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
             t = np.array(t)
 
             # 4. Describe each bar by a unique pair of nodes
-            bars = np.vstack((t[:, [0,1]],
-                              t[:, [1,2]],
-                              t[:, [2,0]]))          # Interior bars duplicated
-            bars.sort(axis=1)
-            bars = ml.unique_rows(bars)              # Bars as node pairs
+            bars = []
+            for triangle in t:
+                bars.append((triangle[0], triangle[1]))
+                bars.append((triangle[1], triangle[2]))
+                bars.append((triangle[2], triangle[0]))
+
+            _bars = []
+            for bar in bars:
+                if bar[1] < bar[0]:
+                    _bars.append((bar[1], bar[0]))
+                else:
+                    _bars.append(bar)
+            _bars = set(_bars)
+            _bars = list(_bars)
+            _bars = sorted(_bars)
+            bars = np.array(_bars)
 
         # 5. Move mesh points based on bar lengths L and forces F
         barvec = p[bars[:,0]] - p[bars[:,1]]         # List of bar vectors
