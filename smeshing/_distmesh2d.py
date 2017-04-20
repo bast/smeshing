@@ -13,6 +13,7 @@
 import numpy as np
 import scipy.spatial as spspatial
 import polygons
+import math
 
 # Local imports
 import mlcompat as ml
@@ -48,7 +49,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
 
     polygons.add_polygon(polygons_context, pv)
 
-    dptol = .001
+    dptol = 0.001
     ttol = .1
     Fscale = 1.2
     delta_t = 0.2
@@ -142,21 +143,27 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         p += delta_t*Ftot
 
         # 6. Bring outside points back to the boundary
-        d = dpoly(p, polygons_context)
-        # Find points outside (d>0)
-        ix = d > 0.0
+        contains = polygons.contains_points(polygons_context, p)
         for i in range(len(p)):
-            if ix[i]:
+            if not contains[i]:
                 px = p[i] + [deps, 0]
                 py = p[i] + [0, deps]
-                dgradx = (dpoly([px], polygons_context) - d[i])/deps
-                dgrady = (dpoly([py], polygons_context) - d[i])/deps
-                dgrad2 = dgradx**2 + dgrady**2
-                p[i][0] -= d[i]*dgradx/dgrad2
-                p[i][1] -= d[i]*dgrady/dgrad2
+                d0 = polygons.get_distances(polygons_context, [p[i]])[0]
+                dx = polygons.get_distances(polygons_context, [px])[0]
+                dy = polygons.get_distances(polygons_context, [py])[0]
+                dgradx = (dx - d0)/deps
+                dgrady = (dy - d0)/deps
+                dgrad2 = dgradx**2.0 + dgrady**2.0
+                p[i][0] -= d0*dgradx/dgrad2
+                p[i][1] -= d0*dgrady/dgrad2
 
         # 7. Termination criterion: All interior nodes move less than dptol (scaled)
-        if (np.sqrt((delta_t*Ftot[d<-geps]**2).sum(1))/h0).max() < dptol:
+        s = []
+        for i in range(len(p)):
+            if contains[i]:
+                tmp = delta_t*Ftot[i]**2.0
+                s.append(tmp[0] + tmp[1])
+        if max(s) < (dptol*h0)**2.0:
             break
 
     # Clean up and plot final mesh
