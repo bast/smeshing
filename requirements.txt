@@ -2,5 +2,4 @@ numpy
 scipy
 pep8
 pytest
-cffi
 git+https://github.com/bast/polygons.git
