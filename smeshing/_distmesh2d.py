@@ -17,7 +17,6 @@ import math
 
 # Local imports
 import mlcompat as ml
-import utils as dmutils
 
 __all__ = ['distmesh2d']
 
@@ -180,9 +179,6 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
                 s.append(tmp[0] + tmp[1])
         if max(s) < (dptol*h0)**2.0:
             break
-
-    # Clean up and plot final mesh
-    p, t = dmutils.fixmesh(p, t)
 
     polygons.free_context(polygons_context)
 
