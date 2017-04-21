@@ -166,6 +166,14 @@ def get_bar_lengths(p, bars, fh, Fscale):
     return L, L0, barvec
 
 
+def large_movement(p, pold, ttol, h0):
+    _temp = 0.0
+    for i in range(len(p)):
+        _d = (p[i][0] - pold[i][0])**2.0 + (p[i][1] - pold[i][1])**2.0
+        _temp = max(_temp, _d)
+    return _temp > (ttol*h0)**2.0
+
+
 def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
@@ -237,14 +245,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
             if count > max_num_iterations:
                 break
 
-        # 3. Retriangulation by the Delaunay algorithm
-        _temp = 0.0
-        for i in range(len(p)):
-            _d = (p[i][0] - pold[i][0])**2.0 + (p[i][1] - pold[i][1])**2.0
-            _temp = max(_temp, _d)
-
-        # any large movement?
-        if _temp > (ttol*h0)**2.0:
+        if large_movement(p, pold, ttol, h0):
+            # 3. Retriangulation by the Delaunay algorithm
             pold = p.copy()                          # Save current positions
             _triangles = spspatial.Delaunay(p).vertices       # List of triangles
             pmid = p[_triangles].sum(1)/3                     # Compute centroids
