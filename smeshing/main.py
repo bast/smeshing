@@ -18,9 +18,31 @@ import math
 # Local imports
 import mlcompat as ml
 
-#-----------------------------------------------------------------------------
-# Functions
-#-----------------------------------------------------------------------------
+
+def create_initial_distribution(bbox, h0):
+    """
+    Create initial distribution in bounding box (equilateral triangles).
+    """
+    xmin, ymin, xmax, ymax = bbox
+
+    xs = [xmin]
+    while xs[-1] <= xmax:
+        xs.append(xs[-1] + h0)
+    ys = [ymin]
+    while ys[-1] <= ymax:
+        ys.append(ys[-1] + h0*math.sqrt(3.0)/2.0)
+
+    points = []
+    for x in xs:
+        for row, y in enumerate(ys):
+            if row%2 != 0:
+                # shift every second row to the right
+                points.append([x + h0/2.0, y])
+            else:
+                points.append([x, y])
+    return np.array(points)
+
+
 
 def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     """
@@ -53,28 +75,10 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     deps = math.sqrt(smallest_representable_double_float)*h0
     densityctrlfreq = 30
 
-    # Extract bounding box
-    xmin, ymin, xmax, ymax = bbox
     if pfix is not None:
         pfix = np.array(pfix, dtype='d')
 
-    # 1. Create initial distribution in bounding box (equilateral triangles)
-    xs = [xmin]
-    while xs[-1] <= xmax:
-        xs.append(xs[-1] + h0)
-    ys = [ymin]
-    while ys[-1] <= ymax:
-        ys.append(ys[-1] + h0*math.sqrt(3.0)/2.0)
-
-    _points = []
-    for x in xs:
-        for row, y in enumerate(ys):
-            if row%2 != 0:
-                # shift every second row to the right
-                _points.append([x + h0/2.0, y])
-            else:
-                _points.append([x, y])
-    _points = np.array(_points)
+    _points = create_initial_distribution(bbox, h0)
 
     # 2. Remove points outside the region, apply the rejection method
 
