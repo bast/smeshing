@@ -14,12 +14,13 @@ import numpy as np
 import scipy.spatial as spspatial
 import polygons
 import math
+import sys
 
 # Local imports
 import mlcompat as ml
 
 
-def density_control(p, count, densityctrlfreq, L, L0):
+def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
     """
     Density control - remove points that are too close.
     """
@@ -243,8 +244,16 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
             p.append(point)
     p = np.array(p)
 
-    r0 = 1/fh(p)**2.0                                # Probability to keep point
-    p = p[np.random.random(p.shape[0])<r0/r0.max()]  # Rejection method
+    # Probability to keep point
+    r0 = 1/fh(p)**2.0
+    r0_max = max(r0)
+    randoms = np.random.random(p.shape[0])
+    _p = []
+    for i, point in enumerate(p):
+        if randoms[i] < r0[i]/r0_max:
+            _p.append(point)
+    p = np.array(_p)
+
     if pfix is not None:
         p = ml.setdiff_rows(p, pfix)                 # Remove duplicated nodes
 
@@ -259,7 +268,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     else:
         nfix = 0
 
-    shift = 10.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
+    shift = 100.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
     pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
 
     count = 0
@@ -275,7 +284,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
 
-        apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0)
+        apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0, bars, nfix)
         if apply_density_control:
             pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
             continue
