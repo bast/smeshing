@@ -17,7 +17,7 @@
 import numpy as np
 
 # Local imports.
-from .main import distmesh2d
+from main import distmesh2d
 
 from file_io import read_data, write_data
 
