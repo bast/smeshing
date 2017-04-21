@@ -72,6 +72,11 @@ def huniform(p):
     return np.ones(p.shape[0])
 
 
+def dcircle(p,xc,yc,r):
+    """Signed distance to circle centered at xc, yc with radius r."""
+    return np.sqrt(((p-np.array([xc,yc]))**2).sum(-1))-r
+
+
 def polygon(file_name, benchmark=False):
 
     pv = []
@@ -88,6 +93,7 @@ def polygon(file_name, benchmark=False):
          _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv, max_num_iterations=100)
     else:
          f = huniform
+       # f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
          h0 = 0.1
          _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv)
     return _p, _t

@@ -85,7 +85,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
             p.append(point)
     p = np.array(p)
 
-    r0 = 1/fh(p)**2                                  # Probability to keep point
+    r0 = 1/fh(p)**2.0                                # Probability to keep point
     p = p[np.random.random(p.shape[0])<r0/r0.max()]  # Rejection method
     if pfix is not None:
         p = ml.setdiff_rows(p, pfix)                 # Remove duplicated nodes
@@ -148,10 +148,33 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
         # 5. Move mesh points based on bar lengths L and forces F
         barvec = p[bars[:,0]] - p[bars[:,1]]         # List of bar vectors
-        L = np.sqrt((barvec**2).sum(1))              # L = Bar lengths
-        hbars = fh(p[bars].sum(1)/2)
-        L0 = (hbars*Fscale
-              *np.sqrt((L**2).sum()/(hbars**2).sum()))  # L0 = Desired lengths
+        _barvec = []
+        for bar in bars:
+            vx = p[bar[0]][0] - p[bar[1]][0]
+            vy = p[bar[0]][1] - p[bar[1]][1]
+            _barvec.append([vx, vy])
+        _L = []
+        for bar in _barvec:
+            _L.append(math.sqrt(bar[0]**2.0 + bar[1]**2.0))
+        L = np.array(_L)
+
+        bar_midpoints = []
+        for bar in bars:
+            _px = p[bar[0]][0] + p[bar[1]][0]
+            _py = p[bar[0]][1] + p[bar[1]][1]
+            bar_midpoints.append([_px/2.0, _py/2.0])
+        bar_midpoints = np.array(bar_midpoints)
+        hbars = fh(bar_midpoints)
+
+        _L0 = []
+        l2sum = 0.0
+        hbars2sum = 0.0
+        for i in range(len(_L)):
+            l2sum += _L[i]**2.0
+            hbars2sum += hbars[i]**2.0
+        for i in range(len(_L)):
+            _L0.append(hbars[i]*Fscale*math.sqrt(l2sum/hbars2sum))
+        L0 = np.array(_L0)
 
         # Density control - remove points that are too close
         apply_density_control = False
