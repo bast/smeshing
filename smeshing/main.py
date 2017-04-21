@@ -259,7 +259,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     else:
         nfix = 0
 
-    pold = np.array([[point[0] + 1000.0, point[1] + 1000.0] for point in p])
+    shift = 10.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
+    pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
 
     count = 0
     while True:
@@ -276,7 +277,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
         apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0)
         if apply_density_control:
-            pold = np.array([[point[0] + 1000.0, point[1] + 1000.0] for point in p])
+            pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
             continue
 
         F = compute_forces(L0, L, bars, barvec, p)
