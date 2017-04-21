@@ -228,9 +228,9 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     else:
         nfix = 0
 
-    count = 0
     pold = float('inf')                              # For first iteration
 
+    count = 0
     while True:
         count += 1
 
@@ -240,7 +240,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
         # 3. Retriangulation by the Delaunay algorithm
         dist = lambda p1, p2: np.sqrt(((p1-p2)**2).sum(1))
-        if (dist(p, pold)/h0).max() > ttol:          # Any large movement?
+        temp = (dist(p, pold)).max()
+        if temp > ttol*h0:          # Any large movement?
             pold = p.copy()                          # Save current positions
             _triangles = spspatial.Delaunay(p).vertices       # List of triangles
             pmid = p[_triangles].sum(1)/3                     # Compute centroids
