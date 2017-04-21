@@ -19,6 +19,15 @@ import math
 import mlcompat as ml
 
 
+def movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
+    s = []
+    for i in range(len(p)):
+        if contains[i]:
+            tmp = delta_t*Ftot[i]**2.0
+            s.append(tmp[0] + tmp[1])
+    return max(s) < (dptol*h0)**2.0
+
+
 def create_initial_distribution(bbox, h0):
     """
     Create initial distribution in bounding box (equilateral triangles).
@@ -243,13 +252,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
                 p[i][0] -= d0*dgradx/dgrad2
                 p[i][1] -= d0*dgrady/dgrad2
 
-        # 7. Termination criterion: All interior nodes move less than dptol (scaled)
-        s = []
-        for i in range(len(p)):
-            if contains[i]:
-                tmp = delta_t*Ftot[i]**2.0
-                s.append(tmp[0] + tmp[1])
-        if max(s) < (dptol*h0)**2.0:
+        if movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
             break
 
     polygons.free_context(polygons_context)
