@@ -199,6 +199,24 @@ def delaunay(p, polygons_context):
     return pold, bars, t
 
 
+def remove_points_outside_region(polygons_context, points):
+    contains = polygons.contains_points(polygons_context, points)
+    _points = [point for i, point in enumerate(points) if contains[i]]
+    return np.array(_points)
+
+
+def apply_rejection_method(fh, p):
+    r0 = 1/fh(p)**2.0
+    r0_max = max(r0)
+    randoms = np.random.random(p.shape[0])
+
+    _p = []
+    for i, point in enumerate(p):
+        if randoms[i] < r0[i]/r0_max:
+            _p.append(point)
+    return np.array(_p)
+
+
 def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
@@ -235,24 +253,9 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
     _points = np.array(create_initial_distribution(bbox, h0))
 
-    # 2. Remove points outside the region, apply the rejection method
+    p = remove_points_outside_region(polygons_context, _points)
 
-    contains = polygons.contains_points(polygons_context, _points)
-    p = []
-    for i, point in enumerate(_points):
-        if contains[i]:
-            p.append(point)
-    p = np.array(p)
-
-    # Probability to keep point
-    r0 = 1/fh(p)**2.0
-    r0_max = max(r0)
-    randoms = np.random.random(p.shape[0])
-    _p = []
-    for i, point in enumerate(p):
-        if randoms[i] < r0[i]/r0_max:
-            _p.append(point)
-    p = np.array(_p)
+    p = apply_rejection_method(fh, p)
 
     if pfix is not None:
         p = ml.setdiff_rows(p, pfix)                 # Remove duplicated nodes
