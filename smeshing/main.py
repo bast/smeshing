@@ -40,8 +40,26 @@ def create_initial_distribution(bbox, h0):
                 points.append([x + h0/2.0, y])
             else:
                 points.append([x, y])
-    return np.array(points)
+    return points
 
+
+def form_bars(triangles):
+    bars = []
+    for triangle in triangles:
+        bars.append((triangle[0], triangle[1]))
+        bars.append((triangle[1], triangle[2]))
+        bars.append((triangle[2], triangle[0]))
+
+    _bars = []
+    for bar in bars:
+        if bar[1] < bar[0]:
+            _bars.append((bar[1], bar[0]))
+        else:
+            _bars.append(bar)
+    _bars = set(_bars)
+    _bars = list(_bars)
+    _bars = sorted(_bars)
+    return _bars
 
 
 def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
@@ -78,7 +96,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     if pfix is not None:
         pfix = np.array(pfix, dtype='d')
 
-    _points = create_initial_distribution(bbox, h0)
+    _points = np.array(create_initial_distribution(bbox, h0))
 
     # 2. Remove points outside the region, apply the rejection method
 
@@ -132,23 +150,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
                     t.append(triangle)
             t = np.array(t)
 
-            # 4. Describe each bar by a unique pair of nodes
-            bars = []
-            for triangle in t:
-                bars.append((triangle[0], triangle[1]))
-                bars.append((triangle[1], triangle[2]))
-                bars.append((triangle[2], triangle[0]))
-
-            _bars = []
-            for bar in bars:
-                if bar[1] < bar[0]:
-                    _bars.append((bar[1], bar[0]))
-                else:
-                    _bars.append(bar)
-            _bars = set(_bars)
-            _bars = list(_bars)
-            _bars = sorted(_bars)
-            bars = np.array(_bars)
+            bars = form_bars(t)
+            bars = np.array(bars)
 
         # 5. Move mesh points based on bar lengths L and forces F
         barvec = p[bars[:,0]] - p[bars[:,1]]         # List of bar vectors
