@@ -17,8 +17,7 @@
 import numpy as np
 
 # Local imports.
-from _distmesh2d import distmesh2d
-from distance_functions import huniform
+from .main import distmesh2d
 
 from file_io import read_data, write_data
 

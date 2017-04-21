@@ -5,10 +5,6 @@ unique_rows    : Similar to unique(..., 'rows')
 setdiff_rows   : Similar to setdiff(..., 'rows')
 """
 
-__all__ = [
-    'setdiff_rows',
-    ]
-
 import numpy as np
 import scipy.sparse as spsparse
 import scipy.interpolate as spinterp
