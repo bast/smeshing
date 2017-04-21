@@ -24,7 +24,7 @@ Prototyping work is currently done in Python. Later we will probably move to
 Fortran or C(++) and introduce parallelization but provide a Python interface.
 
 
-## Installing the code and its dependencies
+## Installing dependencies
 
 ```
 virtualenv venv
