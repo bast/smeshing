@@ -19,6 +19,32 @@ import math
 import mlcompat as ml
 
 
+def compute_forces(L0, L, bars, barvec, p):
+    # Bar forces (scalars)
+    F = L0 - L
+
+    # we ignore attractive forces and only keep repulsion
+    F[F < 0.0] = 0.0
+
+    # compute forces along bars
+    Fvec = np.zeros((len(F), 2))
+    for i in range(len(F)):
+        r = F[i]/L[i]
+        Fvec[i][0] = r*barvec[i][0]
+        Fvec[i][1] = r*barvec[i][1]
+
+    # compute resulting force on each point from all adjacent bars
+    Ftot = np.zeros((len(p), 2))
+    for k, bar in enumerate(bars):
+        i, j = bar
+        Ftot[i][0] += Fvec[k][0]
+        Ftot[i][1] += Fvec[k][1]
+        Ftot[j][0] -= Fvec[k][0]
+        Ftot[j][1] -= Fvec[k][1]
+
+    return Ftot
+
+
 def bring_outside_points_back_to_boundary(p, contains, deps, polygons_context):
     for i in range(len(p)):
         if not contains[i]:
@@ -225,39 +251,19 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
             pold = float('inf')
             continue
 
-        # Bar forces (scalars)
-        F = L0 - L
-
-        # we ignore attractive forces and only keep repulsion
-        F[F < 0.0] = 0.0
-
-        # compute forces along bars
-        Fvec = np.zeros((len(F), 2))
-        for i in range(len(F)):
-            r = F[i]/L[i]
-            Fvec[i][0] = r*barvec[i][0]
-            Fvec[i][1] = r*barvec[i][1]
-
-        # compute resulting force on each point from all adjacent bars
-        Ftot = np.zeros((len(p), 2))
-        for k, bar in enumerate(bars):
-            i, j = bar
-            Ftot[i][0] += Fvec[k][0]
-            Ftot[i][1] += Fvec[k][1]
-            Ftot[j][0] -= Fvec[k][0]
-            Ftot[j][1] -= Fvec[k][1]
+        F = compute_forces(L0, L, bars, barvec, p)
 
         # set force to zero at fixed points
-        Ftot[:nfix] = 0.0
+        F[:nfix] = 0.0
 
         # update node positions
-        p += delta_t*Ftot
+        p += delta_t*F
 
         contains = polygons.contains_points(polygons_context, p)
 
         p = bring_outside_points_back_to_boundary(p, contains, deps, polygons_context)
 
-        if movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
+        if movement_below_threshold(p, delta_t, F, dptol, h0, contains):
             break
 
     polygons.free_context(polygons_context)
