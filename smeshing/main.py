@@ -59,10 +59,22 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
         pfix = np.array(pfix, dtype='d')
 
     # 1. Create initial distribution in bounding box (equilateral triangles)
-    x, y = np.mgrid[xmin:(xmax+h0):h0,
-                    ymin:(ymax+h0*np.sqrt(3)/2):h0*np.sqrt(3)/2]
-    x[:, 1::2] += h0/2                               # Shift even rows
-    _points = np.vstack((x.flat, y.flat)).T                # List of node coordinates
+    xs = [xmin]
+    while xs[-1] <= xmax:
+        xs.append(xs[-1] + h0)
+    ys = [ymin]
+    while ys[-1] <= ymax:
+        ys.append(ys[-1] + h0*math.sqrt(3.0)/2.0)
+
+    _points = []
+    for x in xs:
+        for row, y in enumerate(ys):
+            if row%2 != 0:
+                # shift every second row to the right
+                _points.append([x + h0/2.0, y])
+            else:
+                _points.append([x, y])
+    _points = np.array(_points)
 
     # 2. Remove points outside the region, apply the rejection method
 
