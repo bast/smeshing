@@ -172,19 +172,28 @@ def delaunay(p, polygons_context):
     """
     Retriangulation by the Delaunay algorithm.
     """
-    pold = p.copy()                          # Save current positions
-    _triangles = spspatial.Delaunay(p).vertices       # List of triangles
-    pmid = p[_triangles].sum(1)/3                     # Compute centroids
+    # save current positions
+    p_list = p.tolist()
+    pold = p_list[:]
+    _triangles = spspatial.Delaunay(p_list).vertices       # List of triangles
+
+    triangle_centroids = []
+    for triangle in _triangles:
+        x = 0.0
+        y = 0.0
+        for ip in triangle:
+            x += p[ip][0]
+            y += p[ip][1]
+        triangle_centroids.append((x/3.0, y/3.0))
 
     # Keep interior triangles
     # in contrast to original implementation we do not use a tolerance at boundary
     # to avoid a distance computation
-    contains = polygons.contains_points(polygons_context, pmid)
+    contains = polygons.contains_points(polygons_context, triangle_centroids)
     t = []
     for i, triangle in enumerate(_triangles):
         if contains[i]:
             t.append(triangle)
-    t = np.array(t)
 
     bars = form_bars(t)
 
@@ -205,7 +214,7 @@ def apply_rejection_method(fh, p):
     for i, point in enumerate(p):
         if randoms[i] < r0[i]/r0_max:
             _p.append(point)
-    return np.array(_p)
+    return _p
 
 
 def prepend_fix_points(pfix, p):
@@ -248,10 +257,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     deps = math.sqrt(epsilon)*h0
     densityctrlfreq = 30
 
-    if pfix is not None:
-        pfix = np.array(pfix, dtype='d')
-
-    _points = np.array(create_initial_distribution(bbox, h0))
+    _points = create_initial_distribution(bbox, h0)
 
     p = remove_points_outside_region(polygons_context, _points)
 
@@ -260,7 +266,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     nfix, p = prepend_fix_points(pfix, p)
 
     shift = 100.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
-    pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
+    pold = [[point[0] + shift, point[1] + shift] for point in p]
 
     count = 0
     while True:
@@ -277,7 +283,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
         apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0, bars, nfix)
         if apply_density_control:
-            pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
+            pold = [[point[0] + shift, point[1] + shift] for point in p]
             continue
 
         F = compute_forces(L0, L, bars, barvec, p)
