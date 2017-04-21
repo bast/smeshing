@@ -36,7 +36,6 @@ def density_control(p, count, densityctrlfreq, L, L0):
     if apply_density_control:
         points_to_remove = list(set(points_to_remove))
         p = np.array([p[ip] for ip in range(len(p)) if ip not in points_to_remove])
-        pold = float('inf')
     return apply_density_control, p
 
 
@@ -228,7 +227,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     else:
         nfix = 0
 
-    pold = float('inf')                              # For first iteration
+    pold = np.array([[point[0] + 1000.0, point[1] + 1000.0] for point in p])
 
     count = 0
     while True:
@@ -239,9 +238,13 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
                 break
 
         # 3. Retriangulation by the Delaunay algorithm
-        dist = lambda p1, p2: np.sqrt(((p1-p2)**2).sum(1))
-        temp = (dist(p, pold)).max()
-        if temp > ttol*h0:          # Any large movement?
+        _temp = 0.0
+        for i in range(len(p)):
+            _d = (p[i][0] - pold[i][0])**2.0 + (p[i][1] - pold[i][1])**2.0
+            _temp = max(_temp, _d)
+
+        # any large movement?
+        if _temp > (ttol*h0)**2.0:
             pold = p.copy()                          # Save current positions
             _triangles = spspatial.Delaunay(p).vertices       # List of triangles
             pmid = p[_triangles].sum(1)/3                     # Compute centroids
@@ -263,6 +266,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
         apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0)
         if apply_density_control:
+            pold = np.array([[point[0] + 1000.0, point[1] + 1000.0] for point in p])
             continue
 
         F = compute_forces(L0, L, bars, barvec, p)
