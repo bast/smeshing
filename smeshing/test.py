@@ -21,28 +21,6 @@ from main import distmesh2d
 
 from file_io import read_data, write_data
 
-#-----------------------------------------------------------------------------
-# Demo functions
-#-----------------------------------------------------------------------------
-
-
-def is_same_point(p1, p2):
-    tol = 1.0e-12
-    if abs(p1[0] - p2[0]) > tol:
-        return False
-    if abs(p1[1] - p2[1]) > tol:
-        return False
-    return True
-
-
-def get_triangle_midpoints(xs, ys, ts):
-    ms = []
-    for (t1, t2, t3) in ts:
-        mx = xs[t1] + xs[t2] + xs[t3]
-        my = ys[t1] + ys[t2] + ys[t3]
-        ms.append((mx, my))
-    return ms
-
 
 def matches_with_reference(ps, ts, file_name):
     """
@@ -53,8 +31,6 @@ def matches_with_reference(ps, ts, file_name):
     for p in ps:
         xs.append(p[0])
         ys.append(p[1])
-
-    ms = get_triangle_midpoints(xs, ys, ts)
 
     xs_ref, ys_ref, ts_ref = read_data(file_name)
     for i, t in enumerate(ts):
