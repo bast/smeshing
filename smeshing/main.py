@@ -39,10 +39,12 @@ def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
 
 def compute_forces(L0, L, bars, barvec, p):
     # Bar forces (scalars)
-    F = L0 - L
+    F = [L0[i] - L[i] for i in range(len(L))]
 
     # we ignore attractive forces and only keep repulsion
-    F[F < 0.0] = 0.0
+    for i in range(len(F)):
+        if F[i] < 0.0:
+            F[i] = 0.0
 
     # compute forces along bars
     Fvec = []
@@ -147,15 +149,14 @@ def get_bar_lengths(p, bars, fh, Fscale):
         bar_midpoints.append([_px/2.0, _py/2.0])
     hbars = fh(bar_midpoints)
 
-    _L0 = []
+    L0 = []
     l2sum = 0.0
     hbars2sum = 0.0
     for i in range(len(L)):
         l2sum += L[i]**2.0
         hbars2sum += hbars[i]**2.0
     for i in range(len(L)):
-        _L0.append(hbars[i]*Fscale*math.sqrt(l2sum/hbars2sum))
-    L0 = np.array(_L0)
+        L0.append(hbars[i]*Fscale*math.sqrt(l2sum/hbars2sum))
 
     return L, L0, barvec
 
