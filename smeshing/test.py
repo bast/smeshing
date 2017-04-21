@@ -18,7 +18,7 @@ import numpy as np
 
 # Local imports.
 from _distmesh2d import distmesh2d
-from distance_functions import huniform, dcircle
+from distance_functions import huniform
 
 from file_io import read_data, write_data
 
@@ -68,6 +68,11 @@ def matches_with_reference(ps, ts, file_name):
         assert abs((ys[i] - ys_ref[i])/ys[i]) < 1.0e-5
 
 
+def huniform(p):
+    """Implements the trivial uniform mesh size function h=1."""
+    return np.ones(p.shape[0])
+
+
 def polygon(file_name, benchmark=False):
 
     pv = []
@@ -82,7 +87,6 @@ def polygon(file_name, benchmark=False):
          f = huniform
          h0 = 0.03
     else:
-       # f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
          f = huniform
          h0 = 0.1
 
