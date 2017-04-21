@@ -45,10 +45,10 @@ def matches_with_reference(ps, ts, file_name):
 
 def huniform(p):
     """Implements the trivial uniform mesh size function h=1."""
-    return np.ones(p.shape[0])
+    return np.ones(len(p))
 
 
-def dcircle(p,xc,yc,r):
+def dcircle(p, xc, yc, r):
     """Signed distance to circle centered at xc, yc with radius r."""
     return np.sqrt(((p-np.array([xc,yc]))**2).sum(-1))-r
 

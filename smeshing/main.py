@@ -45,14 +45,13 @@ def compute_forces(L0, L, bars, barvec, p):
     F[F < 0.0] = 0.0
 
     # compute forces along bars
-    Fvec = np.zeros((len(F), 2))
+    Fvec = []
     for i in range(len(F)):
         r = F[i]/L[i]
-        Fvec[i][0] = r*barvec[i][0]
-        Fvec[i][1] = r*barvec[i][1]
+        Fvec.append((r*barvec[i][0], r*barvec[i][1]))
 
     # compute resulting force on each point from all adjacent bars
-    Ftot = np.zeros((len(p), 2))
+    Ftot = [[0.0, 0.0] for _ in p]
     for k, bar in enumerate(bars):
         i, j = bar
         Ftot[i][0] += Fvec[k][0]
@@ -83,8 +82,7 @@ def movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
     s = []
     for i in range(len(p)):
         if contains[i]:
-            tmp = delta_t*Ftot[i]**2.0
-            s.append(tmp[0] + tmp[1])
+            s.append(delta_t*Ftot[i][0]**2.0 + delta_t*Ftot[i][1]**2.0)
     return max(s) < (dptol*h0)**2.0
 
 
@@ -138,26 +136,24 @@ def get_bar_lengths(p, bars, fh, Fscale):
         vx = p[bar[0]][0] - p[bar[1]][0]
         vy = p[bar[0]][1] - p[bar[1]][1]
         _barvec.append([vx, vy])
-    _L = []
+    L = []
     for bar in _barvec:
-        _L.append(math.sqrt(bar[0]**2.0 + bar[1]**2.0))
-    L = np.array(_L)
+        L.append(math.sqrt(bar[0]**2.0 + bar[1]**2.0))
 
     bar_midpoints = []
     for bar in bars:
         _px = p[bar[0]][0] + p[bar[1]][0]
         _py = p[bar[0]][1] + p[bar[1]][1]
         bar_midpoints.append([_px/2.0, _py/2.0])
-    bar_midpoints = np.array(bar_midpoints)
     hbars = fh(bar_midpoints)
 
     _L0 = []
     l2sum = 0.0
     hbars2sum = 0.0
-    for i in range(len(_L)):
-        l2sum += _L[i]**2.0
+    for i in range(len(L)):
+        l2sum += L[i]**2.0
         hbars2sum += hbars[i]**2.0
-    for i in range(len(_L)):
+    for i in range(len(L)):
         _L0.append(hbars[i]*Fscale*math.sqrt(l2sum/hbars2sum))
     L0 = np.array(_L0)
 
@@ -198,14 +194,13 @@ def delaunay(p, polygons_context):
 
 def remove_points_outside_region(polygons_context, points):
     contains = polygons.contains_points(polygons_context, points)
-    _points = [point for i, point in enumerate(points) if contains[i]]
-    return np.array(_points)
+    return [point for i, point in enumerate(points) if contains[i]]
 
 
 def apply_rejection_method(fh, p):
     r0 = 1/fh(p)**2.0
     r0_max = max(r0)
-    randoms = np.random.random(p.shape[0])
+    randoms = np.random.random(len(p))
 
     _p = []
     for i, point in enumerate(p):
@@ -289,10 +284,13 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
         F = compute_forces(L0, L, bars, barvec, p)
 
         # set force to zero at fixed points
-        F[:nfix] = 0.0
+        for i in range(nfix):
+            F[i] = [0.0, 0.0]
 
         # update node positions
-        p += delta_t*F
+        for i in range(len(p)):
+            p[i][0] += delta_t*F[i][0]
+            p[i][1] += delta_t*F[i][1]
 
         contains = polygons.contains_points(polygons_context, p)
 
