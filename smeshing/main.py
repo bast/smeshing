@@ -22,7 +22,7 @@ import mlcompat as ml
 # Functions
 #-----------------------------------------------------------------------------
 
-def distmesh2d(pv, fh, h0, bbox, pfix=None):
+def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -107,6 +107,10 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
 
     while True:
         count += 1
+
+        if max_num_iterations is not None:
+            if count > max_num_iterations:
+                break
 
         # 3. Retriangulation by the Delaunay algorithm
         dist = lambda p1, p2: np.sqrt(((p1-p2)**2).sum(1))

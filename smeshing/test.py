@@ -85,11 +85,11 @@ def polygon(file_name, benchmark=False):
     if benchmark:
          f = huniform
          h0 = 0.03
+         _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv, max_num_iterations=100)
     else:
          f = huniform
          h0 = 0.1
-
-    _p, _t = distmesh2d(pv, f, h0, (-1,-1, 2,1), pv)
+         _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv)
     return _p, _t
 
 
@@ -103,3 +103,10 @@ def test_polygon():
     if generate_tests:
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
+
+
+def test_bench():
+    p, t = polygon('test/polygon.txt', benchmark=True)
+    if generate_tests:
+        write_data(p, t, 'test/result-bench.txt')
+    matches_with_reference(p, t, 'test/result-bench.txt')
