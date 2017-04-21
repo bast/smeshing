@@ -49,7 +49,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None):
     Fscale = 1.2
     delta_t = 0.2
     geps = .001*h0
-    deps = np.sqrt(np.finfo(np.double).eps)*h0
+    smallest_representable_double_float = np.finfo(np.double).eps
+    deps = math.sqrt(smallest_representable_double_float)*h0
     densityctrlfreq = 30
 
     # Extract bounding box
