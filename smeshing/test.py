@@ -14,8 +14,6 @@
 # Imports
 #-----------------------------------------------------------------------------
 
-import numpy as np
-
 # Local imports.
 from main import distmesh2d
 
@@ -43,14 +41,9 @@ def matches_with_reference(ps, ts, file_name):
         assert abs((ys[i] - ys_ref[i])/ys[i]) < 1.0e-5
 
 
-def huniform(p):
+def huniform(x, y):
     """Implements the trivial uniform mesh size function h=1."""
-    return np.ones(len(p))
-
-
-def dcircle(p, xc, yc, r):
-    """Signed distance to circle centered at xc, yc with radius r."""
-    return np.sqrt(((p-np.array([xc,yc]))**2).sum(-1))-r
+    return 1.0
 
 
 def polygon(file_name, benchmark=False):
@@ -60,8 +53,7 @@ def polygon(file_name, benchmark=False):
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
-            pv.append((x, y))
-    pv = np.array(pv)
+            pv.append([x, y])
 
     if benchmark:
          f = huniform
@@ -69,7 +61,7 @@ def polygon(file_name, benchmark=False):
          _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv, max_num_iterations=100)
     else:
          f = huniform
-       # f = lambda p: 0.05 + 0.3*dcircle(p,0,0,0.01)
+       # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
          h0 = 0.1
          _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv)
     return _p, _t

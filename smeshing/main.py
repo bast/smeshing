@@ -67,8 +67,8 @@ def compute_forces(L0, L, bars, barvec, p):
 def bring_outside_points_back_to_boundary(p, contains, deps, polygons_context):
     for i in range(len(p)):
         if not contains[i]:
-            px = p[i] + [deps, 0]
-            py = p[i] + [0, deps]
+            px = [p[i][0] + deps, p[i][1]]
+            py = [p[i][0], p[i][1] + deps]
             d0 = polygons.get_distances(polygons_context, [p[i]])[0]
             dx = polygons.get_distances(polygons_context, [px])[0]
             dy = polygons.get_distances(polygons_context, [py])[0]
@@ -146,7 +146,7 @@ def get_bar_lengths(p, bars, fh, Fscale):
         _px = p[bar[0]][0] + p[bar[1]][0]
         _py = p[bar[0]][1] + p[bar[1]][1]
         bar_midpoints.append([_px/2.0, _py/2.0])
-    hbars = fh(bar_midpoints)
+    hbars = [fh(x, y) for (x, y) in bar_midpoints]
 
     L0 = []
     l2sum = 0.0
@@ -173,9 +173,10 @@ def delaunay(p, polygons_context):
     Retriangulation by the Delaunay algorithm.
     """
     # save current positions
-    p_list = p.tolist()
-    pold = p_list[:]
-    _triangles = spspatial.Delaunay(p_list).vertices       # List of triangles
+    pold = []
+    for _p in p:
+        pold.append([_p[0], _p[1]])
+    _triangles = spspatial.Delaunay(p).vertices       # List of triangles
 
     triangle_centroids = []
     for triangle in _triangles:
@@ -206,7 +207,7 @@ def remove_points_outside_region(polygons_context, points):
 
 
 def apply_rejection_method(fh, p):
-    r0 = 1/fh(p)**2.0
+    r0 = [1.0/fh(x, y)**2.0 for (x, y) in p]
     r0_max = max(r0)
     np.random.seed(1) # Always the same results
     randoms = np.random.random(len(p))
@@ -221,7 +222,7 @@ def apply_rejection_method(fh, p):
 def prepend_fix_points(pfix, p):
     if pfix is not None:
         nfix = len(pfix)
-        p = np.array([point for point in pfix] + [point for point in p])
+        p = [point for point in pfix] + [point for point in p]
     else:
         nfix = 0
     return nfix, p
