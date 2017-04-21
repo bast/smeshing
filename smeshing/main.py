@@ -19,6 +19,27 @@ import math
 import mlcompat as ml
 
 
+def density_control(p, count, densityctrlfreq, L, L0):
+    """
+    Density control - remove points that are too close.
+    """
+    apply_density_control = False
+    points_to_remove = []
+    if count % densityctrlfreq == 0:
+        for i in range(len(L0)):
+            if L0[i] > 2.0*L[i]:
+                apply_density_control = True
+                for k in [0, 1]:
+                    ip = bars[i][k]
+                    if ip > nfix:
+                        points_to_remove.append(ip)
+    if apply_density_control:
+        points_to_remove = list(set(points_to_remove))
+        p = np.array([p[ip] for ip in range(len(p)) if ip not in points_to_remove])
+        pold = float('inf')
+    return apply_density_control, p
+
+
 def compute_forces(L0, L, bars, barvec, p):
     # Bar forces (scalars)
     F = L0 - L
@@ -205,7 +226,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
             bars = np.array(bars)
 
         # 5. Move mesh points based on bar lengths L and forces F
-        barvec = p[bars[:,0]] - p[bars[:,1]]         # List of bar vectors
+        barvec = p[bars[:,0]] - p[bars[:,1]]
         _barvec = []
         for bar in bars:
             vx = p[bar[0]][0] - p[bar[1]][0]
@@ -234,21 +255,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
             _L0.append(hbars[i]*Fscale*math.sqrt(l2sum/hbars2sum))
         L0 = np.array(_L0)
 
-        # Density control - remove points that are too close
-        apply_density_control = False
-        points_to_remove = []
-        if count % densityctrlfreq == 0:
-            for i in range(len(L0)):
-                if L0[i] > 2.0*L[i]:
-                    apply_density_control = True
-                    for k in [0, 1]:
-                        ip = bars[i][k]
-                        if ip > nfix:
-                            points_to_remove.append(ip)
+        apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0)
         if apply_density_control:
-            points_to_remove = list(set(points_to_remove))
-            p = np.array([p[ip] for ip in range(len(p)) if ip not in points_to_remove])
-            pold = float('inf')
             continue
 
         F = compute_forces(L0, L, bars, barvec, p)
