@@ -208,6 +208,7 @@ def remove_points_outside_region(polygons_context, points):
 def apply_rejection_method(fh, p):
     r0 = 1/fh(p)**2.0
     r0_max = max(r0)
+    np.random.seed(1) # Always the same results
     randoms = np.random.random(len(p))
 
     _p = []

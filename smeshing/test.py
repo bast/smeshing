@@ -75,9 +75,7 @@ def polygon(file_name, benchmark=False):
     return _p, _t
 
 
-
 generate_tests = False
-np.random.seed(1) # Always the same results
 
 
 def test_polygon():
