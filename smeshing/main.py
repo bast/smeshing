@@ -244,8 +244,8 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     Fscale = 1.2
     delta_t = 0.2
     geps = .001*h0
-    smallest_representable_double_float = np.finfo(np.double).eps
-    deps = math.sqrt(smallest_representable_double_float)*h0
+    epsilon = sys.float_info.epsilon
+    deps = math.sqrt(epsilon)*h0
     densityctrlfreq = 30
 
     if pfix is not None:
