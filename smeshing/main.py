@@ -100,7 +100,6 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
         p = np.vstack((pfix, p))                     # Prepend fix points
     else:
         nfix = 0
-    N = p.shape[0]                                   # Number of points N
 
     count = 0
     pold = float('inf')                              # For first iteration
@@ -155,10 +154,20 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
               *np.sqrt((L**2).sum()/(hbars**2).sum()))  # L0 = Desired lengths
 
         # Density control - remove points that are too close
-        if (count % densityctrlfreq) == 0 and (L0 > 2*L).any():
-            ixdel = np.setdiff1d(bars[L0 > 2*L].reshape(-1), np.arange(nfix))
-            p = p[np.setdiff1d(np.arange(N), ixdel)]
-            N = p.shape[0]; pold = float('inf')
+        apply_density_control = False
+        points_to_remove = []
+        if count % densityctrlfreq == 0:
+            for i in range(len(L0)):
+                if L0[i] > 2.0*L[i]:
+                    apply_density_control = True
+                    for k in [0, 1]:
+                        ip = bars[i][k]
+                        if ip > nfix:
+                            points_to_remove.append(ip)
+        if apply_density_control:
+            points_to_remove = list(set(points_to_remove))
+            p = np.array([p[ip] for ip in range(len(p)) if ip not in points_to_remove])
+            pold = float('inf')
             continue
 
         # Bar forces (scalars)
