@@ -10,11 +10,11 @@
 #  see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------------
 
-import numpy as np
 import scipy.spatial as spspatial
 import polygons
 import math
 import sys
+import random
 
 
 def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
@@ -209,12 +209,11 @@ def remove_points_outside_region(polygons_context, points):
 def apply_rejection_method(fh, p):
     r0 = [1.0/fh(x, y)**2.0 for (x, y) in p]
     r0_max = max(r0)
-    np.random.seed(1) # Always the same results
-    randoms = np.random.random(len(p))
 
+    random.seed(1)
     _p = []
     for i, point in enumerate(p):
-        if randoms[i] < r0[i]/r0_max:
+        if random.uniform(0.0, 1.0) < r0[i]/r0_max:
             _p.append(point)
     return _p
 
