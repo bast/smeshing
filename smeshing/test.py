@@ -1,22 +1,14 @@
 # encoding: utf-8
 """Distmesh 2D examples."""
 
-#-----------------------------------------------------------------------------
-#  Copyright (C) 2004-2012 Per-Olof Persson
-#  Copyright (C) 2012 Bradley Froehle
+# Copyright (C) 2004-2012 Per-Olof Persson
+# Copyright (C) 2012 Bradley Froehle
 
-#  Distributed under the terms of the GNU General Public License. You should
-#  have received a copy of the license along with this program. If not,
-#  see <http://www.gnu.org/licenses/>.
-#-----------------------------------------------------------------------------
+# Distributed under the terms of the GNU General Public License. You should
+# have received a copy of the license along with this program. If not,
+# see <http://www.gnu.org/licenses/>.
 
-#-----------------------------------------------------------------------------
-# Imports
-#-----------------------------------------------------------------------------
-
-# Local imports.
 from main import distmesh2d
-
 from file_io import read_data, write_data
 
 
@@ -56,14 +48,14 @@ def polygon(file_name, benchmark=False):
             pv.append([x, y])
 
     if benchmark:
-         f = huniform
-         h0 = 0.03
-         _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv, max_num_iterations=100)
+        f = huniform
+        h0 = 0.03
+        _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv, max_num_iterations=100)
     else:
-         f = huniform
-       # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
-         h0 = 0.1
-         _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv)
+        f = huniform
+        # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
+        h0 = 0.1
+        _p, _t = distmesh2d(pv, f, h0, (-1, -1, 2, 1), pv)
     return _p, _t
 
 

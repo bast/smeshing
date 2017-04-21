@@ -1,14 +1,12 @@
 # encoding: utf-8
 """DistMesh 2D"""
 
-#-----------------------------------------------------------------------------
-#  Copyright (C) 2004-2012 Per-Olof Persson
-#  Copyright (C) 2012 Bradley Froehle
+# Copyright (C) 2004-2012 Per-Olof Persson
+# Copyright (C) 2012 Bradley Froehle
 
-#  Distributed under the terms of the GNU General Public License. You should
-#  have received a copy of the license along with this program. If not,
-#  see <http://www.gnu.org/licenses/>.
-#-----------------------------------------------------------------------------
+# Distributed under the terms of the GNU General Public License. You should
+# have received a copy of the license along with this program. If not,
+# see <http://www.gnu.org/licenses/>.
 
 import scipy.spatial as spspatial
 import polygons
@@ -104,7 +102,7 @@ def create_initial_distribution(bbox, h0):
     points = []
     for x in xs:
         for row, y in enumerate(ys):
-            if row%2 != 0:
+            if row % 2 != 0:
                 # shift every second row to the right
                 points.append([x + h0/2.0, y])
             else:
@@ -253,7 +251,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     ttol = .1
     Fscale = 1.2
     delta_t = 0.2
-    geps = .001*h0
+    geps = 0.001*h0
     epsilon = sys.float_info.epsilon
     deps = math.sqrt(epsilon)*h0
     densityctrlfreq = 30
