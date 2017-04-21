@@ -217,6 +217,26 @@ def apply_rejection_method(fh, p):
     return np.array(_p)
 
 
+def remove_duplicate_nodes(pfix, p):
+    if pfix is not None:
+      # print('before', len(p), p)
+      # p = ml.setdiff_rows(p, pfix)
+      # print('after', len(p), p)
+
+      # _pfix = pfix.tolist()
+      # _pfix = [tuple(x) for x in _pfix]
+      # _pfix = set(_pfix)
+      # _pfix = list(_pfix)
+      # pfix = np.array(_pfix)
+
+        nfix = len(pfix)
+        # prepend fix points
+        p = np.array([point for point in pfix] + [point for point in p])
+    else:
+        nfix = 0
+    return nfix, p
+
+
 def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
@@ -257,19 +277,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
     p = apply_rejection_method(fh, p)
 
-    if pfix is not None:
-        p = ml.setdiff_rows(p, pfix)                 # Remove duplicated nodes
-
-        _pfix = pfix.tolist()
-        _pfix = [tuple(x) for x in _pfix]
-        _pfix = set(_pfix)
-        _pfix = list(_pfix)
-        pfix = np.array(_pfix)
-
-        nfix = pfix.shape[0]
-        p = np.vstack((pfix, p))                     # Prepend fix points
-    else:
-        nfix = 0
+    nfix, p = remove_duplicate_nodes(pfix, p)
 
     shift = 100.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
     pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
