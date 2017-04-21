@@ -14,6 +14,16 @@ Like [DistMesh](http://persson.berkeley.edu/distmesh/) and
 based, this code is distributed under the [GNU GPL](../master/LICENSE).
 
 
+## Status and roadmap for this fork
+
+Under heavy development. The plan is to be able to do large grids. We wish to
+use the code to prepare grids for simulations on the Norwegian coast with
+thousands of islands (polygons).
+
+Prototyping work is currently done in Python. Later we will probably move to
+Fortran or C(++) and introduce parallelization but provide a Python interface.
+
+
 ## Installing the code and its dependencies
 
 ```
