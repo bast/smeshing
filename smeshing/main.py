@@ -19,6 +19,22 @@ import math
 import mlcompat as ml
 
 
+def bring_outside_points_back_to_boundary(p, contains, deps, polygons_context):
+    for i in range(len(p)):
+        if not contains[i]:
+            px = p[i] + [deps, 0]
+            py = p[i] + [0, deps]
+            d0 = polygons.get_distances(polygons_context, [p[i]])[0]
+            dx = polygons.get_distances(polygons_context, [px])[0]
+            dy = polygons.get_distances(polygons_context, [py])[0]
+            dgradx = (dx - d0)/deps
+            dgrady = (dy - d0)/deps
+            dgrad2 = dgradx**2.0 + dgrady**2.0
+            p[i][0] -= d0*dgradx/dgrad2
+            p[i][1] -= d0*dgrady/dgrad2
+    return p
+
+
 def movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
     s = []
     for i in range(len(p)):
@@ -237,20 +253,9 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
         # update node positions
         p += delta_t*Ftot
 
-        # 6. Bring outside points back to the boundary
         contains = polygons.contains_points(polygons_context, p)
-        for i in range(len(p)):
-            if not contains[i]:
-                px = p[i] + [deps, 0]
-                py = p[i] + [0, deps]
-                d0 = polygons.get_distances(polygons_context, [p[i]])[0]
-                dx = polygons.get_distances(polygons_context, [px])[0]
-                dy = polygons.get_distances(polygons_context, [py])[0]
-                dgradx = (dx - d0)/deps
-                dgrady = (dy - d0)/deps
-                dgrad2 = dgradx**2.0 + dgrady**2.0
-                p[i][0] -= d0*dgradx/dgrad2
-                p[i][1] -= d0*dgrady/dgrad2
+
+        p = bring_outside_points_back_to_boundary(p, contains, deps, polygons_context)
 
         if movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
             break
