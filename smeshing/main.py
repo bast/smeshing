@@ -33,7 +33,7 @@ def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
                         points_to_remove.append(ip)
     if apply_density_control:
         points_to_remove = list(set(points_to_remove))
-        p = np.array([p[ip] for ip in range(len(p)) if ip not in points_to_remove])
+        p = [p[ip] for ip in range(len(p)) if ip not in points_to_remove]
     return apply_density_control, p
 
 
@@ -132,14 +132,13 @@ def form_bars(triangles):
 
 
 def get_bar_lengths(p, bars, fh, Fscale):
-    barvec = p[bars[:,0]] - p[bars[:,1]]
-    _barvec = []
+    barvec = []
     for bar in bars:
         vx = p[bar[0]][0] - p[bar[1]][0]
         vy = p[bar[0]][1] - p[bar[1]][1]
-        _barvec.append([vx, vy])
+        barvec.append([vx, vy])
     L = []
-    for bar in _barvec:
+    for bar in barvec:
         L.append(math.sqrt(bar[0]**2.0 + bar[1]**2.0))
 
     bar_midpoints = []
@@ -188,7 +187,6 @@ def delaunay(p, polygons_context):
     t = np.array(t)
 
     bars = form_bars(t)
-    bars = np.array(bars)
 
     return pold, bars, t
 
