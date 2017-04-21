@@ -174,6 +174,30 @@ def large_movement(p, pold, ttol, h0):
     return _temp > (ttol*h0)**2.0
 
 
+def delaunay(p, polygons_context):
+    """
+    Retriangulation by the Delaunay algorithm.
+    """
+    pold = p.copy()                          # Save current positions
+    _triangles = spspatial.Delaunay(p).vertices       # List of triangles
+    pmid = p[_triangles].sum(1)/3                     # Compute centroids
+
+    # Keep interior triangles
+    # in contrast to original implementation we do not use a tolerance at boundary
+    # to avoid a distance computation
+    contains = polygons.contains_points(polygons_context, pmid)
+    t = []
+    for i, triangle in enumerate(_triangles):
+        if contains[i]:
+            t.append(triangle)
+    t = np.array(t)
+
+    bars = form_bars(t)
+    bars = np.array(bars)
+
+    return pold, bars, t
+
+
 def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
@@ -246,23 +270,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
                 break
 
         if large_movement(p, pold, ttol, h0):
-            # 3. Retriangulation by the Delaunay algorithm
-            pold = p.copy()                          # Save current positions
-            _triangles = spspatial.Delaunay(p).vertices       # List of triangles
-            pmid = p[_triangles].sum(1)/3                     # Compute centroids
-
-            # Keep interior triangles
-            # in contrast to original implementation we do not use a tolerance at boundary
-            # to avoid a distance computation
-            contains = polygons.contains_points(polygons_context, pmid)
-            t = []
-            for i, triangle in enumerate(_triangles):
-                if contains[i]:
-                    t.append(triangle)
-            t = np.array(t)
-
-            bars = form_bars(t)
-            bars = np.array(bars)
+            pold, bars, t = delaunay(p, polygons_context)
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
 
