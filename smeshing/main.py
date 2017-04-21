@@ -16,9 +16,6 @@ import polygons
 import math
 import sys
 
-# Local imports
-import mlcompat as ml
-
 
 def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
     """
@@ -217,20 +214,9 @@ def apply_rejection_method(fh, p):
     return np.array(_p)
 
 
-def remove_duplicate_nodes(pfix, p):
+def prepend_fix_points(pfix, p):
     if pfix is not None:
-      # print('before', len(p), p)
-      # p = ml.setdiff_rows(p, pfix)
-      # print('after', len(p), p)
-
-      # _pfix = pfix.tolist()
-      # _pfix = [tuple(x) for x in _pfix]
-      # _pfix = set(_pfix)
-      # _pfix = list(_pfix)
-      # pfix = np.array(_pfix)
-
         nfix = len(pfix)
-        # prepend fix points
         p = np.array([point for point in pfix] + [point for point in p])
     else:
         nfix = 0
@@ -277,7 +263,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
     p = apply_rejection_method(fh, p)
 
-    nfix, p = remove_duplicate_nodes(pfix, p)
+    nfix, p = prepend_fix_points(pfix, p)
 
     shift = 100.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
     pold = np.array([[point[0] + shift, point[1] + shift] for point in p])
