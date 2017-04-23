@@ -105,7 +105,10 @@ def read_points(file_name):
     return points
 
 
-def sub(file_name, benchmark=False):
+def sub(boundary_file_name,
+        island_file_names,
+        reference_file_name,
+        benchmark=False):
 
     plot_nearest_in_view = False
     if plot_nearest_in_view:
@@ -115,7 +118,7 @@ def sub(file_name, benchmark=False):
     boundary_context = polygons.new_context()
     islands_context = polygons.new_context()
 
-    boundary_points = read_points('test/boundary.txt')
+    boundary_points = read_points(boundary_file_name)
     polygons.add_polygon(all_polygons_context, boundary_points)
     polygons.add_polygon(boundary_context, boundary_points)
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
@@ -126,7 +129,7 @@ def sub(file_name, benchmark=False):
                      [boundary_points[i][1], boundary_points[i + 1][1]],
                      'r-')
 
-    for island_file in ['test/island1.txt', 'test/island2.txt', 'test/island3.txt']:
+    for island_file in island_file_names:
         islands_points = read_points(island_file)
         polygons.add_polygon(all_polygons_context, islands_points)
         polygons.add_polygon(islands_context, islands_points)
@@ -201,16 +204,21 @@ def sub(file_name, benchmark=False):
     flanders.free_context(flanders_context)
 
     if os.getenv('GENERATE_TESTS', False):
-        write_data(points, triangles, file_name)
-    matches_with_reference(points, triangles, file_name)
+        write_data(points, triangles, reference_file_name)
+    matches_with_reference(points, triangles, reference_file_name)
 
 
 def test_polygon():
-    sub('test/result.txt')
+    sub(boundary_file_name='test/boundary.txt',
+        island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
+        reference_file_name='test/result.txt')
 
 
 def test_bench():
-    sub('test/result-bench.txt', benchmark=True)
+    sub(boundary_file_name='test/boundary.txt',
+        island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
+        reference_file_name='test/result-bench.txt',
+        benchmark=True)
 
 
 def test_resolution():
