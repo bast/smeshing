@@ -5,11 +5,13 @@
 # have received a copy of the license along with this program. If not,
 # see <http://www.gnu.org/licenses/>.
 
+import os
+
 from .main import distmesh2d
 from .file_io import read_data, write_data
 from .bbox import get_bbox
-import os
 import polygons
+import flanders
 
 
 def matches_with_reference(ps, ts, file_name):
@@ -92,6 +94,9 @@ def sub(file_name, benchmark=False):
         h_function = huniform
         h0 = (xmax - xmin) / 25.0
 
+    # currently not used
+    flanders_context = flanders.new_context(len(all_points), all_points)
+
     points, triangles = distmesh2d(all_points,
                                    h_function,
                                    distance_function,
@@ -103,6 +108,8 @@ def sub(file_name, benchmark=False):
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
     polygons.free_context(islands_context)
+
+    flanders.free_context(flanders_context)
 
     if os.getenv('GENERATE_TESTS', False):
         write_data(points, triangles, file_name)
