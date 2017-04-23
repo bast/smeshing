@@ -48,7 +48,7 @@ def read_points(file_name):
     return points
 
 
-def solve(benchmark=False):
+def sub(file_name, benchmark=False):
 
     all_polygons_context = polygons.new_context()
     boundary_context = polygons.new_context()
@@ -84,31 +84,32 @@ def solve(benchmark=False):
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
 
     if benchmark:
-        f = huniform
+        h_function = huniform
         h0 = (xmax - xmin) / 80.0
-        _p, _t = distmesh2d(all_points, f, distance_function, within_bounds_function, h0, all_points, max_num_iterations=100)
     else:
-        f = huniform
-        # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
+        h_function = huniform
         h0 = (xmax - xmin) / 25.0
-        _p, _t = distmesh2d(all_points, f, distance_function, within_bounds_function, h0, all_points, max_num_iterations=100)
+
+    points, triangles = distmesh2d(all_points,
+                                   h_function,
+                                   distance_function,
+                                   within_bounds_function,
+                                   h0,
+                                   all_points,
+                                   max_num_iterations=100)
 
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
     polygons.free_context(islands_context)
 
-    return _p, _t
+    if os.getenv('GENERATE_TESTS', False):
+        write_data(points, triangles, file_name)
+    matches_with_reference(points, triangles, file_name)
 
 
 def test_polygon():
-    p, t = solve()
-    if os.getenv('GENERATE_TESTS', False):
-        write_data(p, t, 'test/result.txt')
-    matches_with_reference(p, t, 'test/result.txt')
+    sub('test/result.txt')
 
 
 def test_bench():
-    p, t = solve(benchmark=True)
-    if os.getenv('GENERATE_TESTS', False):
-        write_data(p, t, 'test/result-bench.txt')
-    matches_with_reference(p, t, 'test/result-bench.txt')
+    sub('test/result-bench.txt', benchmark=True)
