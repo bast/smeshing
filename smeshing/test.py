@@ -75,7 +75,7 @@ def read_polygon(file_name, scale=1.0, benchmark=False):
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
         h0 = (xmax - xmin)/25.0
-        _p, _t = distmesh2d(pv, f, scale*h0, pv)
+        _p, _t = distmesh2d(pv, f, scale*h0, pv, max_num_iterations=100)
     return _p, _t
 
 
