@@ -35,6 +35,10 @@ def matches_with_reference(ps, ts, file_name):
         assert abs((ys[i] - ys_ref[i]) / ys[i]) < 1.0e-5
 
 
+def get_distance(p1, p2):
+    return math.sqrt((p2[0] - p1[0])**2.0 + (p2[1] - p1[1])**2.0)
+
+
 def huniform(x, y):
     """
     Implements the trivial uniform mesh size function h=1.
