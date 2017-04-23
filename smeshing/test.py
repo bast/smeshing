@@ -108,7 +108,9 @@ def read_points(file_name):
 def sub(boundary_file_name,
         island_file_names,
         reference_file_name,
-        benchmark=False):
+        max_num_iterations,
+        benchmark=False,
+        skip_test=False):
 
     plot_nearest_in_view = False
     if plot_nearest_in_view:
@@ -175,7 +177,7 @@ def sub(boundary_file_name,
                                                 ref_indices=list(range(num_points)),
                                                 view_vectors=view_vectors,
                                                 angles_deg=angles_deg)
-#   print(flanders_indices)
+
     if plot_nearest_in_view:
         for i in range(len(all_points)):
             if flanders_indices[i] > -1:
@@ -195,7 +197,7 @@ def sub(boundary_file_name,
                                    within_bounds_function,
                                    h0,
                                    all_points,
-                                   max_num_iterations=100)
+                                   max_num_iterations)
 
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
@@ -205,20 +207,31 @@ def sub(boundary_file_name,
 
     if os.getenv('GENERATE_TESTS', False):
         write_data(points, triangles, reference_file_name)
-    matches_with_reference(points, triangles, reference_file_name)
+    if not skip_test:
+        matches_with_reference(points, triangles, reference_file_name)
 
 
 def test_polygon():
     sub(boundary_file_name='test/boundary.txt',
         island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
-        reference_file_name='test/result.txt')
+        reference_file_name='test/result.txt',
+        max_num_iterations=100)
 
 
 def test_bench():
     sub(boundary_file_name='test/boundary.txt',
         island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
         reference_file_name='test/result-bench.txt',
+        max_num_iterations=100,
         benchmark=True)
+
+
+def dont_test_lofoten():
+    sub(boundary_file_name='data/lofoten/boundary.txt',
+        island_file_names=['data/lofoten/island1.txt'],
+        reference_file_name='test/result-lofoten.txt',
+        skip_test=True,
+        max_num_iterations=5)
 
 
 def test_resolution():
