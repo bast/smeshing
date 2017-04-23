@@ -10,6 +10,24 @@
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
+import sys
+import os
+
+
+def get_bbox(points):
+
+    xmin = sys.float_info.max
+    xmax = -xmin
+    ymin = xmin
+    ymax = -ymin
+
+    for point in points:
+        xmin = min(xmin, point[0])
+        xmax = max(xmax, point[0])
+        ymin = min(ymin, point[1])
+        ymax = max(ymax, point[1])
+
+    return xmin, xmax, ymin, ymax
 
 
 def matches_with_reference(ps, ts, file_name):
@@ -47,30 +65,29 @@ def read_polygon(file_name, scale=1.0, benchmark=False):
             y = float(line.split()[1])
             pv.append([scale*x, scale*y])
 
+    xmin, xmax, ymin, ymax = get_bbox(pv)
+
     if benchmark:
         f = huniform
-        h0 = 0.03
+        h0 = (xmax - xmin)/80.0
         _p, _t = distmesh2d(pv, f, scale*h0, pv, max_num_iterations=100)
     else:
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
-        h0 = 0.1
+        h0 = (xmax - xmin)/25.0
         _p, _t = distmesh2d(pv, f, scale*h0, pv)
     return _p, _t
 
 
-generate_tests = False
-
-
 def test_polygon():
     p, t = read_polygon('test/polygon.txt', scale=1.0)
-    if generate_tests:
+    if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
 
 
 def test_bench():
     p, t = read_polygon('test/polygon.txt', benchmark=True)
-    if generate_tests:
+    if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result-bench.txt')
     matches_with_reference(p, t, 'test/result-bench.txt')
