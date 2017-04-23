@@ -5,6 +5,7 @@
 # have received a copy of the license along with this program. If not,
 # see <http://www.gnu.org/licenses/>.
 
+import sys
 import os
 import math
 import polygons
@@ -14,6 +15,7 @@ from .main import distmesh2d
 from .file_io import read_data, write_data
 from .bbox import get_bbox
 from .clockwise import edges_sum
+from .resolution import linear_function, tanh_function
 
 
 def normalize(vector, s):
@@ -105,7 +107,7 @@ def read_points(file_name):
 
 def sub(file_name, benchmark=False):
 
-    plot_nearest_in_view = False
+    plot_nearest_in_view = True
     if plot_nearest_in_view:
         import matplotlib.pyplot as plt
 
@@ -209,3 +211,52 @@ def test_polygon():
 
 def test_bench():
     sub('test/result-bench.txt', benchmark=True)
+
+
+def test_resolution():
+    plot_nearest_in_view = False
+
+    if plot_nearest_in_view:
+        import matplotlib.pyplot as plt
+
+    points = []
+    view_vectors = []
+
+    for island_file in ['data/1.txt', 'data/2.txt', 'data/3.txt', 'data/4.txt']:
+        islands_points = read_points(island_file)
+        points += islands_points
+        view_vectors += compute_view_vectors(islands_points, scale=1.0)
+        if plot_nearest_in_view:
+            for i in range(len(islands_points) - 1):
+                plt.plot([islands_points[i][0], islands_points[i + 1][0]],
+                         [islands_points[i][1], islands_points[i + 1][1]],
+                         'b-')
+
+    num_points = len(points)
+    flanders_context = flanders.new_context(num_points, points)
+
+    angles_deg = [90.0 for _ in range(num_points)]
+    flanders_indices = flanders.search_neighbor(context=flanders_context,
+                                                ref_indices=list(range(num_points)),
+                                                view_vectors=view_vectors,
+                                                angles_deg=angles_deg)
+
+    for (x, y, r, f) in [(69.731182, 70.688529, 10.55650049085928, linear_function),
+                         (69.731182, 70.688529, 4.3657, tanh_function),
+                         (29.7312, 41.3754, 2.5481, tanh_function)]:
+        _r = sys.float_info.max
+        for i in range(len(points)):
+            nearest_distance_at_coastline_point = get_distance(points[i], points[flanders_indices[i]])
+            distace_to_coastline_point = get_distance(points[i], (x, y))
+            _r = min(_r, f(nearest_distance_at_coastline_point, distace_to_coastline_point))
+        assert abs(_r - r) < 1.0e-4
+
+    if plot_nearest_in_view:
+        for i in range(len(points)):
+            if flanders_indices[i] > -1:
+                plt.plot([points[i][0], points[flanders_indices[i]][0]],
+                         [points[i][1], points[flanders_indices[i]][1]],
+                         'k-')
+                print(points[i], flanders_indices[i], get_distance(points[i], points[flanders_indices[i]]))
+        plt.savefig('foo.png')
+    flanders.free_context(flanders_context)
