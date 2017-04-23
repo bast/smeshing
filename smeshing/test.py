@@ -40,7 +40,7 @@ def huniform(x, y):
 
 def read_points(file_name):
     points = []
-    with open('test/boundary.txt', 'r') as f:
+    with open(file_name, 'r') as f:
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
@@ -58,27 +58,40 @@ def solve(benchmark=False):
     polygons.add_polygon(all_polygons_context, boundary_points)
     polygons.add_polygon(boundary_context, boundary_points)
 
-    islands_points = read_points('test/island3.txt')
-#   polygons.add_polygon(all_polygons_context, islands_points)
-    polygons.add_polygon(islands_context, islands_points)
+    for island_file in ['test/island1.txt', 'test/island2.txt', 'test/island3.txt']:
+        islands_points = read_points(island_file)
+        polygons.add_polygon(all_polygons_context, islands_points)
+        polygons.add_polygon(islands_context, islands_points)
+        all_points = boundary_points + islands_points
 
     def distance_function(points):
         return polygons.get_distances(all_polygons_context, points)
 
     def within_bounds_function(points):
-        return polygons.contains_points(all_polygons_context, points)
+        within_boundary = polygons.contains_points(boundary_context, points)
+        within_islands = polygons.contains_points(islands_context, points)  # FIXME we don't need to check all points
+        within_bounds = []
+        for i, point in enumerate(points):
+            if not within_boundary[i]:
+                within_bounds.append(False)
+            else:
+                if within_islands[i]:
+                    within_bounds.append(False)
+                else:
+                    within_bounds.append(True)
+        return within_bounds
 
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
 
     if benchmark:
         f = huniform
         h0 = (xmax - xmin) / 80.0
-        _p, _t = distmesh2d(boundary_points, f, distance_function, within_bounds_function, h0, boundary_points, max_num_iterations=100)
+        _p, _t = distmesh2d(all_points, f, distance_function, within_bounds_function, h0, all_points, max_num_iterations=100)
     else:
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
         h0 = (xmax - xmin) / 25.0
-        _p, _t = distmesh2d(boundary_points, f, distance_function, within_bounds_function, h0, boundary_points, max_num_iterations=100)
+        _p, _t = distmesh2d(all_points, f, distance_function, within_bounds_function, h0, all_points, max_num_iterations=100)
 
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
