@@ -2,3 +2,4 @@ scipy
 pep8
 pytest
 git+https://github.com/bast/polygons.git
+git+https://github.com/bast/flanders.git
