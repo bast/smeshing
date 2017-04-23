@@ -107,7 +107,7 @@ def read_points(file_name):
 
 def sub(file_name, benchmark=False):
 
-    plot_nearest_in_view = True
+    plot_nearest_in_view = False
     if plot_nearest_in_view:
         import matplotlib.pyplot as plt
 
