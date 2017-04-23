@@ -38,7 +38,7 @@ def huniform(x, y):
     return 1.0
 
 
-def solve(file_name, scale=1.0, benchmark=False):
+def solve(scale=1.0, benchmark=False):
 
     polygons_context = polygons.new_context()
 
@@ -48,25 +48,25 @@ def solve(file_name, scale=1.0, benchmark=False):
     def contains_function(points):
         return polygons.contains_points(polygons_context, points)
 
-    pv = []
-    with open(file_name, 'r') as f:
+    points = []
+    with open('test/boundary.txt', 'r') as f:
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
-            pv.append([scale * x, scale * y])
-    polygons.add_polygon(polygons_context, pv)
+            points.append([scale * x, scale * y])
+    polygons.add_polygon(polygons_context, points)
 
-    xmin, xmax, ymin, ymax = get_bbox(pv)
+    xmin, xmax, ymin, ymax = get_bbox(points)
 
     if benchmark:
         f = huniform
         h0 = (xmax - xmin) / 80.0
-        _p, _t = distmesh2d(pv, f, distance_function, contains_function, scale * h0, pv, max_num_iterations=100)
+        _p, _t = distmesh2d(points, f, distance_function, contains_function, scale * h0, points, max_num_iterations=100)
     else:
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
         h0 = (xmax - xmin) / 25.0
-        _p, _t = distmesh2d(pv, f, distance_function, contains_function, scale * h0, pv, max_num_iterations=100)
+        _p, _t = distmesh2d(points, f, distance_function, contains_function, scale * h0, points, max_num_iterations=100)
 
     polygons.free_context(polygons_context)
 
@@ -74,14 +74,14 @@ def solve(file_name, scale=1.0, benchmark=False):
 
 
 def test_polygon():
-    p, t = solve('test/boundary.txt', scale=1.0)
+    p, t = solve()
     if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
 
 
 def test_bench():
-    p, t = solve('test/boundary.txt', benchmark=True)
+    p, t = solve(benchmark=True)
     if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result-bench.txt')
     matches_with_reference(p, t, 'test/result-bench.txt')
