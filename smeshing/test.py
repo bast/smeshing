@@ -38,14 +38,14 @@ def huniform(x, y):
     return 1.0
 
 
-def polygon(file_name, benchmark=False):
+def read_polygon(file_name, scale=1.0, benchmark=False):
 
     pv = []
     with open(file_name, 'r') as f:
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
-            pv.append([x, y])
+            pv.append([scale*x, scale*y])
 
     if benchmark:
         f = huniform
@@ -63,14 +63,14 @@ generate_tests = False
 
 
 def test_polygon():
-    p, t = polygon('test/polygon.txt')
+    p, t = read_polygon('test/polygon.txt')
     if generate_tests:
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
 
 
 def test_bench():
-    p, t = polygon('test/polygon.txt', benchmark=True)
+    p, t = read_polygon('test/polygon.txt', benchmark=True)
     if generate_tests:
         write_data(p, t, 'test/result-bench.txt')
     matches_with_reference(p, t, 'test/result-bench.txt')
