@@ -6,12 +6,38 @@
 # see <http://www.gnu.org/licenses/>.
 
 import os
+import polygons
+import flanders
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
 from .bbox import get_bbox
-import polygons
-import flanders
+from .clockwise import edges_sum
+
+
+def extract_points_and_vectors(file_name):
+    points = extract_data(file_name)
+
+    # we figure out whether polygon is clockwise or anticlockwise
+    if edges_sum(points) < 0.0:
+        s = +1.0
+    else:
+        s = -1.0
+
+    # we remove the last point since it repeats the first
+    # we assume clock-wise closed loops
+    points.pop()
+
+    if len(points) > 2:
+        vectors = get_normal_vectors(points, s)
+    else:
+        # this is a "linear" island consisting of two points
+        vectors = []
+        vector = (points[1][0] - points[0][0], points[1][1] - points[0][1])
+        vectors.append(normalize(vector, -s))
+        vectors.append(normalize(vector, s))
+
+    return points, vectors
 
 
 def matches_with_reference(ps, ts, file_name):
@@ -99,7 +125,13 @@ def sub(file_name, benchmark=False):
         h0 = (xmax - xmin) / 25.0
 
     # currently not used
-    flanders_context = flanders.new_context(len(all_points), all_points)
+    num_points = len(all_points)
+    flanders_context = flanders.new_context(num_points, all_points)
+    angles_deg = [90.0 for _ in range(num_points)]
+#   flanders_indices = flanders.search_neighbor(context,
+#                                               ref_indices=list(range(num_points)),
+#                                               view_vectors=vectors,
+#                                               angles_deg=angles_deg)
 
     points, triangles = distmesh2d(all_points,
                                    h_function,
