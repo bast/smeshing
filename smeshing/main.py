@@ -62,9 +62,9 @@ def compute_forces(L0, L, bars, barvec, p):
     return Ftot
 
 
-def bring_outside_points_back_to_boundary(p, contains, deps, distance_function):
+def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_function):
     for i in range(len(p)):
-        if not contains[i]:
+        if not within_bounds[i]:
             px = [p[i][0] + deps, p[i][1]]
             py = [p[i][0], p[i][1] + deps]
             d0, dx, dy = tuple(distance_function([p[i], px, py]))
@@ -76,10 +76,10 @@ def bring_outside_points_back_to_boundary(p, contains, deps, distance_function):
     return p
 
 
-def movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
+def movement_below_threshold(p, delta_t, Ftot, dptol, h0, within_bounds):
     s = []
     for i in range(len(p)):
-        if contains[i]:
+        if within_bounds[i]:
             s.append((delta_t * Ftot[i][0])**2.0 + (delta_t * Ftot[i][1])**2.0)
     return max(s) < (dptol * h0)**2.0
 
@@ -164,7 +164,7 @@ def large_movement(p, pold, ttol, h0):
     return _temp > (ttol * h0)**2.0
 
 
-def delaunay(p, contains_function):
+def delaunay(p, within_bounds_function):
     """
     Retriangulation by the Delaunay algorithm.
     """
@@ -186,10 +186,10 @@ def delaunay(p, contains_function):
     # Keep interior triangles
     # in contrast to original implementation we do not use a tolerance at boundary
     # to avoid a distance computation
-    contains = contains_function(triangle_centroids)
+    within_bounds = within_bounds_function(triangle_centroids)
     t = []
     for i, triangle in enumerate(_triangles):
-        if contains[i]:
+        if within_bounds[i]:
             t.append(triangle)
 
     bars = form_bars(t)
@@ -197,9 +197,9 @@ def delaunay(p, contains_function):
     return pold, bars, t
 
 
-def remove_points_outside_region(contains_function, points):
-    contains = contains_function(points)
-    return [point for i, point in enumerate(points) if contains[i]]
+def remove_points_outside_region(within_bounds_function, points):
+    within_bounds = within_bounds_function(points)
+    return [point for i, point in enumerate(points) if within_bounds[i]]
 
 
 def apply_rejection_method(fh, p):
@@ -223,7 +223,7 @@ def prepend_fix_points(pfix, p):
     return nfix, p
 
 
-def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_num_iterations=None):
+def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -251,7 +251,7 @@ def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_
 
     _points = create_initial_distribution(pv, h0)
 
-    p = remove_points_outside_region(contains_function, _points)
+    p = remove_points_outside_region(within_bounds_function, _points)
 
     p = apply_rejection_method(fh, p)
 
@@ -269,7 +269,7 @@ def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_
                 break
 
         if large_movement(p, pold, ttol, h0):
-            pold, bars, t = delaunay(p, contains_function)
+            pold, bars, t = delaunay(p, within_bounds_function)
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
 
@@ -289,11 +289,11 @@ def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_
             p[i][0] += delta_t * F[i][0]
             p[i][1] += delta_t * F[i][1]
 
-        contains = contains_function(p)
+        within_bounds = within_bounds_function(p)
 
-        p = bring_outside_points_back_to_boundary(p, contains, deps, distance_function)
+        p = bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_function)
 
-        if movement_below_threshold(p, delta_t, F, dptol, h0, contains):
+        if movement_below_threshold(p, delta_t, F, dptol, h0, within_bounds):
             break
 
     print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))

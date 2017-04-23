@@ -38,37 +38,51 @@ def huniform(x, y):
     return 1.0
 
 
-def solve(scale=1.0, benchmark=False):
-
-    polygons_context = polygons.new_context()
-
-    def distance_function(points):
-        return polygons.get_distances(polygons_context, points)
-
-    def contains_function(points):
-        return polygons.contains_points(polygons_context, points)
-
+def read_points(file_name):
     points = []
     with open('test/boundary.txt', 'r') as f:
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
-            points.append([scale * x, scale * y])
-    polygons.add_polygon(polygons_context, points)
+            points.append([x, y])
+    return points
 
-    xmin, xmax, ymin, ymax = get_bbox(points)
+
+def solve(benchmark=False):
+
+    all_polygons_context = polygons.new_context()
+    boundary_context = polygons.new_context()
+    islands_context = polygons.new_context()
+
+    boundary_points = read_points('test/boundary.txt')
+    polygons.add_polygon(all_polygons_context, boundary_points)
+    polygons.add_polygon(boundary_context, boundary_points)
+
+    islands_points = read_points('test/island3.txt')
+#   polygons.add_polygon(all_polygons_context, islands_points)
+    polygons.add_polygon(islands_context, islands_points)
+
+    def distance_function(points):
+        return polygons.get_distances(all_polygons_context, points)
+
+    def within_bounds_function(points):
+        return polygons.contains_points(all_polygons_context, points)
+
+    xmin, xmax, ymin, ymax = get_bbox(boundary_points)
 
     if benchmark:
         f = huniform
         h0 = (xmax - xmin) / 80.0
-        _p, _t = distmesh2d(points, f, distance_function, contains_function, scale * h0, points, max_num_iterations=100)
+        _p, _t = distmesh2d(boundary_points, f, distance_function, within_bounds_function, h0, boundary_points, max_num_iterations=100)
     else:
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
         h0 = (xmax - xmin) / 25.0
-        _p, _t = distmesh2d(points, f, distance_function, contains_function, scale * h0, points, max_num_iterations=100)
+        _p, _t = distmesh2d(boundary_points, f, distance_function, within_bounds_function, h0, boundary_points, max_num_iterations=100)
 
-    polygons.free_context(polygons_context)
+    polygons.free_context(all_polygons_context)
+    polygons.free_context(boundary_context)
+    polygons.free_context(islands_context)
 
     return _p, _t
 
