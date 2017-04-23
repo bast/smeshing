@@ -34,7 +34,9 @@ def matches_with_reference(ps, ts, file_name):
 
 
 def huniform(x, y):
-    """Implements the trivial uniform mesh size function h=1."""
+    """
+    Implements the trivial uniform mesh size function h=1.
+    """
     return 1.0
 
 
