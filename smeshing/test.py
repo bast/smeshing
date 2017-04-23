@@ -1,6 +1,3 @@
-# encoding: utf-8
-"""Distmesh 2D examples."""
-
 # Copyright (C) 2004-2012 Per-Olof Persson
 # Copyright (C) 2012 Bradley Froehle
 
