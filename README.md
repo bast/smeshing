@@ -23,6 +23,10 @@ thousands of islands (polygons).
 Prototyping work is currently done in Python. Later we will probably move to
 Fortran or C(++) and introduce parallelization but provide a Python interface.
 
+Currently the code is a bit hardcoded for islands and coastline and specific
+resolution functions but later the code will be generalized and the hardcoded
+aspects will be abstracted out.
+
 
 ## Installing dependencies
 
