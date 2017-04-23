@@ -8,8 +8,8 @@
 # have received a copy of the license along with this program. If not,
 # see <http://www.gnu.org/licenses/>.
 
-from main import distmesh2d
-from file_io import read_data, write_data
+from .main import distmesh2d
+from .file_io import read_data, write_data
 
 
 def matches_with_reference(ps, ts, file_name):
