@@ -6,8 +6,10 @@
 # see <http://www.gnu.org/licenses/>.
 
 import os
+import math
 import polygons
 import flanders
+# import matplotlib.pyplot as plt
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
@@ -15,29 +17,48 @@ from .bbox import get_bbox
 from .clockwise import edges_sum
 
 
-def extract_points_and_vectors(file_name):
-    points = extract_data(file_name)
+def normalize(vector, s):
+    norm = math.sqrt(vector[0]**2.0 + vector[1]**2.0)
+    return (s*vector[0]/norm, s*vector[1]/norm)
+
+
+def get_normal_vectors(points, s):
+    num_points = len(points)
+    vectors = []
+    for i in range(num_points):
+        i_before = i - 1
+        i_after = (i + 1)%num_points
+        vector = (points[i_after][1] - points[i_before][1], -(points[i_after][0] - points[i_before][0]))
+        vector = normalize(vector, s)
+        vectors.append(vector)
+    return vectors
+
+
+def compute_view_vectors(points, scale):
+    """
+    If scale is negative, then view vectors are towards inside.
+    """
 
     # we figure out whether polygon is clockwise or anticlockwise
     if edges_sum(points) < 0.0:
-        s = +1.0
+        s = +1.0*scale
     else:
-        s = -1.0
+        s = -1.0*scale
 
     # we remove the last point since it repeats the first
     # we assume clock-wise closed loops
-    points.pop()
+    _points = [points[i] for i in range(len(points) - 1)]
 
-    if len(points) > 2:
-        vectors = get_normal_vectors(points, s)
+    if len(_points) > 2:
+        vectors = get_normal_vectors(_points, s)
     else:
         # this is a "linear" island consisting of two points
         vectors = []
-        vector = (points[1][0] - points[0][0], points[1][1] - points[0][1])
+        vector = (_points[1][0] - _points[0][0], _points[1][1] - _points[0][1])
         vectors.append(normalize(vector, -s))
         vectors.append(normalize(vector, s))
 
-    return points, vectors
+    return vectors
 
 
 def matches_with_reference(ps, ts, file_name):
@@ -84,6 +105,8 @@ def read_points(file_name):
 
 def sub(file_name, benchmark=False):
 
+    plot = False
+
     all_polygons_context = polygons.new_context()
     boundary_context = polygons.new_context()
     islands_context = polygons.new_context()
@@ -91,12 +114,25 @@ def sub(file_name, benchmark=False):
     boundary_points = read_points('test/boundary.txt')
     polygons.add_polygon(all_polygons_context, boundary_points)
     polygons.add_polygon(boundary_context, boundary_points)
+    view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
+    all_points = boundary_points
+    if plot:
+        for i in range(len(boundary_points) - 1):
+            plt.plot([boundary_points[i][0], boundary_points[i + 1][0]],
+                     [boundary_points[i][1], boundary_points[i + 1][1]],
+                     'r-')
 
     for island_file in ['test/island1.txt', 'test/island2.txt', 'test/island3.txt']:
         islands_points = read_points(island_file)
         polygons.add_polygon(all_polygons_context, islands_points)
         polygons.add_polygon(islands_context, islands_points)
-        all_points = boundary_points + islands_points
+        all_points += islands_points
+        view_vectors += compute_view_vectors(islands_points, scale=1.0)
+        if plot:
+            for i in range(len(islands_points) - 1):
+                plt.plot([islands_points[i][0], islands_points[i + 1][0]],
+                         [islands_points[i][1], islands_points[i + 1][1]],
+                         'b-')
 
     def distance_function(points):
         return polygons.get_distances(all_polygons_context, points)
@@ -128,10 +164,23 @@ def sub(file_name, benchmark=False):
     num_points = len(all_points)
     flanders_context = flanders.new_context(num_points, all_points)
     angles_deg = [90.0 for _ in range(num_points)]
-#   flanders_indices = flanders.search_neighbor(context,
-#                                               ref_indices=list(range(num_points)),
-#                                               view_vectors=vectors,
-#                                               angles_deg=angles_deg)
+    flanders_indices = flanders.search_neighbor(context=flanders_context,
+                                                ref_indices=list(range(num_points)),
+                                                view_vectors=view_vectors,
+                                                angles_deg=angles_deg)
+#   print(flanders_indices)
+    if plot:
+        for i in range(len(all_points)):
+            if flanders_indices[i] > -1:
+                plt.plot([all_points[i][0], all_points[flanders_indices[i]][0]],
+                         [all_points[i][1], all_points[flanders_indices[i]][1]],
+                         'k-')
+            else:
+                plt.plot([all_points[i][0], 0.0],
+                         [all_points[i][1], 0.0],
+                         'g-')
+                print('-1 distance found for x={0} y={1}'.format(all_points[i][0], all_points[i][1]))
+        plt.savefig('foo.png')
 
     points, triangles = distmesh2d(all_points,
                                    h_function,
