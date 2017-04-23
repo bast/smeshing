@@ -13,6 +13,7 @@ import polygons
 import math
 import sys
 import random
+from .bbox import get_bbox
 
 
 def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
@@ -90,16 +91,7 @@ def create_initial_distribution(points, h0):
     """
     Create initial distribution in bounding box (equilateral triangles).
     """
-    xmin = sys.float_info.max
-    xmax = -xmin
-    ymin = xmin
-    ymax = -ymin
-
-    for point in points:
-        xmin = min(xmin, point[0])
-        xmax = max(xmax, point[0])
-        ymin = min(ymin, point[1])
-        ymax = max(ymax, point[1])
+    xmin, xmax, ymin, ymax = get_bbox(points)
 
     xs = [xmin]
     while xs[-1] <= xmax:

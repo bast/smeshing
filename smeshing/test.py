@@ -10,24 +10,8 @@
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
-import sys
+from .bbox import get_bbox
 import os
-
-
-def get_bbox(points):
-
-    xmin = sys.float_info.max
-    xmax = -xmin
-    ymin = xmin
-    ymax = -ymin
-
-    for point in points:
-        xmin = min(xmin, point[0])
-        xmax = max(xmax, point[0])
-        ymin = min(ymin, point[1])
-        ymax = max(ymax, point[1])
-
-    return xmin, xmax, ymin, ymax
 
 
 def matches_with_reference(ps, ts, file_name):
