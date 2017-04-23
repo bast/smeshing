@@ -74,14 +74,14 @@ def solve(file_name, scale=1.0, benchmark=False):
 
 
 def test_polygon():
-    p, t = solve('test/input.txt', scale=1.0)
+    p, t = solve('test/boundary.txt', scale=1.0)
     if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
 
 
 def test_bench():
-    p, t = solve('test/input.txt', benchmark=True)
+    p, t = solve('test/boundary.txt', benchmark=True)
     if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result-bench.txt')
     matches_with_reference(p, t, 'test/result-bench.txt')
