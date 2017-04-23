@@ -9,7 +9,6 @@
 # see <http://www.gnu.org/licenses/>.
 
 import scipy.spatial as spspatial
-import polygons
 import math
 import sys
 import random
@@ -63,14 +62,12 @@ def compute_forces(L0, L, bars, barvec, p):
     return Ftot
 
 
-def bring_outside_points_back_to_boundary(p, contains, deps, polygons_context):
+def bring_outside_points_back_to_boundary(p, contains, deps, distance_function):
     for i in range(len(p)):
         if not contains[i]:
             px = [p[i][0] + deps, p[i][1]]
             py = [p[i][0], p[i][1] + deps]
-            d0 = polygons.get_distances(polygons_context, [p[i]])[0]
-            dx = polygons.get_distances(polygons_context, [px])[0]
-            dy = polygons.get_distances(polygons_context, [py])[0]
+            d0, dx, dy = tuple(distance_function([p[i], px, py]))
             dgradx = (dx - d0)/deps
             dgrady = (dy - d0)/deps
             dgrad2 = dgradx**2.0 + dgrady**2.0
@@ -167,7 +164,7 @@ def large_movement(p, pold, ttol, h0):
     return _temp > (ttol*h0)**2.0
 
 
-def delaunay(p, polygons_context):
+def delaunay(p, contains_function):
     """
     Retriangulation by the Delaunay algorithm.
     """
@@ -189,7 +186,7 @@ def delaunay(p, polygons_context):
     # Keep interior triangles
     # in contrast to original implementation we do not use a tolerance at boundary
     # to avoid a distance computation
-    contains = polygons.contains_points(polygons_context, triangle_centroids)
+    contains = contains_function(triangle_centroids)
     t = []
     for i, triangle in enumerate(_triangles):
         if contains[i]:
@@ -200,8 +197,8 @@ def delaunay(p, polygons_context):
     return pold, bars, t
 
 
-def remove_points_outside_region(polygons_context, points):
-    contains = polygons.contains_points(polygons_context, points)
+def remove_points_outside_region(contains_function, points):
+    contains = contains_function(points)
     return [point for i, point in enumerate(points) if contains[i]]
 
 
@@ -226,7 +223,7 @@ def prepend_fix_points(pfix, p):
     return nfix, p
 
 
-def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
+def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -243,10 +240,6 @@ def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
     t:         Triangle indices (NTx3)
     """
 
-    polygons_context = polygons.new_context()
-
-    polygons.add_polygon(polygons_context, pv)
-
     dptol = 0.001
     ttol = .1
     Fscale = 1.2
@@ -258,7 +251,7 @@ def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
 
     _points = create_initial_distribution(pv, h0)
 
-    p = remove_points_outside_region(polygons_context, _points)
+    p = remove_points_outside_region(contains_function, _points)
 
     p = apply_rejection_method(fh, p)
 
@@ -276,7 +269,7 @@ def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
                 break
 
         if large_movement(p, pold, ttol, h0):
-            pold, bars, t = delaunay(p, polygons_context)
+            pold, bars, t = delaunay(p, contains_function)
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
 
@@ -296,14 +289,12 @@ def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
             p[i][0] += delta_t*F[i][0]
             p[i][1] += delta_t*F[i][1]
 
-        contains = polygons.contains_points(polygons_context, p)
+        contains = contains_function(p)
 
-        p = bring_outside_points_back_to_boundary(p, contains, deps, polygons_context)
+        p = bring_outside_points_back_to_boundary(p, contains, deps, distance_function)
 
         if movement_below_threshold(p, delta_t, F, dptol, h0, contains):
             break
-
-    polygons.free_context(polygons_context)
 
     print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
     return p, t
