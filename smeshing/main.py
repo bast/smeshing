@@ -235,7 +235,6 @@ def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
     pv:        list of polygon coordinate tuples
     fh:        Scaled edge length function h(x,y)
     h0:        Initial edge length
-    bbox:      Bounding box, (xmin, ymin, xmax, ymax)
     pfix:      Fixed node positions, shape (nfix, 2)
 
     Returns
