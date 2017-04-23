@@ -46,6 +46,7 @@ script:
     then py.test -vv smeshing/test.py --cov smeshing;
     else py.test -vv smeshing/test.py;
     fi
+#   pep8 smeshing/* --ignore E501
 
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];

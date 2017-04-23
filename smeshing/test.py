@@ -29,8 +29,8 @@ def matches_with_reference(ps, ts, file_name):
         assert t[2] == ts_ref[i][2]
 
     for i in range(len(xs)):
-        assert abs((xs[i] - xs_ref[i])/xs[i]) < 1.0e-5
-        assert abs((ys[i] - ys_ref[i])/ys[i]) < 1.0e-5
+        assert abs((xs[i] - xs_ref[i]) / xs[i]) < 1.0e-5
+        assert abs((ys[i] - ys_ref[i]) / ys[i]) < 1.0e-5
 
 
 def huniform(x, y):
@@ -44,6 +44,7 @@ def solve(file_name, scale=1.0, benchmark=False):
 
     def distance_function(points):
         return polygons.get_distances(polygons_context, points)
+
     def contains_function(points):
         return polygons.contains_points(polygons_context, points)
 
@@ -52,20 +53,20 @@ def solve(file_name, scale=1.0, benchmark=False):
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
-            pv.append([scale*x, scale*y])
+            pv.append([scale * x, scale * y])
     polygons.add_polygon(polygons_context, pv)
 
     xmin, xmax, ymin, ymax = get_bbox(pv)
 
     if benchmark:
         f = huniform
-        h0 = (xmax - xmin)/80.0
-        _p, _t = distmesh2d(pv, f, distance_function, contains_function, scale*h0, pv, max_num_iterations=100)
+        h0 = (xmax - xmin) / 80.0
+        _p, _t = distmesh2d(pv, f, distance_function, contains_function, scale * h0, pv, max_num_iterations=100)
     else:
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
-        h0 = (xmax - xmin)/25.0
-        _p, _t = distmesh2d(pv, f, distance_function, contains_function, scale*h0, pv, max_num_iterations=100)
+        h0 = (xmax - xmin) / 25.0
+        _p, _t = distmesh2d(pv, f, distance_function, contains_function, scale * h0, pv, max_num_iterations=100)
 
     polygons.free_context(polygons_context)
 

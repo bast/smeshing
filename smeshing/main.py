@@ -23,7 +23,7 @@ def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
     points_to_remove = []
     if count % densityctrlfreq == 0:
         for i in range(len(L0)):
-            if L0[i] > 2.0*L[i]:
+            if L0[i] > 2.0 * L[i]:
                 apply_density_control = True
                 for k in [0, 1]:
                     ip = bars[i][k]
@@ -47,8 +47,8 @@ def compute_forces(L0, L, bars, barvec, p):
     # compute forces along bars
     Fvec = []
     for i in range(len(F)):
-        r = F[i]/L[i]
-        Fvec.append((r*barvec[i][0], r*barvec[i][1]))
+        r = F[i] / L[i]
+        Fvec.append((r * barvec[i][0], r * barvec[i][1]))
 
     # compute resulting force on each point from all adjacent bars
     Ftot = [[0.0, 0.0] for _ in p]
@@ -68,11 +68,11 @@ def bring_outside_points_back_to_boundary(p, contains, deps, distance_function):
             px = [p[i][0] + deps, p[i][1]]
             py = [p[i][0], p[i][1] + deps]
             d0, dx, dy = tuple(distance_function([p[i], px, py]))
-            dgradx = (dx - d0)/deps
-            dgrady = (dy - d0)/deps
+            dgradx = (dx - d0) / deps
+            dgrady = (dy - d0) / deps
             dgrad2 = dgradx**2.0 + dgrady**2.0
-            p[i][0] -= d0*dgradx/dgrad2
-            p[i][1] -= d0*dgrady/dgrad2
+            p[i][0] -= d0 * dgradx / dgrad2
+            p[i][1] -= d0 * dgrady / dgrad2
     return p
 
 
@@ -80,8 +80,8 @@ def movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
     s = []
     for i in range(len(p)):
         if contains[i]:
-            s.append(delta_t*Ftot[i][0]**2.0 + delta_t*Ftot[i][1]**2.0)
-    return max(s) < (dptol*h0)**2.0
+            s.append((delta_t * Ftot[i][0])**2.0 + (delta_t * Ftot[i][1])**2.0)
+    return max(s) < (dptol * h0)**2.0
 
 
 def create_initial_distribution(points, h0):
@@ -95,14 +95,14 @@ def create_initial_distribution(points, h0):
         xs.append(xs[-1] + h0)
     ys = [ymin]
     while ys[-1] <= ymax:
-        ys.append(ys[-1] + h0*math.sqrt(3.0)/2.0)
+        ys.append(ys[-1] + h0 * math.sqrt(3.0) / 2.0)
 
     points = []
     for x in xs:
         for row, y in enumerate(ys):
             if row % 2 != 0:
                 # shift every second row to the right
-                points.append([x + h0/2.0, y])
+                points.append([x + h0 / 2.0, y])
             else:
                 points.append([x, y])
     return points
@@ -141,7 +141,7 @@ def get_bar_lengths(p, bars, fh, Fscale):
     for bar in bars:
         _px = p[bar[0]][0] + p[bar[1]][0]
         _py = p[bar[0]][1] + p[bar[1]][1]
-        bar_midpoints.append([_px/2.0, _py/2.0])
+        bar_midpoints.append([_px / 2.0, _py / 2.0])
     hbars = [fh(x, y) for (x, y) in bar_midpoints]
 
     L0 = []
@@ -151,7 +151,7 @@ def get_bar_lengths(p, bars, fh, Fscale):
         l2sum += L[i]**2.0
         hbars2sum += hbars[i]**2.0
     for i in range(len(L)):
-        L0.append(hbars[i]*Fscale*math.sqrt(l2sum/hbars2sum))
+        L0.append(hbars[i] * Fscale * math.sqrt(l2sum / hbars2sum))
 
     return L, L0, barvec
 
@@ -161,7 +161,7 @@ def large_movement(p, pold, ttol, h0):
     for i in range(len(p)):
         _d = (p[i][0] - pold[i][0])**2.0 + (p[i][1] - pold[i][1])**2.0
         _temp = max(_temp, _d)
-    return _temp > (ttol*h0)**2.0
+    return _temp > (ttol * h0)**2.0
 
 
 def delaunay(p, contains_function):
@@ -181,7 +181,7 @@ def delaunay(p, contains_function):
         for ip in triangle:
             x += p[ip][0]
             y += p[ip][1]
-        triangle_centroids.append((x/3.0, y/3.0))
+        triangle_centroids.append((x / 3.0, y / 3.0))
 
     # Keep interior triangles
     # in contrast to original implementation we do not use a tolerance at boundary
@@ -203,13 +203,13 @@ def remove_points_outside_region(contains_function, points):
 
 
 def apply_rejection_method(fh, p):
-    r0 = [1.0/fh(x, y)**2.0 for (x, y) in p]
+    r0 = [1.0 / fh(x, y)**2.0 for (x, y) in p]
     r0_max = max(r0)
 
     random.seed(1)
     _p = []
     for i, point in enumerate(p):
-        if random.uniform(0.0, 1.0) < r0[i]/r0_max:
+        if random.uniform(0.0, 1.0) < r0[i] / r0_max:
             _p.append(point)
     return _p
 
@@ -241,12 +241,12 @@ def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_
     """
 
     dptol = 0.001
-    ttol = .1
+    ttol = 0.1
     Fscale = 1.2
     delta_t = 0.2
-    geps = 0.001*h0
+    geps = 0.001 * h0
     epsilon = sys.float_info.epsilon
-    deps = math.sqrt(epsilon)*h0
+    deps = math.sqrt(epsilon) * h0
     densityctrlfreq = 30
 
     _points = create_initial_distribution(pv, h0)
@@ -257,7 +257,7 @@ def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_
 
     nfix, p = prepend_fix_points(pfix, p)
 
-    shift = 100.0*ttol*h0**2.0  # this shift is so that the first movement is large enough to trigger delaunay
+    shift = (100.0 * ttol * h0)**2.0  # this shift is so that the first movement is large enough to trigger delaunay
     pold = [[point[0] + shift, point[1] + shift] for point in p]
 
     count = 0
@@ -286,8 +286,8 @@ def distmesh2d(pv, fh, distance_function, contains_function, h0, pfix=None, max_
 
         # update node positions
         for i in range(len(p)):
-            p[i][0] += delta_t*F[i][0]
-            p[i][1] += delta_t*F[i][1]
+            p[i][0] += delta_t * F[i][0]
+            p[i][1] += delta_t * F[i][1]
 
         contains = contains_function(p)
 
