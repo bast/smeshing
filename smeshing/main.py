@@ -15,23 +15,25 @@ import random
 from .bbox import get_bbox
 
 
-def density_control(p, count, densityctrlfreq, L, L0, bars, nfix):
+def density_control(p, L, L0, bars, nfix):
     """
     Density control - remove points that are too close.
     """
     apply_density_control = False
     points_to_remove = []
-    if count % densityctrlfreq == 0:
-        for i in range(len(L0)):
-            if L0[i] > 2.0 * L[i]:
-                apply_density_control = True
-                for k in [0, 1]:
-                    ip = bars[i][k]
-                    if ip > nfix:
-                        points_to_remove.append(ip)
+
+    for i in range(len(L0)):
+        if L0[i] > 2.0 * L[i]:
+            apply_density_control = True
+            for k in [0, 1]:
+                ip = bars[i][k]
+                if ip > nfix:
+                    points_to_remove.append(ip)
+
     if apply_density_control:
         points_to_remove = list(set(points_to_remove))
         p = [p[ip] for ip in range(len(p)) if ip not in points_to_remove]
+
     return apply_density_control, p
 
 
@@ -247,7 +249,7 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
     geps = 0.001 * h0
     epsilon = sys.float_info.epsilon
     deps = math.sqrt(epsilon) * h0
-    densityctrlfreq = 30
+    density_control_frequency = 30
 
     _points = create_initial_distribution(pv, h0)
 
@@ -273,10 +275,11 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
 
-        apply_density_control, p = density_control(p, count, densityctrlfreq, L, L0, bars, nfix)
-        if apply_density_control:
-            pold = [[point[0] + shift, point[1] + shift] for point in p]
-            continue
+        if count % density_control_frequency == 0:
+            apply_density_control, p = density_control(p, L, L0, bars, nfix)
+            if apply_density_control:
+                pold = [[point[0] + shift, point[1] + shift] for point in p]
+                continue
 
         F = compute_forces(L0, L, bars, barvec, p)
 
