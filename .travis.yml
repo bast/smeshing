@@ -19,6 +19,21 @@ matrix:
       env:
         - CC='gcc-4.9'
         - CXX='g++-4.9'
+    - os: linux
+      python: 3.5
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gfortran-4.9
+            - gcc-4.9
+            - g++-4.9
+            - libblas-dev
+            - liblapack-dev
+      env:
+        - CC='gcc-4.9'
+        - CXX='g++-4.9'
 
 install:
   - pip install --upgrade pip setuptools wheel  # https://github.com/travis-ci/travis-ci/issues/2650#issuecomment-266721196
