@@ -50,12 +50,12 @@ def read_polygon(file_name, scale=1.0, benchmark=False):
     if benchmark:
         f = huniform
         h0 = 0.03
-        _p, _t = distmesh2d(pv, f, h0, pv, max_num_iterations=100)
+        _p, _t = distmesh2d(pv, f, scale*h0, pv, max_num_iterations=100)
     else:
         f = huniform
         # f = lambda p: 0.05 + 0.3*dcircle(p, 0, 0, 0.01)
         h0 = 0.1
-        _p, _t = distmesh2d(pv, f, h0, pv)
+        _p, _t = distmesh2d(pv, f, scale*h0, pv)
     return _p, _t
 
 
@@ -63,7 +63,7 @@ generate_tests = False
 
 
 def test_polygon():
-    p, t = read_polygon('test/polygon.txt')
+    p, t = read_polygon('test/polygon.txt', scale=1.0)
     if generate_tests:
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
