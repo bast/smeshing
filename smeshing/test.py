@@ -40,7 +40,7 @@ def huniform(x, y):
     return 1.0
 
 
-def read_polygon(file_name, scale=1.0, benchmark=False):
+def solve(file_name, scale=1.0, benchmark=False):
 
     pv = []
     with open(file_name, 'r') as f:
@@ -64,14 +64,14 @@ def read_polygon(file_name, scale=1.0, benchmark=False):
 
 
 def test_polygon():
-    p, t = read_polygon('test/input.txt', scale=1.0)
+    p, t = solve('test/input.txt', scale=1.0)
     if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result.txt')
     matches_with_reference(p, t, 'test/result.txt')
 
 
 def test_bench():
-    p, t = read_polygon('test/input.txt', benchmark=True)
+    p, t = solve('test/input.txt', benchmark=True)
     if os.getenv('GENERATE_TESTS', False):
         write_data(p, t, 'test/result-bench.txt')
     matches_with_reference(p, t, 'test/result-bench.txt')
