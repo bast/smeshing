@@ -305,4 +305,5 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
 
     polygons.free_context(polygons_context)
 
+    print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
     return p, t
