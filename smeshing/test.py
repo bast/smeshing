@@ -10,6 +10,7 @@ import os
 import math
 import polygons
 import flanders
+import glob
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
@@ -226,9 +227,9 @@ def test_bench():
         benchmark=True)
 
 
-def dont_test_lofoten():
+def test_lofoten():
     sub(boundary_file_name='data/lofoten/boundary.txt',
-        island_file_names=['data/lofoten/island1.txt'],
+        island_file_names=glob.glob('data/lofoten/islands/*.txt'),
         reference_file_name='test/result-lofoten.txt',
         skip_test=True,
         max_num_iterations=5)
