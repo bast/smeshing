@@ -19,8 +19,8 @@ def generate_plot(x, y, triangles, out_file_name):
 
     plt.figure()
     plt.gca().set_aspect('equal')
-    plt.triplot(x, y, triangles, 'go-', markersize=1.0, linewidth=0.8)
-    plt.savefig(out_file_name)
+    plt.triplot(x, y, triangles, 'g-', markersize=0.2, linewidth=0.2)
+    plt.savefig(out_file_name, dpi=300)
 
 
 in_file_name, out_file_name = parse_command_line()
