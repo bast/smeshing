@@ -9,7 +9,6 @@ import os
 import math
 import polygons
 import flanders
-# import matplotlib.pyplot as plt
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
@@ -58,7 +57,8 @@ def compute_view_vectors(points, scale):
         vectors.append(normalize(vector, -s))
         vectors.append(normalize(vector, s))
 
-    return vectors
+    # we add the removed point again
+    return vectors + [vectors[0]]
 
 
 def matches_with_reference(ps, ts, file_name):
@@ -105,7 +105,9 @@ def read_points(file_name):
 
 def sub(file_name, benchmark=False):
 
-    plot = False
+    plot_nearest_in_view = False
+    if plot_nearest_in_view:
+        import matplotlib.pyplot as plt
 
     all_polygons_context = polygons.new_context()
     boundary_context = polygons.new_context()
@@ -116,7 +118,7 @@ def sub(file_name, benchmark=False):
     polygons.add_polygon(boundary_context, boundary_points)
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
-    if plot:
+    if plot_nearest_in_view:
         for i in range(len(boundary_points) - 1):
             plt.plot([boundary_points[i][0], boundary_points[i + 1][0]],
                      [boundary_points[i][1], boundary_points[i + 1][1]],
@@ -128,7 +130,7 @@ def sub(file_name, benchmark=False):
         polygons.add_polygon(islands_context, islands_points)
         all_points += islands_points
         view_vectors += compute_view_vectors(islands_points, scale=1.0)
-        if plot:
+        if plot_nearest_in_view:
             for i in range(len(islands_points) - 1):
                 plt.plot([islands_points[i][0], islands_points[i + 1][0]],
                          [islands_points[i][1], islands_points[i + 1][1]],
@@ -169,7 +171,7 @@ def sub(file_name, benchmark=False):
                                                 view_vectors=view_vectors,
                                                 angles_deg=angles_deg)
 #   print(flanders_indices)
-    if plot:
+    if plot_nearest_in_view:
         for i in range(len(all_points)):
             if flanders_indices[i] > -1:
                 plt.plot([all_points[i][0], all_points[flanders_indices[i]][0]],
