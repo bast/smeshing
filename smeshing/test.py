@@ -111,7 +111,8 @@ def sub(boundary_file_name,
         reference_file_name,
         max_num_iterations,
         benchmark=False,
-        skip_test=False):
+        skip_test=False,
+        uniform_function=True):
 
     plot_nearest_in_view = False
     if plot_nearest_in_view:
@@ -163,11 +164,16 @@ def sub(boundary_file_name,
 
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
 
-    if benchmark:
+    if uniform_function:
         h_function = huniform
+    else:
+        def _r(x, y):
+            return get_resolution(x, y, tanh_function, all_points, flanders_indices)
+        h_function = _r
+
+    if benchmark:
         h0 = (xmax - xmin) / 80.0
     else:
-        h_function = huniform
         h0 = (xmax - xmin) / 25.0
 
     # currently not used
@@ -243,12 +249,22 @@ def dont_test_lofoten_small():
         max_num_iterations=5)
 
 
-def test_lofoten_tiny():
+def dont_test_lofoten_tiny():
     sub(boundary_file_name='data/lofoten/simple-boundary.txt',
         island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
         reference_file_name='test/result-lofoten.txt',
         skip_test=True,
-        max_num_iterations=5)
+        max_num_iterations=5,
+        uniform_function=False)
+
+
+def get_resolution(x, y, function, points, flanders_indices):
+    r = sys.float_info.max
+    for i in range(len(points)):
+        nearest_distance_at_coastline_point = get_distance(points[i], points[flanders_indices[i]])
+        distace_to_coastline_point = get_distance(points[i], (x, y))
+        r = min(r, function(nearest_distance_at_coastline_point, distace_to_coastline_point))
+    return r
 
 
 def test_resolution():
@@ -282,11 +298,7 @@ def test_resolution():
     for (x, y, r, f) in [(69.731182, 70.688529, 10.55650049085928, linear_function),
                          (69.731182, 70.688529, 4.3657, tanh_function),
                          (29.7312, 41.3754, 2.5481, tanh_function)]:
-        _r = sys.float_info.max
-        for i in range(len(points)):
-            nearest_distance_at_coastline_point = get_distance(points[i], points[flanders_indices[i]])
-            distace_to_coastline_point = get_distance(points[i], (x, y))
-            _r = min(_r, f(nearest_distance_at_coastline_point, distace_to_coastline_point))
+        _r = get_resolution(x, y, f, points, flanders_indices)
         assert abs(_r - r) < 1.0e-4
 
     if plot_nearest_in_view:
