@@ -86,11 +86,20 @@ def movement_below_threshold(p, delta_t, Ftot, dptol, h0, contains):
     return max(s) < (dptol*h0)**2.0
 
 
-def create_initial_distribution(bbox, h0):
+def create_initial_distribution(points, h0):
     """
     Create initial distribution in bounding box (equilateral triangles).
     """
-    xmin, ymin, xmax, ymax = bbox
+    xmin = sys.float_info.max
+    xmax = -xmin
+    ymin = xmin
+    ymax = -ymin
+
+    for point in points:
+        xmin = min(xmin, point[0])
+        xmax = max(xmax, point[0])
+        ymin = min(ymin, point[1])
+        ymax = max(ymax, point[1])
 
     xs = [xmin]
     while xs[-1] <= xmax:
@@ -225,7 +234,7 @@ def prepend_fix_points(pfix, p):
     return nfix, p
 
 
-def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
+def distmesh2d(pv, fh, h0, pfix=None, max_num_iterations=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -256,7 +265,7 @@ def distmesh2d(pv, fh, h0, bbox, pfix=None, max_num_iterations=None):
     deps = math.sqrt(epsilon)*h0
     densityctrlfreq = 30
 
-    _points = create_initial_distribution(bbox, h0)
+    _points = create_initial_distribution(pv, h0)
 
     p = remove_points_outside_region(polygons_context, _points)
 
