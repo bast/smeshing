@@ -44,8 +44,8 @@ install:
 
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
-    then py.test -vv smeshing/test.py --cov smeshing;
-    else py.test -vv smeshing/test.py;
+    then SMESHING_BUILD_DIR=build py.test -vv smeshing/test.py --cov smeshing;
+    else SMESHING_BUILD_DIR=build py.test -vv smeshing/test.py;
     fi
 #   pep8 smeshing/* --ignore E501
 
