@@ -185,9 +185,11 @@ def sub(boundary_file_name,
     if uniform_function:
         h_function = huniform
     else:
-        def _r(points):
-            return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
-        h_function = _r
+      # def _r(points):
+      #     return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
+      # h_function = _r
+        h_function = huniform
+        h0 = (xmax - xmin) / 70.0
 
     if plot_nearest_in_view:
         for i in range(len(all_points)):
