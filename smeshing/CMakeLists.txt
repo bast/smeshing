@@ -1,8 +1,12 @@
+include_directories(
+    ${PROJECT_BINARY_DIR}/include
+    )
+
 add_library(
     smeshing
     SHARED
     resolution_functions.cpp
-    resolution_functions.h
+    smeshing.h
     )
 
 # clang seems to need this

@@ -11,6 +11,7 @@ import math
 import polygons
 import flanders
 import glob
+from smeshing import get_resolution
 
 from .main import distmesh2d
 from .file_io import read_data, write_data
@@ -258,15 +259,6 @@ def dont_test_lofoten_tiny():
         uniform_function=False)
 
 
-def get_resolution(x, y, function, points, flanders_indices):
-    r = sys.float_info.max
-    for i in range(len(points)):
-        nearest_distance_at_coastline_point = get_distance(points[i], points[flanders_indices[i]])
-        distace_to_coastline_point = get_distance(points[i], (x, y))
-        r = min(r, function(nearest_distance_at_coastline_point, distace_to_coastline_point))
-    return r
-
-
 def test_resolution():
     plot_nearest_in_view = False
 
@@ -295,10 +287,13 @@ def test_resolution():
                                                 view_vectors=view_vectors,
                                                 angles_deg=angles_deg)
 
-    for (x, y, r, f) in [(69.731182, 70.688529, 10.55650049085928, linear_function),
-                         (69.731182, 70.688529, 4.3657, tanh_function),
-                         (29.7312, 41.3754, 2.5481, tanh_function)]:
-        _r = get_resolution(x, y, f, points, flanders_indices)
+    for (x, y, r) in [(69.731182, 70.688529, 10.55650049085928)]:
+        _r = get_resolution(x, y, False, points, flanders_indices)
+        assert abs(_r - r) < 1.0e-4
+
+    for (x, y, r) in [(69.731182, 70.688529, 4.3657),
+                      (29.7312, 41.3754, 2.5481)]:
+        _r = get_resolution(x, y, True, points, flanders_indices)
         assert abs(_r - r) < 1.0e-4
 
     if plot_nearest_in_view:
