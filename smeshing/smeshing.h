@@ -17,6 +17,7 @@ double get_resolution(const double x,
                       const int num_points,
                       const double points_x[],
                       const double points_y[],
+                      const double nearest_distance_at_coastline_point[],
                       const int flanders_indices[]);
 
 #ifdef __cplusplus

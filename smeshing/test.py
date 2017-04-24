@@ -17,7 +17,6 @@ from .main import distmesh2d
 from .file_io import read_data, write_data
 from .bbox import get_bbox
 from .clockwise import edges_sum
-from .resolution import linear_function, tanh_function
 
 
 def normalize(vector, s):
@@ -287,13 +286,17 @@ def test_resolution():
                                                 view_vectors=view_vectors,
                                                 angles_deg=angles_deg)
 
+    nearest_distance_at_coastline_point = []
+    for i in range(len(points)):
+        nearest_distance_at_coastline_point.append(get_distance(points[i], points[flanders_indices[i]]))
+
     for (x, y, r) in [(69.731182, 70.688529, 10.55650049085928)]:
-        _r = get_resolution(x, y, False, points, flanders_indices)
+        _r = get_resolution(x, y, False, points, nearest_distance_at_coastline_point, flanders_indices)
         assert abs(_r - r) < 1.0e-4
 
     for (x, y, r) in [(69.731182, 70.688529, 4.3657),
                       (29.7312, 41.3754, 2.5481)]:
-        _r = get_resolution(x, y, True, points, flanders_indices)
+        _r = get_resolution(x, y, True, points, nearest_distance_at_coastline_point, flanders_indices)
         assert abs(_r - r) < 1.0e-4
 
     if plot_nearest_in_view:

@@ -29,6 +29,7 @@ def get_resolution(x,
                    y,
                    use_tanh,
                    points,
+                   nearest_distance_at_coastline_point,
                    flanders_indices):
 
     num_points = len(points)
@@ -40,4 +41,5 @@ def get_resolution(x,
                                num_points,
                                points_x,
                                points_y,
+                               nearest_distance_at_coastline_point,
                                flanders_indices)

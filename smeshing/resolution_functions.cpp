@@ -56,31 +56,25 @@ double get_resolution(const double x,
                       const int num_points,
                       const double points_x[],
                       const double points_y[],
+                      const double nearest_distance_at_coastline_point[],
                       const int flanders_indices[])
 {
     double r = std::numeric_limits<float>::max();
     for (int i = 0; i < num_points; i++)
     {
-        // FIXME precompute this
-        double nearest_distance_at_coastline_point =
-            get_distance(points_x[i],
-                         points_y[i],
-                         points_x[flanders_indices[i]],
-                         points_y[flanders_indices[i]]);
-
         double distace_to_coastline_point =
             get_distance(x, y, points_x[i], points_y[i]);
 
         if (use_tanh)
         {
             r = std::min(r,
-                         tanh_function(nearest_distance_at_coastline_point,
+                         tanh_function(nearest_distance_at_coastline_point[i],
                                        distace_to_coastline_point));
         }
         else
         {
             r = std::min(r,
-                         linear_function(nearest_distance_at_coastline_point,
+                         linear_function(nearest_distance_at_coastline_point[i],
                                          distace_to_coastline_point));
         }
     }
