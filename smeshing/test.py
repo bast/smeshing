@@ -89,11 +89,11 @@ def get_distance(p1, p2):
     return math.sqrt((p2[0] - p1[0])**2.0 + (p2[1] - p1[1])**2.0)
 
 
-def huniform(x, y):
+def huniform(points):
     """
     Implements the trivial uniform mesh size function h=1.
     """
-    return 1.0
+    return [1.0 for _ in points]
 
 
 def read_points(file_name):
@@ -167,8 +167,8 @@ def sub(boundary_file_name,
     if uniform_function:
         h_function = huniform
     else:
-        def _r(x, y):
-            return get_resolution(x, y, tanh_function, all_points, flanders_indices)
+        def _r(points):
+            return [get_resolution(x, y, tanh_function, all_points, flanders_indices) for (x, y) in points]
         h_function = _r
 
     if benchmark:

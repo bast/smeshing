@@ -144,7 +144,7 @@ def get_bar_lengths(p, bars, fh, Fscale):
         _px = p[bar[0]][0] + p[bar[1]][0]
         _py = p[bar[0]][1] + p[bar[1]][1]
         bar_midpoints.append([_px / 2.0, _py / 2.0])
-    hbars = [fh(x, y) for (x, y) in bar_midpoints]
+    hbars = fh(bar_midpoints)
 
     L0 = []
     l2sum = 0.0
@@ -205,7 +205,8 @@ def remove_points_outside_region(within_bounds_function, points):
 
 
 def apply_rejection_method(fh, p):
-    r0 = [1.0 / fh(x, y)**2.0 for (x, y) in p]
+    fh_applied = fh(p)
+    r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(p))]
     r0_max = max(r0)
 
     random.seed(1)
