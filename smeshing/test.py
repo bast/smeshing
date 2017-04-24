@@ -222,19 +222,21 @@ def sub(boundary_file_name,
         matches_with_reference(points, triangles, reference_file_name)
 
 
-def test_polygon():
-    sub(boundary_file_name='test/boundary.txt',
-        island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
-        reference_file_name='test/result.txt',
-        max_num_iterations=100)
+if not os.getenv('ONLY_LOFOTEN', False):
+    def test_polygon():
+        sub(boundary_file_name='test/boundary.txt',
+            island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
+            reference_file_name='test/result.txt',
+            max_num_iterations=100)
 
 
-def test_bench():
-    sub(boundary_file_name='test/boundary.txt',
-        island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
-        reference_file_name='test/result-bench.txt',
-        max_num_iterations=100,
-        benchmark=True)
+if not os.getenv('ONLY_LOFOTEN', False):
+    def test_bench():
+        sub(boundary_file_name='test/boundary.txt',
+            island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
+            reference_file_name='test/result-bench.txt',
+            max_num_iterations=100,
+            benchmark=True)
 
 
 def dont_test_lofoten():
@@ -253,13 +255,14 @@ def dont_test_lofoten_small():
         max_num_iterations=5)
 
 
-def dont_test_lofoten_tiny():
-    sub(boundary_file_name='data/lofoten/simple-boundary.txt',
-        island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
-        reference_file_name='test/result-lofoten.txt',
-        skip_test=True,
-        max_num_iterations=5,
-        uniform_function=False)
+if os.getenv('ONLY_LOFOTEN', False):
+    def test_lofoten_tiny():
+        sub(boundary_file_name='data/lofoten/simple-boundary.txt',
+            island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
+            reference_file_name='test/result-lofoten.txt',
+            skip_test=True,
+            max_num_iterations=5,
+            uniform_function=False)
 
 
 def test_resolution():
