@@ -164,13 +164,6 @@ def sub(boundary_file_name,
 
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
 
-    if uniform_function:
-        h_function = huniform
-    else:
-        def _r(points):
-            return [get_resolution(x, y, tanh_function, all_points, flanders_indices) for (x, y) in points]
-        h_function = _r
-
     if benchmark:
         h0 = (xmax - xmin) / 80.0
     else:
@@ -184,6 +177,17 @@ def sub(boundary_file_name,
                                                 ref_indices=list(range(num_points)),
                                                 view_vectors=view_vectors,
                                                 angles_deg=angles_deg)
+
+    nearest_distance_at_coastline_point = []
+    for i in range(len(all_points)):
+        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
+
+    if uniform_function:
+        h_function = huniform
+    else:
+        def _r(points):
+            return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
+        h_function = _r
 
     if plot_nearest_in_view:
         for i in range(len(all_points)):
@@ -291,13 +295,13 @@ def test_resolution():
         nearest_distance_at_coastline_point.append(get_distance(points[i], points[flanders_indices[i]]))
 
     for (x, y, r) in [(69.731182, 70.688529, 10.55650049085928)]:
-        _r = get_resolution(x, y, False, points, nearest_distance_at_coastline_point, flanders_indices)
-        assert abs(_r - r) < 1.0e-4
+        _r = get_resolution([(x, y)], False, points, nearest_distance_at_coastline_point, flanders_indices)
+        assert abs(_r[0] - r) < 1.0e-4
 
     for (x, y, r) in [(69.731182, 70.688529, 4.3657),
                       (29.7312, 41.3754, 2.5481)]:
-        _r = get_resolution(x, y, True, points, nearest_distance_at_coastline_point, flanders_indices)
-        assert abs(_r - r) < 1.0e-4
+        _r = get_resolution([(x, y)], True, points, nearest_distance_at_coastline_point, flanders_indices)
+        assert abs(_r[0] - r) < 1.0e-4
 
     if plot_nearest_in_view:
         for i in range(len(points)):

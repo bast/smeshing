@@ -25,21 +25,30 @@ _lib = get_lib_handle(
 _ffi = FFI()
 
 
-def get_resolution(x,
-                   y,
+def get_resolution(points,
                    use_tanh,
-                   points,
+                   ref_points,
                    nearest_distance_at_coastline_point,
                    flanders_indices):
 
     num_points = len(points)
-    (points_x, points_y) = zip(*points)
+    (x, y) = zip(*points)
 
-    return _lib.get_resolution(x,
-                               y,
-                               use_tanh,
-                               num_points,
-                               points_x,
-                               points_y,
-                               nearest_distance_at_coastline_point,
-                               flanders_indices)
+    num_reference_points = len(ref_points)
+    (points_x, points_y) = zip(*ref_points)
+
+    resolutions_np = np.zeros(num_points, dtype=np.float64)
+    resolutions_p = _ffi.cast("double *", resolutions_np.ctypes.data)
+
+    _lib.get_resolution(num_points,
+                        x,
+                        y,
+                        resolutions_p,
+                        use_tanh,
+                        num_reference_points,
+                        points_x,
+                        points_y,
+                        nearest_distance_at_coastline_point,
+                        flanders_indices)
+
+    return resolutions_np.tolist()

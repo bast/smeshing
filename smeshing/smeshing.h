@@ -11,14 +11,16 @@ extern "C" {
 #endif
 
 SMESHING_API
-double get_resolution(const double x,
-                      const double y,
-                      const bool use_tanh,
-                      const int num_points,
-                      const double points_x[],
-                      const double points_y[],
-                      const double nearest_distance_at_coastline_point[],
-                      const int flanders_indices[]);
+void get_resolution(const int num_points,
+                    const double x[],
+                    const double y[],
+                          double resolutions[],
+                    const bool use_tanh,
+                    const int num_reference_points,
+                    const double reference_x[],
+                    const double reference_y[],
+                    const double nearest_distance_at_coastline_point[],
+                    const int flanders_indices[]);
 
 #ifdef __cplusplus
 }

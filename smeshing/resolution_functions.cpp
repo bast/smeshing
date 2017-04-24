@@ -50,33 +50,38 @@ double get_distance(const double p1x,
     return sqrt(pow((p2x - p1x), 2.0) + pow((p2y - p1y), 2.0));
 }
 
-double get_resolution(const double x,
-                      const double y,
-                      const bool use_tanh,
-                      const int num_points,
-                      const double points_x[],
-                      const double points_y[],
-                      const double nearest_distance_at_coastline_point[],
-                      const int flanders_indices[])
+void get_resolution(const int num_points,
+                    const double x[],
+                    const double y[],
+                          double resolutions[],
+                    const bool use_tanh,
+                    const int num_reference_points,
+                    const double reference_x[],
+                    const double reference_y[],
+                    const double nearest_distance_at_coastline_point[],
+                    const int flanders_indices[])
 {
-    double r = std::numeric_limits<float>::max();
-    for (int i = 0; i < num_points; i++)
+    for (int ip = 0; ip < num_points; ip++)
     {
-        double distace_to_coastline_point =
-            get_distance(x, y, points_x[i], points_y[i]);
-
-        if (use_tanh)
+        double r = std::numeric_limits<float>::max();
+        for (int ir = 0; ir < num_reference_points; ir++)
         {
-            r = std::min(r,
-                         tanh_function(nearest_distance_at_coastline_point[i],
-                                       distace_to_coastline_point));
+            double distace_to_coastline_point =
+                get_distance(x[ip], y[ip], reference_x[ir], reference_y[ir]);
+       
+            if (use_tanh)
+            {
+                r = std::min(r,
+                             tanh_function(nearest_distance_at_coastline_point[ir],
+                                           distace_to_coastline_point));
+            }
+            else
+            {
+                r = std::min(r,
+                             linear_function(nearest_distance_at_coastline_point[ir],
+                                             distace_to_coastline_point));
+            }
         }
-        else
-        {
-            r = std::min(r,
-                         linear_function(nearest_distance_at_coastline_point[i],
-                                         distace_to_coastline_point));
-        }
+        resolutions[ip] = r;
     }
-    return r;
 }
