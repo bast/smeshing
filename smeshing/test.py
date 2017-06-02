@@ -89,13 +89,6 @@ def get_distance(p1, p2):
     return math.sqrt((p2[0] - p1[0])**2.0 + (p2[1] - p1[1])**2.0)
 
 
-def huniform(points):
-    """
-    Implements the trivial uniform mesh size function h=1.
-    """
-    return [1.0 for _ in points]
-
-
 def read_points(file_name):
     points = []
     with open(file_name, 'r') as f:
@@ -110,9 +103,7 @@ def sub(boundary_file_name,
         island_file_names,
         reference_file_name,
         max_num_iterations,
-        benchmark=False,
-        skip_test=False,
-        uniform_function=True):
+        skip_test=False):
 
     plot_nearest_in_view = False
     if plot_nearest_in_view:
@@ -163,11 +154,7 @@ def sub(boundary_file_name,
         return within_bounds
 
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
-
-    if benchmark:
-        h0 = (xmax - xmin) / 80.0
-    else:
-        h0 = (xmax - xmin) / 25.0
+    h0 = (xmax - xmin) / 500.0
 
     # currently not used
     num_points = len(all_points)
@@ -182,14 +169,9 @@ def sub(boundary_file_name,
     for i in range(len(all_points)):
         nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
 
-    if uniform_function:
-        h_function = huniform
-    else:
-      # def _r(points):
-      #     return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
-      # h_function = _r
-        h_function = huniform
-        h0 = (xmax - xmin) / 20.0
+    def _r(points):
+        return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
+    h_function = _r
 
     if plot_nearest_in_view:
         for i in range(len(all_points)):
@@ -229,8 +211,7 @@ if not os.getenv('ONLY_LOFOTEN', False):
         sub(boundary_file_name='test/boundary.txt',
             island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
             reference_file_name='test/result.txt',
-            max_num_iterations=100,
-            benchmark=True)
+            max_num_iterations=40)
 
 
 def dont_test_lofoten():
@@ -248,8 +229,7 @@ if os.getenv('ONLY_LOFOTEN', False):
             island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
             reference_file_name='test/result-lofoten.txt',
             skip_test=True,
-            max_num_iterations=1,
-            uniform_function=False)
+            max_num_iterations=1)
 
 
 def test_resolution():

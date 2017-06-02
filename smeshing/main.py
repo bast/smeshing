@@ -86,28 +86,37 @@ def movement_below_threshold(p, delta_t, Ftot, dptol, h0, within_bounds):
     return max(s) < (dptol * h0)**2.0
 
 
-def create_initial_distribution(points, h0):
+def create_initial_distribution(points_polygon, num_points, within_bounds_function, fh):
     """
     Create initial distribution in bounding box (equilateral triangles).
     """
-    xmin, xmax, ymin, ymax = get_bbox(points)
+    xmin, xmax, ymin, ymax = get_bbox(points_polygon)
 
-    xs = [xmin]
-    while xs[-1] <= xmax:
-        xs.append(xs[-1] + h0)
-    ys = [ymin]
-    while ys[-1] <= ymax:
-        ys.append(ys[-1] + h0 * math.sqrt(3.0) / 2.0)
+    random.seed(1)
 
-    points = []
-    for x in xs:
-        for row, y in enumerate(ys):
-            if row % 2 != 0:
-                # shift every second row to the right
-                points.append([x + h0 / 2.0, y])
-            else:
-                points.append([x, y])
-    return points
+    r0_max = 50000.0
+
+    count = 0
+
+    _p = []
+    while True:
+        _points = []
+        for _ in range(10000):
+            x = random.uniform(xmin, xmax)
+            y = random.uniform(ymin, ymax)
+            _points.append([x, y])
+        within_bounds = within_bounds_function(_points)
+        _points = [point for i, point in enumerate(_points) if within_bounds[i]]
+    
+        fh_applied = fh(_points)
+        r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(_points))]
+    
+        for i, point in enumerate(_points):
+            if random.uniform(0.0, 1.0) < r0[i] / r0_max:
+                _p.append(point)
+                count += 1
+                if count == num_points:
+                    return _p
 
 
 def form_bars(triangles):
@@ -199,11 +208,6 @@ def delaunay(p, within_bounds_function):
     return pold, bars, t
 
 
-def remove_points_outside_region(within_bounds_function, points):
-    within_bounds = within_bounds_function(points)
-    return [point for i, point in enumerate(points) if within_bounds[i]]
-
-
 def apply_rejection_method(fh, p):
     fh_applied = fh(p)
     r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(p))]
@@ -247,15 +251,11 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
     ttol = 0.1
     Fscale = 1.2
     delta_t = 0.2
-    geps = 0.001 * h0
     epsilon = sys.float_info.epsilon
     deps = math.sqrt(epsilon) * h0
     density_control_frequency = 30
 
-    # TODO combine these three steps
-    _points = create_initial_distribution(pv, h0)
-    p = remove_points_outside_region(within_bounds_function, _points)
-    p = apply_rejection_method(fh, p)
+    p = create_initial_distribution(pv, 2222, within_bounds_function, fh)
 
     nfix, p = prepend_fix_points(pfix, p)
 
@@ -299,8 +299,9 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
 
         p = bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_function)
 
-        if movement_below_threshold(p, delta_t, F, dptol, h0, within_bounds):
-            break
+      # for the moment not considered
+      # if movement_below_threshold(p, delta_t, F, dptol, h0, within_bounds):
+      #     break
 
     print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
     return p, t
