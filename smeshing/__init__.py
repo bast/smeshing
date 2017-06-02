@@ -40,9 +40,14 @@ def get_resolution(points,
     resolutions_np = np.zeros(num_points, dtype=np.float64)
     resolutions_p = _ffi.cast("double *", resolutions_np.ctypes.data)
 
+    x_np = np.array(x)
+    x_p = _ffi.cast("double *", x_np.ctypes.data)
+    y_np = np.array(y)
+    y_p = _ffi.cast("double *", y_np.ctypes.data)
+
     _lib.get_resolution(num_points,
-                        x,
-                        y,
+                        x_p,
+                        y_p,
                         resolutions_p,
                         use_tanh,
                         num_reference_points,
