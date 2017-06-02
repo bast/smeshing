@@ -271,8 +271,9 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
             if count > max_num_iterations:
                 break
 
-        if large_movement(p, pold, ttol, h0):
-            print('starting a delaunay')
+      # during debugging run delaunay every single time
+      # if large_movement(p, pold, ttol, h0):
+        if True:
             pold, bars, t = delaunay(p, within_bounds_function)
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
