@@ -229,14 +229,6 @@ if not os.getenv('ONLY_LOFOTEN', False):
         sub(boundary_file_name='test/boundary.txt',
             island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
             reference_file_name='test/result.txt',
-            max_num_iterations=100)
-
-
-if not os.getenv('ONLY_LOFOTEN', False):
-    def test_bench():
-        sub(boundary_file_name='test/boundary.txt',
-            island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
-            reference_file_name='test/result-bench.txt',
             max_num_iterations=100,
             benchmark=True)
 
