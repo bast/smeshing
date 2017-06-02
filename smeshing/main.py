@@ -12,6 +12,7 @@ import scipy.spatial as spspatial
 import math
 import sys
 import random
+import time
 from .bbox import get_bbox
 
 
@@ -255,7 +256,9 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
     deps = math.sqrt(epsilon) * h0
     density_control_frequency = 30
 
+    t0 = time.time()
     p = create_initial_distribution(pv, 2222, within_bounds_function, fh)
+    print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
 
     nfix, p = prepend_fix_points(pfix, p)
 
@@ -265,6 +268,7 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
     count = 0
     while True:
         print('iteration', count)
+        t0_iter = time.time()
         count += 1
 
         if max_num_iterations is not None:
@@ -274,18 +278,27 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
       # during debugging run delaunay every single time
       # if large_movement(p, pold, ttol, h0):
         if True:
+            t0 = time.time()
             pold, bars, t = delaunay(p, within_bounds_function)
+            print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
 
+        t0 = time.time()
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
+        print('time spent in get_bar_lengths: {0:.2f}'.format(time.time() - t0))
 
+        t0 = time.time()
         if count % density_control_frequency == 0:
             apply_density_control, p = density_control(p, L, L0, bars, nfix)
             if apply_density_control:
                 pold = [[point[0] + shift, point[1] + shift] for point in p]
                 continue
+        print('time spent in density_control: {0:.2f}'.format(time.time() - t0))
 
+        t0 = time.time()
         F = compute_forces(L0, L, bars, barvec, p)
+        print('time spent in compute_forces: {0:.2f}'.format(time.time() - t0))
 
+        t0 = time.time()
         # set force to zero at fixed points
         for i in range(nfix):
             F[i] = [0.0, 0.0]
@@ -294,14 +307,20 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
         for i in range(len(p)):
             p[i][0] += delta_t * F[i][0]
             p[i][1] += delta_t * F[i][1]
+        print('time spent in forces and update: {0:.2f}'.format(time.time() - t0))
 
+        t0 = time.time()
         within_bounds = within_bounds_function(p)
+        print('time spent in within_bounds: {0:.2f}'.format(time.time() - t0))
 
+        t0 = time.time()
         p = bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_function)
+        print('time spent in bring_outside_points_back_to_boundary: {0:.2f}'.format(time.time() - t0))
 
       # for the moment not considered
       # if movement_below_threshold(p, delta_t, F, dptol, h0, within_bounds):
       #     break
+        print('time spent in iter: {0:.2f}'.format(time.time() - t0_iter))
 
     print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
     return p, t
