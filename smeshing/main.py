@@ -252,10 +252,9 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
     deps = math.sqrt(epsilon) * h0
     density_control_frequency = 30
 
+    # TODO combine these three steps
     _points = create_initial_distribution(pv, h0)
-
     p = remove_points_outside_region(within_bounds_function, _points)
-
     p = apply_rejection_method(fh, p)
 
     nfix, p = prepend_fix_points(pfix, p)
@@ -265,6 +264,7 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
 
     count = 0
     while True:
+        print('iteration', count)
         count += 1
 
         if max_num_iterations is not None:
@@ -272,6 +272,7 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
                 break
 
         if large_movement(p, pold, ttol, h0):
+            print('starting a delaunay')
             pold, bars, t = delaunay(p, within_bounds_function)
 
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)

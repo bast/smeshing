@@ -189,7 +189,7 @@ def sub(boundary_file_name,
       #     return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
       # h_function = _r
         h_function = huniform
-        h0 = (xmax - xmin) / 120.0
+        h0 = (xmax - xmin) / 20.0
 
     if plot_nearest_in_view:
         for i in range(len(all_points)):
@@ -249,21 +249,14 @@ def dont_test_lofoten():
         max_num_iterations=5)
 
 
-def dont_test_lofoten_small():
-    sub(boundary_file_name='data/lofoten/simple-boundary.txt',
-        island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19, 247, 173, 210, 39, 95]],
-        reference_file_name='test/result-lofoten.txt',
-        skip_test=True,
-        max_num_iterations=5)
-
-
 if os.getenv('ONLY_LOFOTEN', False):
     def test_lofoten_tiny():
         sub(boundary_file_name='data/lofoten/simple-boundary.txt',
+          # island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19, 247, 173, 210, 39, 95]],
             island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
             reference_file_name='test/result-lofoten.txt',
             skip_test=True,
-            max_num_iterations=5,
+            max_num_iterations=1,
             uniform_function=False)
 
 
