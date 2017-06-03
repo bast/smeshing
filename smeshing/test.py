@@ -106,6 +106,13 @@ def sub(boundary_file_name,
         config_file_name,
         skip_test=False):
 
+    with open(config_file_name, 'r') as f:
+        try:
+            config = yaml.load(f, yaml.SafeLoader)
+        except yaml.YAMLError as exc:
+            print(exc)
+            sys.exit(-1)
+
     plot_nearest_in_view = False
     if plot_nearest_in_view:
         import matplotlib.pyplot as plt
@@ -171,7 +178,7 @@ def sub(boundary_file_name,
         nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
 
     def _r(points):
-        return get_resolution(points, False, all_points, nearest_distance_at_coastline_point, flanders_indices)
+        return get_resolution(points, config['use_tanh'], all_points, nearest_distance_at_coastline_point, flanders_indices)
     h_function = _r
 
     if plot_nearest_in_view:
@@ -186,13 +193,6 @@ def sub(boundary_file_name,
                          'g-')
                 print('-1 distance found for x={0} y={1}'.format(all_points[i][0], all_points[i][1]))
         plt.savefig('foo.png')
-
-    with open(config_file_name, 'r') as f:
-        try:
-            config = yaml.load(f, yaml.SafeLoader)
-        except yaml.YAMLError as exc:
-            print(exc)
-            sys.exit(-1)
 
     points, triangles = distmesh2d(config,
                                    all_points,
@@ -215,13 +215,13 @@ def sub(boundary_file_name,
 
 
 if os.getenv('ONLY_LOFOTEN', False):
-    def test_lofoten():
+    def dont_test_lofoten():
         sub(boundary_file_name='data/lofoten/boundary.txt',
             island_file_names=glob.glob('data/lofoten/islands/*.txt'),
             reference_file_name='data/lofoten/result.txt',
             config_file_name='data/lofoten/config.yml',
             skip_test=True)
-    def dont_test_lofoten_tiny():
+    def test_lofoten_tiny():
         sub(boundary_file_name='data/lofoten/simple-boundary.txt',
             island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
                                                                                   247, 173, 210, 39, 95]],
