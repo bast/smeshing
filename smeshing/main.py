@@ -95,7 +95,7 @@ def create_initial_distribution(points_polygon, num_points, within_bounds_functi
 
     random.seed(1)
 
-    r0_max = 50000.0
+    r0_max = 1000.0
 
     count = 0
 
