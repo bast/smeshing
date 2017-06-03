@@ -11,6 +11,7 @@ import math
 import polygons
 import flanders
 import glob
+import yaml
 from smeshing import get_resolution
 
 from .main import distmesh2d
@@ -102,7 +103,7 @@ def read_points(file_name):
 def sub(boundary_file_name,
         island_file_names,
         reference_file_name,
-        max_num_iterations,
+        config_file_name,
         skip_test=False):
 
     plot_nearest_in_view = False
@@ -186,13 +187,20 @@ def sub(boundary_file_name,
                 print('-1 distance found for x={0} y={1}'.format(all_points[i][0], all_points[i][1]))
         plt.savefig('foo.png')
 
-    points, triangles = distmesh2d(all_points,
+    with open(config_file_name, 'r') as f:
+        try:
+            config = yaml.load(f, yaml.SafeLoader)
+        except yaml.YAMLError as exc:
+            print(exc)
+            sys.exit(-1)
+
+    points, triangles = distmesh2d(config,
+                                   all_points,
                                    h_function,
                                    distance_function,
                                    within_bounds_function,
                                    h0,
-                                   all_points,
-                                   max_num_iterations)
+                                   all_points)
 
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
@@ -211,21 +219,21 @@ if os.getenv('ONLY_LOFOTEN', False):
         sub(boundary_file_name='data/lofoten/boundary.txt',
             island_file_names=glob.glob('data/lofoten/islands/*.txt'),
             reference_file_name='data/lofoten/result.txt',
-            skip_test=True,
-            max_num_iterations=4)
+            config_file_name='data/lofoten/config.yml',
+            skip_test=True)
     def dont_test_lofoten_tiny():
         sub(boundary_file_name='data/lofoten/simple-boundary.txt',
             island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
                                                                                   247, 173, 210, 39, 95]],
-            reference_file_name='test/result-lofoten.txt',
-            skip_test=True,
-            max_num_iterations=4)
+            reference_file_name='data/lofoten/result.txt',
+            config_file_name='data/lofoten/config.yml',
+            skip_test=True)
 else:
     def test_polygon():
         sub(boundary_file_name='data/fiction/boundary.txt',
             island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
             reference_file_name='data/fiction/result.txt',
-            max_num_iterations=40)
+            config_file_name='data/fiction/config.yml')
 
 
 def test_resolution():

@@ -87,15 +87,13 @@ def movement_below_threshold(p, delta_t, Ftot, dptol, h0, within_bounds):
     return max(s) < (dptol * h0)**2.0
 
 
-def create_initial_distribution(points_polygon, num_points, within_bounds_function, fh):
+def create_initial_distribution(r0_max, points_polygon, num_points, within_bounds_function, fh):
     """
     Create initial distribution in bounding box (equilateral triangles).
     """
     xmin, xmax, ymin, ymax = get_bbox(points_polygon)
 
     random.seed(1)
-
-    r0_max = 1000.0
 
     count = 0
 
@@ -201,19 +199,6 @@ def delaunay(p, within_bounds_function):
     return pold, bars, t
 
 
-def apply_rejection_method(fh, p):
-    fh_applied = fh(p)
-    r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(p))]
-    r0_max = max(r0)
-
-    random.seed(1)
-    _p = []
-    for i, point in enumerate(p):
-        if random.uniform(0.0, 1.0) < r0[i] / r0_max:
-            _p.append(point)
-    return _p
-
-
 def prepend_fix_points(pfix, p):
     if pfix is not None:
         nfix = len(pfix)
@@ -223,7 +208,7 @@ def prepend_fix_points(pfix, p):
     return nfix, p
 
 
-def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None, max_num_iterations=None):
+def distmesh2d(config, pv, fh, distance_function, within_bounds_function, h0, pfix=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -249,7 +234,7 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
     density_control_frequency = 30
 
     t0 = time.time()
-    p = create_initial_distribution(pv, 2222, within_bounds_function, fh)
+    p = create_initial_distribution(config['r0_max'], pv, config['num_points'], within_bounds_function, fh)
     print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
 
     nfix, p = prepend_fix_points(pfix, p)
@@ -264,9 +249,8 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
         t0_iter = time.time()
         count += 1
 
-        if max_num_iterations is not None:
-            if count > max_num_iterations:
-                break
+        if count > config['max_num_iterations']:
+            break
 
         t0 = time.time()
         pold, bars, t = delaunay(p, within_bounds_function)
