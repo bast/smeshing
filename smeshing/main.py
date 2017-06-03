@@ -99,6 +99,7 @@ def create_initial_distribution(r0_max, points_polygon, num_points, within_bound
 
     _p = []
     while True:
+        print('number of initial points {0} out of {1}'.format(count, num_points))
         _points = []
         for _ in range(10000):
             x = random.uniform(xmin, xmax)
