@@ -247,7 +247,7 @@ def test_resolution():
     points = []
     view_vectors = []
 
-    for island_file in ['data/small/1.txt', 'data/small/2.txt', 'data/small/3.txt', 'data/small/4.txt']:
+    for island_file in ['data/resolution/1.txt', 'data/resolution/2.txt', 'data/resolution/3.txt', 'data/resolution/4.txt']:
         islands_points = read_points(island_file)
         points += islands_points
         view_vectors += compute_view_vectors(islands_points, scale=1.0)
