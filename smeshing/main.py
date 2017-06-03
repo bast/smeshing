@@ -168,14 +168,6 @@ def get_bar_lengths(p, bars, fh, Fscale):
     return L, L0, barvec
 
 
-def large_movement(p, pold, ttol, h0):
-    _temp = 0.0
-    for i in range(len(p)):
-        _d = (p[i][0] - pold[i][0])**2.0 + (p[i][1] - pold[i][1])**2.0
-        _temp = max(_temp, _d)
-    return _temp > (ttol * h0)**2.0
-
-
 def delaunay(p, within_bounds_function):
     """
     Retriangulation by the Delaunay algorithm.
@@ -262,7 +254,8 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
 
     nfix, p = prepend_fix_points(pfix, p)
 
-    shift = (100.0 * ttol * h0)**2.0  # this shift is so that the first movement is large enough to trigger delaunay
+    # this shift was chosen so that the first movement is large enough to trigger delaunay
+    shift = (100.0 * ttol * h0)**2.0
     pold = [[point[0] + shift, point[1] + shift] for point in p]
 
     count = 0
@@ -275,12 +268,9 @@ def distmesh2d(pv, fh, distance_function, within_bounds_function, h0, pfix=None,
             if count > max_num_iterations:
                 break
 
-      # during debugging run delaunay every single time
-      # if large_movement(p, pold, ttol, h0):
-        if True:
-            t0 = time.time()
-            pold, bars, t = delaunay(p, within_bounds_function)
-            print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
+        t0 = time.time()
+        pold, bars, t = delaunay(p, within_bounds_function)
+        print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
