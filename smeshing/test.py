@@ -229,7 +229,7 @@ if os.getenv('ONLY_LOFOTEN', False):
             island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
             reference_file_name='test/result-lofoten.txt',
             skip_test=True,
-            max_num_iterations=1)
+            max_num_iterations=4)
 
 
 def test_resolution():
