@@ -208,25 +208,17 @@ def sub(boundary_file_name,
 
 if not os.getenv('ONLY_LOFOTEN', False):
     def test_polygon():
-        sub(boundary_file_name='test/boundary.txt',
-            island_file_names=['test/island1.txt', 'test/island2.txt', 'test/island3.txt'],
-            reference_file_name='test/result.txt',
+        sub(boundary_file_name='data/fiction/boundary.txt',
+            island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
+            reference_file_name='data/fiction/result.txt',
             max_num_iterations=40)
-
-
-def dont_test_lofoten():
-    sub(boundary_file_name='data/lofoten/boundary.txt',
-        island_file_names=glob.glob('data/lofoten/islands/*.txt'),
-        reference_file_name='test/result-lofoten.txt',
-        skip_test=True,
-        max_num_iterations=5)
 
 
 if os.getenv('ONLY_LOFOTEN', False):
     def test_lofoten():
         sub(boundary_file_name='data/lofoten/boundary.txt',
             island_file_names=glob.glob('data/lofoten/islands/*.txt'),
-            reference_file_name='test/result-lofoten.txt',
+            reference_file_name='data/lofoten/result.txt',
             skip_test=True,
             max_num_iterations=4)
     def dont_test_lofoten_tiny():
