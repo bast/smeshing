@@ -1,5 +1,6 @@
 scipy
 pep8
 pytest
+pyyaml
 git+https://github.com/bast/polygons.git
 git+https://github.com/bast/flanders.git
