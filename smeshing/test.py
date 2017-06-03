@@ -206,14 +206,6 @@ def sub(boundary_file_name,
         matches_with_reference(points, triangles, reference_file_name)
 
 
-if not os.getenv('ONLY_LOFOTEN', False):
-    def test_polygon():
-        sub(boundary_file_name='data/fiction/boundary.txt',
-            island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
-            reference_file_name='data/fiction/result.txt',
-            max_num_iterations=40)
-
-
 if os.getenv('ONLY_LOFOTEN', False):
     def test_lofoten():
         sub(boundary_file_name='data/lofoten/boundary.txt',
@@ -228,6 +220,12 @@ if os.getenv('ONLY_LOFOTEN', False):
             reference_file_name='test/result-lofoten.txt',
             skip_test=True,
             max_num_iterations=4)
+else:
+    def test_polygon():
+        sub(boundary_file_name='data/fiction/boundary.txt',
+            island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
+            reference_file_name='data/fiction/result.txt',
+            max_num_iterations=40)
 
 
 def test_resolution():
