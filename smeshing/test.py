@@ -223,10 +223,16 @@ def dont_test_lofoten():
 
 
 if os.getenv('ONLY_LOFOTEN', False):
-    def test_lofoten_tiny():
+    def test_lofoten():
+        sub(boundary_file_name='data/lofoten/boundary.txt',
+            island_file_names=glob.glob('data/lofoten/islands/*.txt'),
+            reference_file_name='test/result-lofoten.txt',
+            skip_test=True,
+            max_num_iterations=4)
+    def dont_test_lofoten_tiny():
         sub(boundary_file_name='data/lofoten/simple-boundary.txt',
-          # island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19, 247, 173, 210, 39, 95]],
-            island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [39, 95]],
+            island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
+                                                                                  247, 173, 210, 39, 95]],
             reference_file_name='test/result-lofoten.txt',
             skip_test=True,
             max_num_iterations=4)
