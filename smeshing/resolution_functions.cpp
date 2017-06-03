@@ -61,6 +61,7 @@ void get_resolution(const int num_points,
                     const double nearest_distance_at_coastline_point[],
                     const int flanders_indices[])
 {
+    #pragma omp parallel for
     for (int ip = 0; ip < num_points; ip++)
     {
         double r = std::numeric_limits<float>::max();
@@ -68,7 +69,7 @@ void get_resolution(const int num_points,
         {
             double distace_to_coastline_point =
                 get_distance(x[ip], y[ip], reference_x[ir], reference_y[ir]);
-       
+
             if (use_tanh)
             {
                 r = std::min(r,
