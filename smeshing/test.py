@@ -215,13 +215,13 @@ def sub(boundary_file_name,
 
 
 if os.getenv('ONLY_LOFOTEN', False):
-    def dont_test_lofoten():
+    def test_lofoten():
         sub(boundary_file_name='data/lofoten/boundary.txt',
             island_file_names=glob.glob('data/lofoten/islands/*.txt'),
             reference_file_name='data/lofoten/result.txt',
             config_file_name='data/lofoten/config.yml',
             skip_test=True)
-    def test_lofoten_tiny():
+    def dont_test_lofoten_tiny():
         sub(boundary_file_name='data/lofoten/simple-boundary.txt',
             island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
                                                                                   247, 173, 210, 39, 95]],
