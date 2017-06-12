@@ -8,61 +8,13 @@
 import sys
 import os
 import math
-import polygons
 import flanders
 import glob
-import yaml
 from smeshing import get_resolution
 
-from .main import distmesh2d
+from .main import distmesh2d, run, read_points, compute_view_vectors, get_distance
 from .file_io import read_data, write_data
 from .bbox import get_bbox
-from .clockwise import edges_sum
-
-
-def normalize(vector, s):
-    norm = math.sqrt(vector[0]**2.0 + vector[1]**2.0)
-    return (s*vector[0]/norm, s*vector[1]/norm)
-
-
-def get_normal_vectors(points, s):
-    num_points = len(points)
-    vectors = []
-    for i in range(num_points):
-        i_before = i - 1
-        i_after = (i + 1)%num_points
-        vector = (points[i_after][1] - points[i_before][1], -(points[i_after][0] - points[i_before][0]))
-        vector = normalize(vector, s)
-        vectors.append(vector)
-    return vectors
-
-
-def compute_view_vectors(points, scale):
-    """
-    If scale is negative, then view vectors are towards inside.
-    """
-
-    # we figure out whether polygon is clockwise or anticlockwise
-    if edges_sum(points) < 0.0:
-        s = +1.0*scale
-    else:
-        s = -1.0*scale
-
-    # we remove the last point since it repeats the first
-    # we assume clock-wise closed loops
-    _points = [points[i] for i in range(len(points) - 1)]
-
-    if len(_points) > 2:
-        vectors = get_normal_vectors(_points, s)
-    else:
-        # this is a "linear" island consisting of two points
-        vectors = []
-        vector = (_points[1][0] - _points[0][0], _points[1][1] - _points[0][1])
-        vectors.append(normalize(vector, -s))
-        vectors.append(normalize(vector, s))
-
-    # we add the removed point again
-    return vectors + [vectors[0]]
 
 
 def matches_with_reference(ps, ts, file_name):
@@ -84,129 +36,6 @@ def matches_with_reference(ps, ts, file_name):
     for i in range(len(xs)):
         assert abs((xs[i] - xs_ref[i]) / xs[i]) < 1.0e-5
         assert abs((ys[i] - ys_ref[i]) / ys[i]) < 1.0e-5
-
-
-def get_distance(p1, p2):
-    return math.sqrt((p2[0] - p1[0])**2.0 + (p2[1] - p1[1])**2.0)
-
-
-def read_points(file_name):
-    points = []
-    with open(file_name, 'r') as f:
-        for line in f:
-            x = float(line.split()[0])
-            y = float(line.split()[1])
-            points.append([x, y])
-    return points
-
-
-def run(boundary_file_name,
-        island_file_names,
-        config_file_name):
-
-    with open(config_file_name, 'r') as f:
-        try:
-            config = yaml.load(f, yaml.SafeLoader)
-        except yaml.YAMLError as exc:
-            print(exc)
-            sys.exit(-1)
-
-    plot_nearest_in_view = False
-    if plot_nearest_in_view:
-        import matplotlib.pyplot as plt
-
-    all_polygons_context = polygons.new_context()
-    boundary_context = polygons.new_context()
-    islands_context = polygons.new_context()
-
-    boundary_points = read_points(boundary_file_name)
-    polygons.add_polygon(all_polygons_context, boundary_points)
-    polygons.add_polygon(boundary_context, boundary_points)
-    view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
-    all_points = boundary_points
-    if plot_nearest_in_view:
-        for i in range(len(boundary_points) - 1):
-            plt.plot([boundary_points[i][0], boundary_points[i + 1][0]],
-                     [boundary_points[i][1], boundary_points[i + 1][1]],
-                     'r-')
-
-    for island_file in island_file_names:
-        islands_points = read_points(island_file)
-        polygons.add_polygon(all_polygons_context, islands_points)
-        polygons.add_polygon(islands_context, islands_points)
-        all_points += islands_points
-        view_vectors += compute_view_vectors(islands_points, scale=1.0)
-        if plot_nearest_in_view:
-            for i in range(len(islands_points) - 1):
-                plt.plot([islands_points[i][0], islands_points[i + 1][0]],
-                         [islands_points[i][1], islands_points[i + 1][1]],
-                         'b-')
-
-    def distance_function(points):
-        return polygons.get_distances(all_polygons_context, points)
-
-    def within_bounds_function(points):
-        within_boundary = polygons.contains_points(boundary_context, points)
-        within_islands = polygons.contains_points(islands_context, points)  # FIXME we don't need to check all points
-        within_bounds = []
-        for i, point in enumerate(points):
-            if not within_boundary[i]:
-                within_bounds.append(False)
-            else:
-                if within_islands[i]:
-                    within_bounds.append(False)
-                else:
-                    within_bounds.append(True)
-        return within_bounds
-
-    xmin, xmax, ymin, ymax = get_bbox(boundary_points)
-    h0 = (xmax - xmin) / 500.0
-
-    # currently not used
-    num_points = len(all_points)
-    flanders_context = flanders.new_context(num_points, all_points)
-    angles_deg = [90.0 for _ in range(num_points)]
-    flanders_indices = flanders.search_neighbor(context=flanders_context,
-                                                ref_indices=list(range(num_points)),
-                                                view_vectors=view_vectors,
-                                                angles_deg=angles_deg)
-
-    nearest_distance_at_coastline_point = []
-    for i in range(len(all_points)):
-        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
-
-    def _r(points):
-        return get_resolution(points, config['use_tanh'], all_points, nearest_distance_at_coastline_point, flanders_indices)
-    h_function = _r
-
-    if plot_nearest_in_view:
-        for i in range(len(all_points)):
-            if flanders_indices[i] > -1:
-                plt.plot([all_points[i][0], all_points[flanders_indices[i]][0]],
-                         [all_points[i][1], all_points[flanders_indices[i]][1]],
-                         'k-')
-            else:
-                plt.plot([all_points[i][0], 0.0],
-                         [all_points[i][1], 0.0],
-                         'g-')
-                print('-1 distance found for x={0} y={1}'.format(all_points[i][0], all_points[i][1]))
-        plt.savefig('foo.png')
-
-    points, triangles = distmesh2d(config,
-                                   all_points,
-                                   h_function,
-                                   distance_function,
-                                   within_bounds_function,
-                                   h0,
-                                   all_points)
-
-    polygons.free_context(all_polygons_context)
-    polygons.free_context(boundary_context)
-    polygons.free_context(islands_context)
-
-    flanders.free_context(flanders_context)
-
-    return points, triangles
 
 
 if os.getenv('ONLY_LOFOTEN', False):
