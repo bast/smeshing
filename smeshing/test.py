@@ -100,11 +100,9 @@ def read_points(file_name):
     return points
 
 
-def sub(boundary_file_name,
+def run(boundary_file_name,
         island_file_names,
-        reference_file_name,
-        config_file_name,
-        skip_test=False):
+        config_file_name):
 
     with open(config_file_name, 'r') as f:
         try:
@@ -208,32 +206,30 @@ def sub(boundary_file_name,
 
     flanders.free_context(flanders_context)
 
-    if os.getenv('GENERATE_TESTS', False):
-        write_data(points, triangles, reference_file_name)
-    if not skip_test:
-        matches_with_reference(points, triangles, reference_file_name)
+    return points, triangles
 
 
 if os.getenv('ONLY_LOFOTEN', False):
+    reference_file_name = 'data/lofoten/result.txt'
     def test_lofoten():
-        sub(boundary_file_name='data/lofoten/boundary.txt',
-            island_file_names=glob.glob('data/lofoten/islands/*.txt'),
-            reference_file_name='data/lofoten/result.txt',
-            config_file_name='data/lofoten/config.yml',
-            skip_test=True)
+        points, triangles = run(boundary_file_name='data/lofoten/boundary.txt',
+                                island_file_names=glob.glob('data/lofoten/islands/*.txt'),
+                                config_file_name='data/lofoten/config.yml')
+        write_data(points, triangles, reference_file_name)
     def dont_test_lofoten_tiny():
-        sub(boundary_file_name='data/lofoten/simple-boundary.txt',
-            island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
-                                                                                  247, 173, 210, 39, 95]],
-            reference_file_name='data/lofoten/result.txt',
-            config_file_name='data/lofoten/config.yml',
-            skip_test=True)
+        points, triangles = run(boundary_file_name='data/lofoten/simple-boundary.txt',
+                                island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
+                                                                                                      247, 173, 210, 39, 95]],
+                                config_file_name='data/lofoten/config.yml')
 else:
     def test_polygon():
-        sub(boundary_file_name='data/fiction/boundary.txt',
-            island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
-            reference_file_name='data/fiction/result.txt',
-            config_file_name='data/fiction/config.yml')
+        reference_file_name = 'data/fiction/result.txt'
+        points, triangles = run(boundary_file_name='data/fiction/boundary.txt',
+                                island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
+                                config_file_name='data/fiction/config.yml')
+        if os.getenv('GENERATE_TESTS', False):
+            write_data(points, triangles, reference_file_name)
+        matches_with_reference(points, triangles, reference_file_name)
 
 
 def test_resolution():
