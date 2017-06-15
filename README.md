@@ -52,13 +52,21 @@ python smeshing/plot.py test/circle.txt circle.png
 ```
 
 
-## Example run
+## Example installation and run
 
 ```
+virtualenv venv
+source venv/bin/activate
+
+pip install git+https://github.com/bast/polygons.git
+pip install git+https://github.com/bast/flanders.git
+pip install git+https://github.com/bast/smeshing.git
+
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
-SMESHING_BUILD_DIR=build python smeshing.py --boundary=data/fiction/boundary.txt --islands='data/fiction/island*.txt' --config=data/fiction/config.yml
+
+smesh --boundary=/home/bast/tmp/smeshing/data/fiction/boundary.txt --islands='/home/bast/tmp/smeshing/data/fiction/island*.txt' --config=/home/bast/tmp/smeshing/data/fiction/config.yml
 ```
 
 
