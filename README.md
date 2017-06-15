@@ -52,6 +52,16 @@ python smeshing/plot.py test/circle.txt circle.png
 ```
 
 
+## Example run
+
+```
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+SMESHING_BUILD_DIR=build python smeshing.py --boundary=data/fiction/boundary.txt --islands='data/fiction/island*.txt' --config=data/fiction/config.yml
+```
+
+
 ## References
 
 The DistMesh algorithm is described in the following two references.
