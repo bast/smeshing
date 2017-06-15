@@ -14,10 +14,8 @@ def parse_command_line():
     return in_file_name, out_file_name
 
 
-def generate_plot(x, y, triangles, out_file_name):
+def generate_plot(points, triangles, out_file_name):
     import matplotlib.pyplot as plt
-
-    assert len(x) == len(y)
 
     # remove triangles outside bounds
     # not sure how they can appear
@@ -25,10 +23,12 @@ def generate_plot(x, y, triangles, out_file_name):
     for triple in triangles:
         keep_triangle = True
         for t in triple:
-            if not -1 < t < len(x):
+            if not -1 < t < len(points):
                 keep_triangle = False
         if keep_triangle:
                 _triangles.append(triple)
+
+    x, y = zip(*points)
 
     plt.figure()
     plt.gca().set_aspect('equal')
@@ -38,6 +38,6 @@ def generate_plot(x, y, triangles, out_file_name):
 
 in_file_name, out_file_name = parse_command_line()
 
-x, y, triangles = file_io.read_data(in_file_name)
+points, triangles = file_io.read_data(in_file_name)
 
-generate_plot(x, y, triangles, out_file_name)
+generate_plot(points, triangles, out_file_name)

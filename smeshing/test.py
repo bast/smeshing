@@ -27,15 +27,15 @@ def matches_with_reference(ps, ts, file_name):
         xs.append(p[0])
         ys.append(p[1])
 
-    xs_ref, ys_ref, ts_ref = read_data(file_name)
+    points_ref, ts_ref = read_data(file_name)
     for i, t in enumerate(ts):
         assert t[0] == ts_ref[i][0]
         assert t[1] == ts_ref[i][1]
         assert t[2] == ts_ref[i][2]
 
     for i in range(len(xs)):
-        assert abs((xs[i] - xs_ref[i]) / xs[i]) < 1.0e-5
-        assert abs((ys[i] - ys_ref[i]) / ys[i]) < 1.0e-5
+        assert abs((xs[i] - points_ref[i][0]) / xs[i]) < 1.0e-5
+        assert abs((ys[i] - points_ref[i][1]) / ys[i]) < 1.0e-5
 
 
 if os.getenv('ONLY_LOFOTEN', False):
