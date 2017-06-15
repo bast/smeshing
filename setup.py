@@ -75,6 +75,6 @@ setup(name='smeshing',
       url='https://github.com/bast/smeshing',
       scripts=['smesh'],
       packages=['smeshing'],
-      license='GPL',
+      license='GPL-3.0',
       install_requires=['cffi', 'click', 'scipy', 'pyyaml'],
       cmdclass={'install': install, 'build': build})
