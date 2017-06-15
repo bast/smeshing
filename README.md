@@ -66,8 +66,16 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 
-smesh --boundary=/home/bast/tmp/smeshing/data/fiction/boundary.txt --islands='/home/bast/tmp/smeshing/data/fiction/island*.txt' --config=/home/bast/tmp/smeshing/data/fiction/config.yml
+smesh --boundary=/home/bast/tmp/smeshing/data/fiction/boundary.txt \
+      --islands='/home/bast/tmp/smeshing/data/fiction/island*.txt' \
+      --config=/home/bast/tmp/smeshing/data/fiction/config.yml \
+      --output=/home/bast/tmp/data.txt
 ```
+
+
+## Restart
+
+It is possible to restart a calculation if you provide `--restart=/path/to/restart/file`.
 
 
 ## References

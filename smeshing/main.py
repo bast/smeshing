@@ -19,6 +19,7 @@ import flanders
 from smeshing import get_resolution
 from .bbox import get_bbox
 from .clockwise import edges_sum
+from .file_io import read_data
 
 
 def density_control(p, L, L0, bars, nfix):
@@ -214,7 +215,14 @@ def prepend_fix_points(pfix, p):
     return nfix, p
 
 
-def distmesh2d(config, pv, fh, distance_function, within_bounds_function, h0, pfix=None):
+def distmesh2d(config,
+               pv,
+               fh,
+               distance_function,
+               within_bounds_function,
+               h0,
+               pfix=None,
+               restart_file_name=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
 
@@ -239,11 +247,14 @@ def distmesh2d(config, pv, fh, distance_function, within_bounds_function, h0, pf
     deps = math.sqrt(epsilon) * h0
     density_control_frequency = 30
 
-    t0 = time.time()
-    p = create_initial_distribution(config['r0_max'], pv, config['num_points'], within_bounds_function, fh)
-    print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
-
-    nfix, p = prepend_fix_points(pfix, p)
+    if restart_file_name is None:
+        t0 = time.time()
+        p = create_initial_distribution(config['r0_max'], pv, config['num_points'], within_bounds_function, fh)
+        print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
+        nfix, p = prepend_fix_points(pfix, p)
+    else:
+        nfix = len(pfix)
+        p, _ = read_data(restart_file_name)
 
     # this shift was chosen so that the first movement is large enough to trigger delaunay
     shift = (100.0 * ttol * h0)**2.0
@@ -308,7 +319,8 @@ def distmesh2d(config, pv, fh, distance_function, within_bounds_function, h0, pf
 
 def run(boundary_file_name,
         island_file_names,
-        config_file_name):
+        config_file_name,
+        restart_file_name=None):
 
     with open(config_file_name, 'r') as f:
         try:
@@ -404,7 +416,8 @@ def run(boundary_file_name,
                                    distance_function,
                                    within_bounds_function,
                                    h0,
-                                   all_points)
+                                   all_points,
+                                   restart_file_name)
 
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
