@@ -48,7 +48,7 @@ py.test -vv smeshing/test.py
 
 Example:
 ```
-python smeshing/plot.py test/circle.txt circle.png
+python smeshing/plot.py data/fiction/result.txt example.png
 ```
 
 
