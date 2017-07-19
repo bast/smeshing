@@ -4,6 +4,11 @@ min_cmake_version: 2.8
 
 default_build_type: release
 
+language:
+  - CXX
+
+setup_script: None
+
 url_root: https://github.com/coderefinery/autocmake/raw/master/
 
 modules:
