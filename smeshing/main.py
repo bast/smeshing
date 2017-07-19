@@ -359,8 +359,9 @@ def run(boundary_file_name,
     islands_context = polygons.new_context()
 
     boundary_points = read_points(boundary_file_name)
-    polygons.add_polygon(all_polygons_context, boundary_points, [1.0]*len(boundary_points))
-    polygons.add_polygon(boundary_context, boundary_points, [1.0]*len(boundary_points))
+    polygons.add_polygon(all_polygons_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
+    polygons.add_polygon(boundary_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
+    counter = len(boundary_points)
     all_points = boundary_points
     if plot_nearest_in_view:
         for i in range(len(boundary_points) - 1):
@@ -370,8 +371,9 @@ def run(boundary_file_name,
 
     for island_file in island_file_names:
         islands_points = read_points(island_file)
-        polygons.add_polygon(all_polygons_context, islands_points, [1.0]*len(islands_points))
-        polygons.add_polygon(islands_context, islands_points, [1.0]*len(islands_points))
+        polygons.add_polygon(all_polygons_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
+        polygons.add_polygon(islands_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
+        counter += len(islands_points)
         all_points += islands_points
         if plot_nearest_in_view:
             for i in range(len(islands_points) - 1):
@@ -400,7 +402,8 @@ def run(boundary_file_name,
     h0 = (xmax - xmin) / 500.0
 
     def _r(points):
-        return get_resolution(points, config['use_tanh'], all_points, nearest_distance_at_coastline_point, flanders_indices)
+      # return get_resolution(points, config['use_tanh'], all_points, nearest_distance_at_coastline_point, flanders_indices)
+        return polygons.get_distances_vertex(all_polygons_context, points, weighted=True)
     h_function = _r
 
     if plot_nearest_in_view:
