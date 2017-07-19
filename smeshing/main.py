@@ -333,6 +333,27 @@ def run(boundary_file_name,
     if plot_nearest_in_view:
         import matplotlib.pyplot as plt
 
+    boundary_points = read_points(boundary_file_name)
+    view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
+    all_points = boundary_points
+    for island_file in island_file_names:
+        islands_points = read_points(island_file)
+        view_vectors += compute_view_vectors(islands_points, scale=1.0)
+        all_points += islands_points
+    num_points = len(all_points)
+    flanders_context = flanders.new_context(num_points, all_points)
+    angles_deg = [90.0 for _ in range(num_points)]
+    flanders_indices = flanders.search_neighbor(context=flanders_context,
+                                                ref_indices=list(range(num_points)),
+                                                view_vectors=view_vectors,
+                                                angles_deg=angles_deg)
+
+    nearest_distance_at_coastline_point = []
+    for i in range(len(all_points)):
+        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
+
+    flanders.free_context(flanders_context)
+
     all_polygons_context = polygons.new_context()
     boundary_context = polygons.new_context()
     islands_context = polygons.new_context()
@@ -340,7 +361,6 @@ def run(boundary_file_name,
     boundary_points = read_points(boundary_file_name)
     polygons.add_polygon(all_polygons_context, boundary_points, [1.0]*len(boundary_points))
     polygons.add_polygon(boundary_context, boundary_points, [1.0]*len(boundary_points))
-    view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
     if plot_nearest_in_view:
         for i in range(len(boundary_points) - 1):
@@ -353,7 +373,6 @@ def run(boundary_file_name,
         polygons.add_polygon(all_polygons_context, islands_points, [1.0]*len(islands_points))
         polygons.add_polygon(islands_context, islands_points, [1.0]*len(islands_points))
         all_points += islands_points
-        view_vectors += compute_view_vectors(islands_points, scale=1.0)
         if plot_nearest_in_view:
             for i in range(len(islands_points) - 1):
                 plt.plot([islands_points[i][0], islands_points[i + 1][0]],
@@ -379,19 +398,6 @@ def run(boundary_file_name,
 
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
     h0 = (xmax - xmin) / 500.0
-
-    # currently not used
-    num_points = len(all_points)
-    flanders_context = flanders.new_context(num_points, all_points)
-    angles_deg = [90.0 for _ in range(num_points)]
-    flanders_indices = flanders.search_neighbor(context=flanders_context,
-                                                ref_indices=list(range(num_points)),
-                                                view_vectors=view_vectors,
-                                                angles_deg=angles_deg)
-
-    nearest_distance_at_coastline_point = []
-    for i in range(len(all_points)):
-        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
 
     def _r(points):
         return get_resolution(points, config['use_tanh'], all_points, nearest_distance_at_coastline_point, flanders_indices)
@@ -422,8 +428,6 @@ def run(boundary_file_name,
     polygons.free_context(all_polygons_context)
     polygons.free_context(boundary_context)
     polygons.free_context(islands_context)
-
-    flanders.free_context(flanders_context)
 
     return points, triangles
 
