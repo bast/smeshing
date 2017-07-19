@@ -338,8 +338,8 @@ def run(boundary_file_name,
     islands_context = polygons.new_context()
 
     boundary_points = read_points(boundary_file_name)
-    polygons.add_polygon(all_polygons_context, boundary_points)
-    polygons.add_polygon(boundary_context, boundary_points)
+    polygons.add_polygon(all_polygons_context, boundary_points, [1.0]*len(boundary_points))
+    polygons.add_polygon(boundary_context, boundary_points, [1.0]*len(boundary_points))
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
     if plot_nearest_in_view:
@@ -350,8 +350,8 @@ def run(boundary_file_name,
 
     for island_file in island_file_names:
         islands_points = read_points(island_file)
-        polygons.add_polygon(all_polygons_context, islands_points)
-        polygons.add_polygon(islands_context, islands_points)
+        polygons.add_polygon(all_polygons_context, islands_points, [1.0]*len(islands_points))
+        polygons.add_polygon(islands_context, islands_points, [1.0]*len(islands_points))
         all_points += islands_points
         view_vectors += compute_view_vectors(islands_points, scale=1.0)
         if plot_nearest_in_view:
@@ -361,7 +361,7 @@ def run(boundary_file_name,
                          'b-')
 
     def distance_function(points):
-        return polygons.get_distances(all_polygons_context, points)
+        return polygons.get_distances_edge(all_polygons_context, points)
 
     def within_bounds_function(points):
         within_boundary = polygons.contains_points(boundary_context, points)
