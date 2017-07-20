@@ -354,7 +354,7 @@ def run(boundary_file_name,
 
     nearest_distance_at_coastline_point = []
     for i in range(len(all_points)):
-        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
+        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]])/6.0)  # FIXME 6.0 is hardcoded
 
     flanders.free_context(flanders_context)
 
@@ -406,7 +406,8 @@ def run(boundary_file_name,
     h0 = (xmax - xmin) / 500.0
 
     def _r(points):
-        return polygons.get_distances_vertex(all_polygons_context, points, weighted=True)
+        # FIXME slope is hardcoded
+        return polygons.get_distances_vertex_weighted(all_polygons_context, points, [0.995792]*len(points))
     h_function = _r
 
     if plot_nearest_in_view:
