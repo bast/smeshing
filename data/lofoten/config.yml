@@ -1,4 +1,3 @@
 r0_max: 0.000001
 num_points: 1000
 max_num_iterations: 3
-use_tanh: False
