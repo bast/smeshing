@@ -16,6 +16,7 @@ import yaml
 import time
 import polygons
 import flanders
+import delaunay
 from .bbox import get_bbox
 from .clockwise import edges_sum
 from .file_io import read_data
@@ -180,7 +181,9 @@ def solve_delaunay(p, within_bounds_function):
     pold = []
     for _p in p:
         pold.append([_p[0], _p[1]])
-    _triangles = spspatial.Delaunay(p).vertices       # List of triangles
+
+  # _triangles = spspatial.Delaunay(p).vertices       # List of triangles
+    _triangles = delaunay.solve(p)
 
     triangle_centroids = []
     for triangle in _triangles:

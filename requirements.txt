@@ -5,3 +5,4 @@ pyyaml
 click
 git+https://github.com/bast/polygons.git
 git+https://github.com/bast/flanders.git
+git+https://github.com/bast/delaunay.git@radovan/python-interface
