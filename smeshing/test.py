@@ -10,7 +10,6 @@ import os
 import math
 import flanders
 import glob
-from smeshing import get_resolution
 
 from .main import distmesh2d, run, read_points, compute_view_vectors, get_distance
 from .file_io import read_data, write_data
@@ -59,55 +58,3 @@ else:
         if os.getenv('GENERATE_TESTS', False):
             write_data(points, triangles, reference_file_name)
         matches_with_reference(points, triangles, reference_file_name)
-
-
-def test_resolution():
-    plot_nearest_in_view = False
-
-    if plot_nearest_in_view:
-        import matplotlib.pyplot as plt
-
-    points = []
-    view_vectors = []
-
-    for island_file in ['data/resolution/1.txt', 'data/resolution/2.txt', 'data/resolution/3.txt', 'data/resolution/4.txt']:
-        islands_points = read_points(island_file)
-        points += islands_points
-        view_vectors += compute_view_vectors(islands_points, scale=1.0)
-        if plot_nearest_in_view:
-            for i in range(len(islands_points) - 1):
-                plt.plot([islands_points[i][0], islands_points[i + 1][0]],
-                         [islands_points[i][1], islands_points[i + 1][1]],
-                         'b-')
-
-    num_points = len(points)
-    flanders_context = flanders.new_context(num_points, points)
-
-    angles_deg = [90.0 for _ in range(num_points)]
-    flanders_indices = flanders.search_neighbor(context=flanders_context,
-                                                ref_indices=list(range(num_points)),
-                                                view_vectors=view_vectors,
-                                                angles_deg=angles_deg)
-
-    nearest_distance_at_coastline_point = []
-    for i in range(len(points)):
-        nearest_distance_at_coastline_point.append(get_distance(points[i], points[flanders_indices[i]]))
-
-    for (x, y, r) in [(69.731182, 70.688529, 10.55650049085928)]:
-        _r = get_resolution([(x, y)], False, points, nearest_distance_at_coastline_point, flanders_indices)
-        assert abs(_r[0] - r) < 1.0e-4
-
-    for (x, y, r) in [(69.731182, 70.688529, 4.3657),
-                      (29.7312, 41.3754, 2.5481)]:
-        _r = get_resolution([(x, y)], True, points, nearest_distance_at_coastline_point, flanders_indices)
-        assert abs(_r[0] - r) < 1.0e-4
-
-    if plot_nearest_in_view:
-        for i in range(len(points)):
-            if flanders_indices[i] > -1:
-                plt.plot([points[i][0], points[flanders_indices[i]][0]],
-                         [points[i][1], points[flanders_indices[i]][1]],
-                         'k-')
-                print(points[i], flanders_indices[i], get_distance(points[i], points[flanders_indices[i]]))
-        plt.savefig('foo.png')
-    flanders.free_context(flanders_context)

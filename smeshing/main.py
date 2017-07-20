@@ -16,7 +16,6 @@ import yaml
 import time
 import polygons
 import flanders
-from smeshing import get_resolution
 from .bbox import get_bbox
 from .clockwise import edges_sum
 from .file_io import read_data
@@ -402,7 +401,6 @@ def run(boundary_file_name,
     h0 = (xmax - xmin) / 500.0
 
     def _r(points):
-      # return get_resolution(points, config['use_tanh'], all_points, nearest_distance_at_coastline_point, flanders_indices)
         return polygons.get_distances_vertex(all_polygons_context, points, weighted=True)
     h_function = _r
 

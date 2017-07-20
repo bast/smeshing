@@ -43,14 +43,9 @@ install:
   - pip install git+https://github.com/bast/flanders.git
 
 script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
-  - cd ..
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
-    then SMESHING_BUILD_DIR=build py.test -vv smeshing/test.py --cov smeshing;
-    else SMESHING_BUILD_DIR=build py.test -vv smeshing/test.py;
+    then py.test -vv smeshing/test.py --cov smeshing;
+    else py.test -vv smeshing/test.py;
     fi
 #   pep8 smeshing/* --ignore E501
 
