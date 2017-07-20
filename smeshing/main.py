@@ -8,7 +8,6 @@
 # have received a copy of the license along with this program. If not,
 # see <http://www.gnu.org/licenses/>.
 
-import scipy.spatial as spspatial
 import math
 import sys
 import random
@@ -182,7 +181,6 @@ def solve_delaunay(p, within_bounds_function):
     for _p in p:
         pold.append([_p[0], _p[1]])
 
-  # _triangles = spspatial.Delaunay(p).vertices       # List of triangles
     _triangles = delaunay.solve(p)
 
     triangle_centroids = []

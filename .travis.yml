@@ -37,11 +37,7 @@ matrix:
 
 install:
   - pip install --upgrade pip setuptools wheel  # https://github.com/travis-ci/travis-ci/issues/2650#issuecomment-266721196
-  - pip install --only-binary=scipy scipy
-  - pip install pytest pytest-cov python-coveralls
-  - pip install git+https://github.com/bast/polygons.git
-  - pip install git+https://github.com/bast/flanders.git
-  - pip install git+https://github.com/bast/delaunay.git@radovan/python-interface
+  - pip install -r requirements.txt
 
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];

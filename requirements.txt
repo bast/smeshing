@@ -1,8 +1,9 @@
-scipy
 pep8
 pytest
 pyyaml
 click
+pytest-cov
+python-coveralls
 git+https://github.com/bast/polygons.git
 git+https://github.com/bast/flanders.git
 git+https://github.com/bast/delaunay.git@radovan/python-interface

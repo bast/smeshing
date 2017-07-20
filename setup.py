@@ -76,5 +76,5 @@ setup(name='smeshing',
       scripts=['smesh'],
       packages=['smeshing'],
       license='GPL-3.0',
-      install_requires=['cffi', 'click', 'scipy', 'pyyaml'],
+      install_requires=['cffi', 'click', 'pyyaml'],
       cmdclass={'install': install, 'build': build})
