@@ -28,7 +28,7 @@ resolution functions but later the code will be generalized and the hardcoded
 aspects will be abstracted out.
 
 
-## Installing dependencies
+## Installing dependencies for development
 
 ```
 virtualenv venv
@@ -52,7 +52,7 @@ python smeshing/plot.py data/fiction/result.txt example.png
 ```
 
 
-## Example run
+## Example installation and run
 
 ```
 virtualenv venv
@@ -60,7 +60,7 @@ source venv/bin/activate
 
 pip install git+https://github.com/bast/polygons.git
 pip install git+https://github.com/bast/flanders.git
-pip install git+https://github.com/bast/delaunay.git
+pip install git+https://github.com/bast/delaunay.git@radovan/python-interface
 pip install git+https://github.com/bast/smeshing.git
 
 smesh --boundary=/home/bast/tmp/smeshing/data/fiction/boundary.txt \
