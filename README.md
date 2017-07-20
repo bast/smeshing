@@ -40,7 +40,7 @@ pip install -r requirements.txt
 ## Running tests
 
 ```
-py.test -vv smeshing/test.py
+py.test -vv smeshing/*.py
 ```
 
 
@@ -52,7 +52,7 @@ python smeshing/plot.py data/fiction/result.txt example.png
 ```
 
 
-## Example installation and run
+## Example run
 
 ```
 virtualenv venv
@@ -60,11 +60,8 @@ source venv/bin/activate
 
 pip install git+https://github.com/bast/polygons.git
 pip install git+https://github.com/bast/flanders.git
+pip install git+https://github.com/bast/delaunay.git
 pip install git+https://github.com/bast/smeshing.git
-
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
 
 smesh --boundary=/home/bast/tmp/smeshing/data/fiction/boundary.txt \
       --islands='/home/bast/tmp/smeshing/data/fiction/island*.txt' \
