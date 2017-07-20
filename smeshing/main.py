@@ -172,7 +172,7 @@ def get_bar_lengths(p, bars, fh, Fscale):
     return L, L0, barvec
 
 
-def delaunay(p, within_bounds_function):
+def solve_delaunay(p, within_bounds_function):
     """
     Retriangulation by the Delaunay algorithm.
     """
@@ -273,7 +273,7 @@ def distmesh2d(config,
             break
 
         t0 = time.time()
-        pold, bars, t = delaunay(p, within_bounds_function)
+        pold, bars, t = solve_delaunay(p, within_bounds_function)
         print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
