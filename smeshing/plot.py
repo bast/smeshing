@@ -36,8 +36,7 @@ def generate_plot(points, triangles, out_file_name):
     plt.savefig(out_file_name, dpi=300)
 
 
-in_file_name, out_file_name = parse_command_line()
-
-points, triangles = file_io.read_data(in_file_name)
-
-generate_plot(points, triangles, out_file_name)
+if __name__ == '__main__':
+    in_file_name, out_file_name = parse_command_line()
+    points, triangles = file_io.read_data(in_file_name)
+    generate_plot(points, triangles, out_file_name)

@@ -2,8 +2,7 @@
 
 import click
 import glob
-from smeshing.main import run
-from smeshing.file_io import write_data
+import smeshing
 
 
 @click.command()
@@ -14,13 +13,13 @@ from smeshing.file_io import write_data
 @click.option('--restart', help='Restart from this file.')
 def main(boundary, islands, config, output, restart):
 
-    points, triangles = run(boundary_file_name=boundary,
-                            island_file_names=glob.glob(islands),
-                            config_file_name=config,
-                            restart_file_name=restart)
+    points, triangles = smeshing.run(boundary_file_name=boundary,
+                                     island_file_names=glob.glob(islands),
+                                     config_file_name=config,
+                                     restart_file_name=restart)
 
     if output is not None:
-        write_data(points, triangles, output)
+        smeshing.write_data(points, triangles, output)
 
 
 if __name__ == '__main__':
