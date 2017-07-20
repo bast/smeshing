@@ -37,26 +37,11 @@ def matches_with_reference(ps, ts, file_name):
         assert abs((ys[i] - points_ref[i][1]) / ys[i]) < 1.0e-5
 
 
-if os.getenv('ONLY_LOFOTEN', False):
-    reference_file_name = 'data/lofoten/result.txt'
-
-    def test_lofoten():
-        points, triangles = run(boundary_file_name='data/lofoten/boundary.txt',
-                                island_file_names=glob.glob('data/lofoten/islands/*.txt'),
-                                config_file_name='data/lofoten/config.yml')
+def test_polygon():
+    reference_file_name = 'data/fiction/result.txt'
+    points, triangles = run(boundary_file_name='data/fiction/boundary.txt',
+                            island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
+                            config_file_name='data/fiction/config.yml')
+    if os.getenv('GENERATE_TESTS', False):
         write_data(points, triangles, reference_file_name)
-
-    def dont_test_lofoten_tiny():
-        points, triangles = run(boundary_file_name='data/lofoten/simple-boundary.txt',
-                                island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
-                                                                                                      247, 173, 210, 39, 95]],
-                                config_file_name='data/lofoten/config.yml')
-else:
-    def test_polygon():
-        reference_file_name = 'data/fiction/result.txt'
-        points, triangles = run(boundary_file_name='data/fiction/boundary.txt',
-                                island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
-                                config_file_name='data/fiction/config.yml')
-        if os.getenv('GENERATE_TESTS', False):
-            write_data(points, triangles, reference_file_name)
-        matches_with_reference(points, triangles, reference_file_name)
+    matches_with_reference(points, triangles, reference_file_name)
