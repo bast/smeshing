@@ -84,14 +84,6 @@ def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_funct
     return p
 
 
-def movement_below_threshold(p, delta_t, Ftot, dptol, h0, within_bounds):
-    s = []
-    for i in range(len(p)):
-        if within_bounds[i]:
-            s.append((delta_t * Ftot[i][0])**2.0 + (delta_t * Ftot[i][1])**2.0)
-    return max(s) < (dptol * h0)**2.0
-
-
 def create_initial_distribution(r0_max, points_polygon, num_points, within_bounds_function, fh):
     """
     Create initial distribution in bounding box (equilateral triangles).
@@ -312,9 +304,6 @@ def distmesh2d(config,
         p = bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_function)
         print('time spent in bring_outside_points_back_to_boundary: {0:.2f}'.format(time.time() - t0))
 
-      # for the moment not considered
-      # if movement_below_threshold(p, delta_t, F, dptol, h0, within_bounds):
-      #     break
         print('time spent in iter: {0:.2f}'.format(time.time() - t0_iter))
 
     print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
@@ -354,7 +343,7 @@ def run(boundary_file_name,
 
     nearest_distance_at_coastline_point = []
     for i in range(len(all_points)):
-        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]])/6.0)  # FIXME 6.0 is hardcoded
+        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]) / 6.0)  # FIXME 6.0 is hardcoded
 
     flanders.free_context(flanders_context)
 
@@ -407,7 +396,7 @@ def run(boundary_file_name,
 
     def _r(points):
         # FIXME slope is hardcoded
-        return polygons.get_distances_vertex_weighted(all_polygons_context, points, [0.995792]*len(points))
+        return polygons.get_distances_vertex_weighted(all_polygons_context, points, [0.995792] * len(points))
     h_function = _r
 
     if plot_nearest_in_view:
@@ -456,9 +445,9 @@ def compute_view_vectors(points, scale):
 
     # we figure out whether polygon is clockwise or anticlockwise
     if edges_sum(points) < 0.0:
-        s = +1.0*scale
+        s = +1.0 * scale
     else:
-        s = -1.0*scale
+        s = -1.0 * scale
 
     # we remove the last point since it repeats the first
     # we assume clock-wise closed loops
@@ -482,7 +471,7 @@ def get_normal_vectors(points, s):
     vectors = []
     for i in range(num_points):
         i_before = i - 1
-        i_after = (i + 1)%num_points
+        i_after = (i + 1) % num_points
         vector = (points[i_after][1] - points[i_before][1], -(points[i_after][0] - points[i_before][0]))
         vector = normalize(vector, s)
         vectors.append(vector)
@@ -491,7 +480,7 @@ def get_normal_vectors(points, s):
 
 def normalize(vector, s):
     norm = math.sqrt(vector[0]**2.0 + vector[1]**2.0)
-    return (s*vector[0]/norm, s*vector[1]/norm)
+    return (s * vector[0] / norm, s * vector[1] / norm)
 
 
 def get_distance(p1, p2):

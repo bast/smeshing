@@ -41,10 +41,10 @@ install:
 
 script:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
-    then py.test -vv smeshing/test.py --cov smeshing;
-    else py.test -vv smeshing/test.py;
+    then py.test -vv smeshing/*.py --cov smeshing;
+    else py.test -vv smeshing/*.py;
     fi
-#   pep8 smeshing/* --ignore E501
+    pep8 smeshing/*.py --ignore E501
 
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];

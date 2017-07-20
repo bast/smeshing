@@ -39,11 +39,13 @@ def matches_with_reference(ps, ts, file_name):
 
 if os.getenv('ONLY_LOFOTEN', False):
     reference_file_name = 'data/lofoten/result.txt'
+
     def test_lofoten():
         points, triangles = run(boundary_file_name='data/lofoten/boundary.txt',
                                 island_file_names=glob.glob('data/lofoten/islands/*.txt'),
                                 config_file_name='data/lofoten/config.yml')
         write_data(points, triangles, reference_file_name)
+
     def dont_test_lofoten_tiny():
         points, triangles = run(boundary_file_name='data/lofoten/simple-boundary.txt',
                                 island_file_names=['data/lofoten/islands/{0}.txt'.format(i) for i in [275, 209, 38, 154, 19,
