@@ -40,7 +40,7 @@ pip install -r requirements.txt
 ## Running tests
 
 ```
-SMESHING_BUILD_DIR=build py.test -vv smeshing/test.py
+py.test -vv smeshing/test.py
 ```
 
 
