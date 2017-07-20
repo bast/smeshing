@@ -255,6 +255,10 @@ def distmesh2d(config,
         nfix = len(pfix)
         p, _ = read_data(restart_file_name)
 
+    # remove points which are on top of other points
+    p_tuples = [(point[0], point[1]) for point in p]
+    p = [[point[0], point[1]] for point in set(p_tuples)]
+
     # this shift was chosen so that the first movement is large enough to trigger delaunay
     shift = (100.0 * ttol * h0)**2.0
     pold = [[point[0] + shift, point[1] + shift] for point in p]
