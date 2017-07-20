@@ -395,8 +395,7 @@ def run(boundary_file_name,
     h0 = (xmax - xmin) / 500.0
 
     def _r(points):
-        # FIXME slope is hardcoded
-        return polygons.get_distances_vertex_weighted(all_polygons_context, points, [0.995792] * len(points))
+        return polygons.get_distances_vertex_weighted(all_polygons_context, points, [config['scale_factor']] * len(points))
     h_function = _r
 
     if plot_nearest_in_view:
