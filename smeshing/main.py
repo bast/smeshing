@@ -84,7 +84,7 @@ def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_funct
     return p
 
 
-def create_initial_distribution(r0_max, points_polygon, num_points, within_bounds_function, fh):
+def create_initial_distribution(seeding_speed, points_polygon, num_points, within_bounds_function, fh):
     """
     Create initial distribution in bounding box (equilateral triangles).
     """
@@ -107,6 +107,7 @@ def create_initial_distribution(r0_max, points_polygon, num_points, within_bound
 
         fh_applied = fh(_points)
         r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(_points))]
+        r0_max = max(r0)/seeding_speed
 
         for i, point in enumerate(_points):
             if random.uniform(0.0, 1.0) < r0[i] / r0_max:
@@ -241,7 +242,7 @@ def distmesh2d(config,
 
     if restart_file_name is None:
         t0 = time.time()
-        p = create_initial_distribution(config['r0_max'], pv, config['num_points'], within_bounds_function, fh)
+        p = create_initial_distribution(config['seeding_speed'], pv, config['num_points'], within_bounds_function, fh)
         print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
         nfix, p = prepend_fix_points(pfix, p)
     else:

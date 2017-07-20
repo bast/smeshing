@@ -1,4 +1,4 @@
-r0_max: 1000.0
-num_points: 2222
-max_num_iterations: 40
+seeding_speed: 1.0
+num_points: 2000
+max_num_iterations: 20
 scale_factor: 0.995792
