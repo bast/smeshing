@@ -63,10 +63,17 @@ pip install git+https://github.com/bast/flanders.git
 pip install git+https://github.com/bast/delaunay.git@radovan/python-interface
 pip install git+https://github.com/bast/smeshing.git
 
-smesh --boundary=/home/bast/tmp/smeshing/data/fiction/boundary.txt \
-      --islands='/home/bast/tmp/smeshing/data/fiction/island*.txt' \
-      --config=/home/bast/tmp/smeshing/data/fiction/config.yml \
-      --output=/home/bast/tmp/data.txt
+smesh --help
+```
+
+
+## Installation on [Stallo](https://www.sigma2.no/content/stallo)
+
+Before running the above commands, activate the following modules:
+
+```
+module load foss/2016b
+module load CMake
 ```
 
 
