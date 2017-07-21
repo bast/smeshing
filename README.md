@@ -4,6 +4,8 @@
 
 # Simple mesh generator in Python (fork of PyDistMesh)
 
+<img src="https://github.com/bast/smeshing/raw/master/img/example.jpg" width="300">
+
 This version of the code is based on
 [PyDistMesh](https://github.com/bfroehle/pydistmesh) developed by [Bradley M.
 Froehle](https://github.com/bfroehle).
