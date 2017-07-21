@@ -1,4 +1,4 @@
-import file_io
+from .file_io import read_data
 
 
 def parse_command_line():
@@ -38,5 +38,5 @@ def generate_plot(points, triangles, out_file_name):
 
 if __name__ == '__main__':
     in_file_name, out_file_name = parse_command_line()
-    points, triangles = file_io.read_data(in_file_name)
+    points, triangles = read_data(in_file_name)
     generate_plot(points, triangles, out_file_name)
