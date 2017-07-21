@@ -90,6 +90,26 @@ export FC=gfortran
 ```
 
 
+## Pros
+
+- A lot of effort was invested in avoiding quadratic scaling.
+- Optimization is fully relaxed - no interpolation is done.
+- Delaunay is performed at every step.
+- Good memory profile.
+
+
+## Known issues
+
+- Code uses shared-memory parallelization but the load is not optimal and the scaling on Stallo has not been studied.
+- Sometimes a step generates crazy meshes. Possibly there is a numerical instability for small forces or division by very small number.
+- One needs to set a `seeding_speed`. This controls in how many steps the initial point distribution is set up.
+  The higher the number, the fewer steps, and the more uniform distribution. The more steps, the more time it takes, but also the more
+  it will reflect the resolution function.
+- Coastline resolution is currently hard-coded. In future versions this will be read from input.
+- Currently no lower and upper bounds on resolution can be set.
+- There is no stop criterion, it will run as many iterations as you ask it to.
+
+
 ## Restart
 
 It is possible to restart a calculation if you provide `--restart=/path/to/restart/file`.
