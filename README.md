@@ -69,11 +69,24 @@ smesh --help
 
 ## Installation on [Stallo](https://www.sigma2.no/content/stallo)
 
-Before running the above commands, activate the following modules:
-
 ```
 module load foss/2016b
 module load CMake
+module load libffi
+
+cd ${SLURM_SUBMIT_DIR}
+
+virtualenv venv
+source venv/bin/activate
+
+export CC=gcc
+export CXX=g++
+export FC=gfortran
+
+   pip install git+https://github.com/bast/polygons.git \
+&& pip install git+https://github.com/bast/flanders.git \
+&& pip install git+https://github.com/bast/delaunay.git@radovan/python-interface \
+&& pip install git+https://github.com/bast/smeshing.git
 ```
 
 
