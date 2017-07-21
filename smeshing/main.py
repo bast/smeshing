@@ -107,7 +107,7 @@ def create_initial_distribution(seeding_speed, points_polygon, num_points, withi
 
         fh_applied = fh(_points)
         r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(_points))]
-        r0_max = max(r0)/seeding_speed
+        r0_max = max(r0) / seeding_speed
 
         for i, point in enumerate(_points):
             if random.uniform(0.0, 1.0) < r0[i] / r0_max:
