@@ -240,7 +240,8 @@ def distmesh2d(config,
         p = create_initial_distribution(config['seeding_speed'], pv, config['num_points'], within_bounds_function, fh)
         if print_timing:
             print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
-        p = [point for point in boundary_points] + [point for point in p]
+#       we do not add boundary points to the set of points
+#       p = [point for point in boundary_points] + [point for point in p]
     else:
         p, _ = read_data(restart_file_name)
 
