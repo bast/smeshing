@@ -263,7 +263,7 @@ def distmesh2d(config,
         t0_iter = time.time()
         count += 1
 
-        if count > config['max_num_iterations']:
+        if count > config['num_iterations']:
             break
 
         t0 = time.time()

@@ -1,4 +1,4 @@
 seeding_speed: 20.0
 num_points: 5000
-max_num_iterations: 100
+num_iterations: 100
 scale_factor: 0.995792
