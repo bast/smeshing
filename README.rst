@@ -79,6 +79,18 @@ Example installation and run
     smesh --help
 
 
+Example config.yml
+------------------
+
+.. code-block:: yaml
+
+  seeding_speed: 20.0
+  num_points: 5000
+  num_iterations: 100
+  scale_factor: 0.995792
+  view_angle: 90.0
+
+
 Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
 -----------------------------------------------------------------
 
