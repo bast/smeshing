@@ -21,7 +21,7 @@ from .clockwise import edges_sum
 from .file_io import read_data
 
 
-def density_control(p, L, L0, bars, nfix):
+def density_control_unused(p, L, L0, bars, nfix):
     """
     Density control - remove points that are too close.
     """
@@ -282,14 +282,14 @@ def distmesh2d(config,
         if print_timing:
             print('time spent in get_bar_lengths: {0:.2f}'.format(time.time() - t0))
 
-        t0 = time.time()
-        if count % density_control_frequency == 0:
-            apply_density_control, p = density_control(p, L, L0, bars, nfix)
-            if apply_density_control:
-                pold = [[point[0] + shift, point[1] + shift] for point in p]
-                continue
-        if print_timing:
-            print('time spent in density_control: {0:.2f}'.format(time.time() - t0))
+#       t0 = time.time()
+#       if count % density_control_frequency == 0:
+#           apply_density_control, p = density_control(p, L, L0, bars, nfix)
+#           if apply_density_control:
+#               pold = [[point[0] + shift, point[1] + shift] for point in p]
+#               continue
+#       if print_timing:
+#           print('time spent in density_control: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         F = compute_forces(L0, L, bars, barvec, p)
