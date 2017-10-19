@@ -237,7 +237,7 @@ def distmesh2d(config,
 
     if restart_file_name is None:
         t0 = time.time()
-        p = create_initial_distribution(config['seeding_speed'], pv, config['num_points'], within_bounds_function, fh)
+        p = create_initial_distribution(config['seeding_speed'], pv, config['num_grid_points'], within_bounds_function, fh)
         if print_timing:
             print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
 #       we do not add boundary points to the set of points
@@ -311,6 +311,23 @@ def distmesh2d(config,
     return p, t
 
 
+def get_polygon_length(polygon):
+    l = 0.0
+    for i in range(1, len(polygon)):
+        l += get_distance(polygon[i-1], polygon[i])
+    return l
+
+
+def get_boundary_length(boundary_file_name, island_file_names):
+    l = 0.0
+    boundary_points = read_points(boundary_file_name)
+    l += get_polygon_length(boundary_points)
+    for island_file in island_file_names:
+        islands_points = read_points(island_file)
+        l += get_polygon_length(islands_points)
+    return l
+
+
 def run(boundary_file_name,
         island_file_names,
         config_file_name,
@@ -323,15 +340,19 @@ def run(boundary_file_name,
             print(exc)
             sys.exit(-1)
 
+    boundary_length = get_boundary_length(boundary_file_name, island_file_names)
+    boundary_step_length = boundary_length/config['num_boundary_points']
+
     plot_nearest_in_view = False
     if plot_nearest_in_view:
         import matplotlib.pyplot as plt
 
-    boundary_points = read_points(boundary_file_name)
+    boundary_points = read_points(boundary_file_name, step_length=boundary_step_length)
+    print('number of boundary points', len(boundary_points))
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
     for island_file in island_file_names:
-        islands_points = read_points(island_file)
+        islands_points = read_points(island_file, step_length=boundary_step_length)
         view_vectors += compute_view_vectors(islands_points, scale=1.0)
         all_points += islands_points
     num_points = len(all_points)
@@ -352,7 +373,7 @@ def run(boundary_file_name,
     boundary_context = polygons.new_context()
     islands_context = polygons.new_context()
 
-    boundary_points = read_points(boundary_file_name)
+    boundary_points = read_points(boundary_file_name, step_length=boundary_step_length)
     polygons.add_polygon(all_polygons_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
     polygons.add_polygon(boundary_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
     counter = len(boundary_points)
@@ -364,7 +385,7 @@ def run(boundary_file_name,
                      'r-')
 
     for island_file in island_file_names:
-        islands_points = read_points(island_file)
+        islands_points = read_points(island_file, step_length=boundary_step_length)
         polygons.add_polygon(all_polygons_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
         polygons.add_polygon(islands_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
         counter += len(islands_points)
@@ -428,14 +449,43 @@ def run(boundary_file_name,
     return points, triangles
 
 
-def read_points(file_name):
+def read_points(file_name, step_length=None):
+
     points = []
     with open(file_name, 'r') as f:
         for line in f:
             x = float(line.split()[0])
             y = float(line.split()[1])
             points.append([x, y])
-    return points
+
+    if step_length is None:
+        return points
+
+    # what we do here below is to walk along the polygon and
+    # create a point after a step of step_length
+
+    l_total = 0.0
+    lengths = [0.0]
+    for i in range(1, len(points)):
+        l_total += get_distance(points[i-1], points[i])
+        lengths.append(l_total)
+
+    if step_length > l_total:
+        return points
+
+    step_points = [points[0]]
+    current_step = 0.0
+    while True:
+        current_step += step_length
+        if current_step > l_total:
+            return step_points + [points[0]]
+        for i in range(1, len(points)):
+            if current_step < lengths[i]:
+                l = current_step - lengths[i-1]
+                vector = (points[i][0] - points[i-1][0], points[i][1] - points[i-1][1])
+                vector = normalize(vector, 1.0)
+                step_points.append([points[i-1][0] + l*vector[0], points[i-1][1] + l*vector[1]])
+                break
 
 
 def compute_view_vectors(points, scale):

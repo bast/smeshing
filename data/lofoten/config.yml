@@ -1,5 +1,6 @@
-seeding_speed: 5.0
-num_points: 1000
-num_iterations: 3
+seeding_speed: 2.0
+num_grid_points: 4000
+num_boundary_points: 1000
+num_iterations: 100
 scale_factor: 0.995792
-view_angle: 90.0
+view_angle: 10.0
