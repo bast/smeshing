@@ -88,8 +88,8 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
 ::
 
     module load foss/2016b
-    module load CMake
-    module load libffi
+    module load CMake/3.7.1-foss-2016b
+    module load libffi/3.2.1-foss-2016b
 
     cd ${SLURM_SUBMIT_DIR}
 
