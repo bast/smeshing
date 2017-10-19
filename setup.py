@@ -38,7 +38,7 @@ setup(
         "git+https://github.com/bast/flanders.git@0e072e1566ce4b3fadca59609dd1ce03164dbedd#egg=flanders-0.0.0",
         "git+https://github.com/bast/delaunay.git@radovan/python-interface#egg=delaunay-0.0.0",
     ],
-    scripts=['bin/smesh'],
+    scripts=['smesh'],
     include_package_data=True,
     classifiers=[
         'Development Status :: 3 - Alpha',
