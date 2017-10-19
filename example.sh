@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./smesh --boundary=/home/bast/mesh/smeshing/data/fiction/boundary.txt \
-        --islands='/home/bast/mesh/smeshing/data/fiction/island*.txt' \
-        --config=/home/bast/mesh/smeshing/data/fiction/config.yml \
-        --output=/home/bast/mesh/smeshing/data.txt
+./smesh --boundary=/home/bast/tmp/smeshing/data/bear/boundary.txt \
+        --islands='/home/bast/tmp/smeshing/data/bear/island*.txt' \
+        --config=/home/bast/tmp/smeshing/data/bear/config.yml \
+        --output=data.txt
