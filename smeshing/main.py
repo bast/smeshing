@@ -199,22 +199,13 @@ def solve_delaunay(p, within_bounds_function):
     return pold, bars, t
 
 
-def prepend_fix_points(pfix, p):
-    if pfix is not None:
-        nfix = len(pfix)
-        p = [point for point in pfix] + [point for point in p]
-    else:
-        nfix = 0
-    return nfix, p
-
-
 def distmesh2d(config,
                pv,
                fh,
                distance_function,
                within_bounds_function,
                h0,
-               pfix=None,
+               boundary_points,
                restart_file_name=None):
     """
     distmesh2d: 2-D Mesh Generator using Distance Functions.
@@ -224,7 +215,6 @@ def distmesh2d(config,
     pv:        list of polygon coordinate tuples
     fh:        Scaled edge length function h(x,y)
     h0:        Initial edge length
-    pfix:      Fixed node positions, shape (nfix, 2)
 
     Returns
     -------
@@ -250,9 +240,8 @@ def distmesh2d(config,
         p = create_initial_distribution(config['seeding_speed'], pv, config['num_points'], within_bounds_function, fh)
         if print_timing:
             print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
-        nfix, p = prepend_fix_points(pfix, p)
+        p = [point for point in boundary_points] + [point for point in p]
     else:
-        nfix = len(pfix)
         p, _ = read_data(restart_file_name)
 
     # remove points which are on top of other points
@@ -296,12 +285,8 @@ def distmesh2d(config,
         if print_timing:
             print('time spent in compute_forces: {0:.2f}'.format(time.time() - t0))
 
-        t0 = time.time()
-        # set force to zero at fixed points
-        for i in range(nfix):
-            F[i] = [0.0, 0.0]
-
         # update node positions
+        t0 = time.time()
         for i in range(len(p)):
             p[i][0] += delta_t * F[i][0]
             p[i][1] += delta_t * F[i][1]
