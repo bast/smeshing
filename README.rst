@@ -74,10 +74,7 @@ Example installation and run
     virtualenv venv
     source venv/bin/activate
 
-    pip install git+https://github.com/bast/polygons.git
-    pip install git+https://github.com/bast/flanders.git
-    pip install git+https://github.com/bast/delaunay.git@radovan/python-interface
-    pip install git+https://github.com/bast/smeshing.git
+    pip install --process-dependency-links git+https://github.com/bast/smeshing.git
 
     smesh --help
 
@@ -100,10 +97,7 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
     export CXX=g++
     export FC=gfortran
 
-       pip install git+https://github.com/bast/polygons.git \
-    && pip install git+https://github.com/bast/flanders.git \
-    && pip install git+https://github.com/bast/delaunay.git@radovan/python-interface \
-    && pip install git+https://github.com/bast/smeshing.git
+    pip install --process-dependency-links git+https://github.com/bast/smeshing.git
 
 
 Pros
