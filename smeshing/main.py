@@ -265,7 +265,7 @@ def distmesh2d(config,
 
     count = 0
     while True:
-        print('iteration', count)
+        print('iteration: {0}'.format(count))
         t0_iter = time.time()
         count += 1
 
