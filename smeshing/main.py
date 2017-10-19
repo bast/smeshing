@@ -265,7 +265,7 @@ def distmesh2d(config,
 
     count = 0
     while True:
-        print('iteration: {0}'.format(count))
+        print('iteration: {0}, number of points: {1}'.format(count, len(p)))
         t0_iter = time.time()
         count += 1
 
