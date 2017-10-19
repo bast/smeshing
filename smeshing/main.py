@@ -336,7 +336,7 @@ def run(boundary_file_name,
         all_points += islands_points
     num_points = len(all_points)
     flanders_context = flanders.new_context(num_points, all_points)
-    angles_deg = [90.0 for _ in range(num_points)]
+    angles_deg = [config['view_angle'] for _ in range(num_points)]
     flanders_indices = flanders.search_neighbor(context=flanders_context,
                                                 ref_indices=list(range(num_points)),
                                                 view_vectors=view_vectors,
