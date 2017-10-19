@@ -1,3 +1,4 @@
+.. image:: img/example.jpg
 
 
 Simple mesh generator in Python (fork of PyDistMesh)
@@ -84,10 +85,12 @@ Example config.yml
 
 .. code-block:: yaml
 
-  # the smaller this number, the better starting grid, but the longer it takes
+  # the smaller this number, the better starting grid
   seeding_speed: 20.0
-  # number of points
-  num_points: 5000
+  # number of grid points
+  num_grid_points: 5000
+  # number of boundary points
+  num_boundary_points: 1000
   # number of iterations
   num_iterations: 100
   # magic factor, needs documentation
