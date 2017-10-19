@@ -240,10 +240,16 @@ def distmesh2d(config,
     deps = math.sqrt(epsilon) * h0
     density_control_frequency = 30
 
+    print_timing = False
+    if 'print_timing' in config:
+        if config['print_timing']:
+            print_timing = True
+
     if restart_file_name is None:
         t0 = time.time()
         p = create_initial_distribution(config['seeding_speed'], pv, config['num_points'], within_bounds_function, fh)
-        print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
         nfix, p = prepend_fix_points(pfix, p)
     else:
         nfix = len(pfix)
@@ -268,11 +274,13 @@ def distmesh2d(config,
 
         t0 = time.time()
         pold, bars, t = solve_delaunay(p, within_bounds_function)
-        print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
-        print('time spent in get_bar_lengths: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in get_bar_lengths: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         if count % density_control_frequency == 0:
@@ -280,11 +288,13 @@ def distmesh2d(config,
             if apply_density_control:
                 pold = [[point[0] + shift, point[1] + shift] for point in p]
                 continue
-        print('time spent in density_control: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in density_control: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         F = compute_forces(L0, L, bars, barvec, p)
-        print('time spent in compute_forces: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in compute_forces: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         # set force to zero at fixed points
@@ -295,17 +305,21 @@ def distmesh2d(config,
         for i in range(len(p)):
             p[i][0] += delta_t * F[i][0]
             p[i][1] += delta_t * F[i][1]
-        print('time spent in forces and update: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in forces and update: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         within_bounds = within_bounds_function(p)
-        print('time spent in within_bounds: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in within_bounds: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         p = bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_function)
-        print('time spent in bring_outside_points_back_to_boundary: {0:.2f}'.format(time.time() - t0))
+        if print_timing:
+            print('time spent in bring_outside_points_back_to_boundary: {0:.2f}'.format(time.time() - t0))
 
-        print('time spent in iter: {0:.2f}'.format(time.time() - t0_iter))
+        if print_timing:
+            print('time spent in iter: {0:.2f}'.format(time.time() - t0_iter))
 
     print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
     return p, t
