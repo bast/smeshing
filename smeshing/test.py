@@ -11,7 +11,7 @@ import math
 import flanders
 import glob
 
-from .main import distmesh2d, run, read_points, compute_view_vectors, get_distance
+from .main import run, read_points, compute_view_vectors, get_distance
 from .file_io import read_data, write_data
 from .bbox import get_bbox
 
