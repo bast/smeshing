@@ -419,9 +419,8 @@ def run(boundary_file_name,
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
     h0 = (xmax - xmin) / 500.0
 
-    def _r(points):
+    def h_function(points):
         return polygons.get_distances_vertex_weighted(all_polygons_context, points, [config['scale_factor']] * len(points))
-    h_function = _r
 
     if plot_nearest_in_view:
         for i in range(len(all_points)):
