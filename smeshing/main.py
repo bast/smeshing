@@ -13,9 +13,11 @@ import sys
 import random
 import yaml
 import time
+
 import polygons
 import flanders
 import delaunay
+
 from .bbox import get_bbox
 from .clockwise import edges_sum
 from .file_io import read_data
