@@ -350,7 +350,6 @@ def run(boundary_file_name,
         import matplotlib.pyplot as plt
 
     boundary_points = read_points(boundary_file_name, step_length=boundary_step_length)
-    print('number of boundary points', len(boundary_points))
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
     for island_file in island_file_names:
@@ -358,6 +357,8 @@ def run(boundary_file_name,
         view_vectors += compute_view_vectors(islands_points, scale=1.0)
         all_points += islands_points
     num_points = len(all_points)
+    # FIXME boundary can be confusing name
+    print('number of boundary points', len(all_points))
     flanders_context = flanders.new_context(num_points, all_points)
     angles_deg = [config['view_angle'] for _ in range(num_points)]
     flanders_indices = flanders.search_neighbor(context=flanders_context,
