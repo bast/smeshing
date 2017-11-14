@@ -256,9 +256,11 @@ def distmesh2d(config,
     shift = (100.0 * ttol * h0)**2.0
     pold = [[point[0] + shift, point[1] + shift] for point in p]
 
+    print('number of grid points: {0}'.format(len(p)))
+
     count = 0
     while True:
-        print('iteration: {0}, number of points: {1}'.format(count, len(p)))
+        print('iteration: {0}'.format(count))
         t0_iter = time.time()
         count += 1
 
@@ -349,8 +351,10 @@ def run(boundary_file_name,
         view_vectors += compute_view_vectors(islands_points, scale=1.0)
         all_points += islands_points
     num_points = len(all_points)
+
     # FIXME boundary can be confusing name
-    print('number of boundary points', len(all_points))
+    print('number of boundary points: {0}'.format(len(all_points)))
+
     flanders_context = flanders.new_context(num_points, all_points)
     angles_deg = [config['view_angle'] for _ in range(num_points)]
     flanders_indices = flanders.search_neighbor(context=flanders_context,
