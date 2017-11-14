@@ -159,6 +159,17 @@ It is possible to restart a calculation if you provide
 ``--restart=/path/to/restart/file``.
 
 
+Why not using GeoJSON?
+----------------------
+
+GeoJSON is a nice and standard format but the choice was to prefer a custom format
+for the following reasons:
+
+- Meshing should not be restricted to geospatial data
+- Meshing should not be restricted to longitude and
+  latitude units of decimal degrees but operate on arbitrary units
+
+
 References
 ----------
 
