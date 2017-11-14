@@ -229,7 +229,6 @@ def distmesh2d(config,
     delta_t = 0.2
     epsilon = sys.float_info.epsilon
     deps = math.sqrt(epsilon) * h0
-    density_control_frequency = 30
 
     print_timing = False
     if 'print_timing' in config:
@@ -273,15 +272,6 @@ def distmesh2d(config,
         L, L0, barvec = get_bar_lengths(p, bars, fh, Fscale)
         if print_timing:
             print('time spent in get_bar_lengths: {0:.2f}'.format(time.time() - t0))
-
-#       t0 = time.time()
-#       if count % density_control_frequency == 0:
-#           apply_density_control, p = density_control(p, L, L0, bars, nfix)
-#           if apply_density_control:
-#               pold = [[point[0] + shift, point[1] + shift] for point in p]
-#               continue
-#       if print_timing:
-#           print('time spent in density_control: {0:.2f}'.format(time.time() - t0))
 
         t0 = time.time()
         F = compute_forces(L0, L, bars, barvec, p)
