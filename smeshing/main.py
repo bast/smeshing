@@ -339,10 +339,6 @@ def run(boundary_file_name,
     boundary_length = get_boundary_length(boundary_file_name, island_file_names)
     boundary_step_length = boundary_length/config['num_boundary_points']
 
-    plot_nearest_in_view = False
-    if plot_nearest_in_view:
-        import matplotlib.pyplot as plt
-
     boundary_points = read_points(boundary_file_name, step_length=boundary_step_length)
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
@@ -377,11 +373,6 @@ def run(boundary_file_name,
     polygons.add_polygon(boundary_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
     counter = len(boundary_points)
     all_points = boundary_points
-    if plot_nearest_in_view:
-        for i in range(len(boundary_points) - 1):
-            plt.plot([boundary_points[i][0], boundary_points[i + 1][0]],
-                     [boundary_points[i][1], boundary_points[i + 1][1]],
-                     'r-')
 
     for island_file in island_file_names:
         islands_points = read_points(island_file, step_length=boundary_step_length)
@@ -389,11 +380,6 @@ def run(boundary_file_name,
         polygons.add_polygon(islands_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
         counter += len(islands_points)
         all_points += islands_points
-        if plot_nearest_in_view:
-            for i in range(len(islands_points) - 1):
-                plt.plot([islands_points[i][0], islands_points[i + 1][0]],
-                         [islands_points[i][1], islands_points[i + 1][1]],
-                         'b-')
 
     def distance_function(points):
         return polygons.get_distances_edge(all_polygons_context, points)
@@ -417,19 +403,6 @@ def run(boundary_file_name,
 
     def h_function(points):
         return polygons.get_distances_vertex_weighted(all_polygons_context, points, [config['scale_factor']] * len(points))
-
-    if plot_nearest_in_view:
-        for i in range(len(all_points)):
-            if flanders_indices[i] > -1:
-                plt.plot([all_points[i][0], all_points[flanders_indices[i]][0]],
-                         [all_points[i][1], all_points[flanders_indices[i]][1]],
-                         'k-')
-            else:
-                plt.plot([all_points[i][0], 0.0],
-                         [all_points[i][1], 0.0],
-                         'g-')
-                print('-1 distance found for x={0} y={1}'.format(all_points[i][0], all_points[i][1]))
-        plt.savefig('foo.png')
 
     points, triangles = distmesh2d(config,
                                    all_points,
