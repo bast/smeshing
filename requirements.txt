@@ -4,6 +4,6 @@ pyyaml
 click
 pytest-cov
 python-coveralls
-git+https://github.com/bast/polygons.git@d0cad23730afc21db6c26b7a6f154d2efc83c2f4
+git+https://github.com/bast/polygons.git@8afdb5fcdf203ddeacf754b232062a46d2ed220a
 git+https://github.com/bast/flanders.git
 git+https://github.com/bast/delaunay.git@radovan/python-interface
