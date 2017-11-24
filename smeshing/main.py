@@ -10,9 +10,11 @@
 
 import math
 import sys
+import os
 import random
 import yaml
 import time
+import ntpath
 
 import polygons
 import flanders
@@ -22,6 +24,21 @@ from .bbox import get_bbox
 from .clockwise import edges_sum
 from .file_io import read_data
 from .version import __version__
+
+
+def import_resolution_function(resolution_function_file_name):
+    '''
+    Imports the resolution function from file resolution_function_file_name
+    and returns it.
+    '''
+    only_path = os.path.dirname(resolution_function_file_name)
+    sys.path.append(only_path)
+
+    only_file = ntpath.basename(resolution_function_file_name)
+    only_file_no_suffix = os.path.splitext(only_file)[0]
+    resolution_function = __import__(only_file_no_suffix)
+
+    return resolution_function.resolution_function
 
 
 def density_control_unused(p, L, L0, bars, nfix):
@@ -327,6 +344,7 @@ def get_boundary_length(boundary_file_name, island_file_names):
 def run(boundary_file_name,
         island_file_names,
         config_file_name,
+        resolution_function_file_name,
         restart_file_name=None):
 
     with open(config_file_name, 'r') as f:
@@ -409,15 +427,7 @@ def run(boundary_file_name,
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
     h0 = (xmax - xmin) / 500.0
 
-    def resolution_function(distance_to_nearest_vertex,
-                            nearest_distance_at_nearest_vertex,
-                            r):
-        s = 0.9
-        resolution = s*distance_to_nearest_vertex + nearest_distance_at_nearest_vertex/r
-        if resolution < 1.0:
-            resolution = 1.0
-        return resolution
-
+    resolution_function = import_resolution_function(resolution_function_file_name)
 
     def h_function(points):
         closest_vertices = polygons.get_closest_vertices(all_polygons_context, points)
