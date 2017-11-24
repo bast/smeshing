@@ -360,7 +360,7 @@ def run(boundary_file_name,
 
     nearest_distance_at_coastline_point = []
     for i in range(len(all_points)):
-        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]) / 6.0)  # FIXME 6.0 is hardcoded
+        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
 
     flanders.free_context(flanders_context)
 
@@ -369,15 +369,23 @@ def run(boundary_file_name,
     islands_context = polygons.new_context()
 
     boundary_points = read_points(boundary_file_name, step_length=boundary_step_length)
-    polygons.add_polygon(all_polygons_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
-    polygons.add_polygon(boundary_context, boundary_points, nearest_distance_at_coastline_point[0:len(boundary_points)])
+    index_off = 0
+    indices = list(range(index_off, index_off + len(boundary_points)))
+    index_off += len(boundary_points)
+    polygons.add_polygon(all_polygons_context, boundary_points, indices)
+    polygons.add_polygon(boundary_context, boundary_points, indices)
     counter = len(boundary_points)
     all_points = boundary_points
 
+    index_off_islands = 0
     for island_file in island_file_names:
         islands_points = read_points(island_file, step_length=boundary_step_length)
-        polygons.add_polygon(all_polygons_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
-        polygons.add_polygon(islands_context, islands_points, nearest_distance_at_coastline_point[counter:counter + len(islands_points)])
+        indices = list(range(index_off, index_off + len(islands_points)))
+        index_off += len(islands_points)
+        polygons.add_polygon(all_polygons_context, islands_points, indices)
+        indices = list(range(index_off_islands, index_off_islands + len(islands_points)))
+        index_off_islands += len(islands_points)
+        polygons.add_polygon(islands_context, islands_points, indices)
         counter += len(islands_points)
         all_points += islands_points
 
@@ -401,8 +409,30 @@ def run(boundary_file_name,
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
     h0 = (xmax - xmin) / 500.0
 
+    def resolution_function(distance_to_nearest_vertex,
+                            nearest_distance_at_nearest_vertex,
+                            r):
+        s = 0.9
+        resolution = s*distance_to_nearest_vertex + nearest_distance_at_nearest_vertex/r
+        if resolution < 1.0:
+            resolution = 1.0
+        return resolution
+
+
     def h_function(points):
-        return polygons.get_distances_vertex_weighted(all_polygons_context, points, [config['scale_factor']] * len(points))
+        closest_vertices = polygons.get_closest_vertices(all_polygons_context, points)
+
+        resolutions = []
+        for point, closest_vertex in zip(points, closest_vertices):
+            distance_to_nearest_vertex = get_distance(point, all_points[closest_vertex])
+            nearest_distance_at_nearest_vertex = nearest_distance_at_coastline_point[closest_vertex]
+            r = 6.0  # FIXME hardcoded
+            resolution = resolution_function(distance_to_nearest_vertex,
+                                             nearest_distance_at_nearest_vertex,
+                                             r)
+            resolutions.append(resolution)
+
+        return resolutions
 
     points, triangles = distmesh2d(config,
                                    all_points,
