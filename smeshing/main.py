@@ -464,6 +464,17 @@ def run(boundary_file_name,
     return points, triangles
 
 
+def interpolate_points(p1, p2, distance_from_p1):
+    d = get_distance(p1, p2)
+    d1 = distance_from_p1
+    d2 = d - d1
+    new_point = []
+    for i in range(len(p1)):
+        x = d1/d*p2[i] + d2/d*p1[i]
+        new_point.append(x)
+    return new_point
+
+
 def interpolate_polygon(points, step_length):
     '''
     Walk along the polygon and interpolate it with points
@@ -490,9 +501,8 @@ def interpolate_polygon(points, step_length):
             i += 1
             if current_step < lengths[i]:
                 l = current_step - lengths[i - 1]
-                vector = (p2[0] - p1[0], p2[1] - p1[1])
-                vector = normalize(vector, 1.0)
-                interpolated_points.append([p1[0] + l * vector[0], p1[1] + l * vector[1]])
+                new_point = interpolate_points(p1, p2, l)
+                interpolated_points.append(new_point)
                 break
     return interpolated_points + [points[0]]
 
