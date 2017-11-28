@@ -333,11 +333,11 @@ def get_polygon_length(polygon):
 
 def get_boundary_length(boundary_file_name, island_file_names):
     l = 0.0
-    boundary_points = read_points(boundary_file_name)
+    boundary_points = read_points(boundary_file_name)[0]  # there is only one boundary (right?)
     l += get_polygon_length(boundary_points)
     for island_file in island_file_names:
-        islands_points = read_points(island_file)
-        l += get_polygon_length(islands_points)
+        for islands_points in read_points(island_file):
+            l += get_polygon_length(islands_points)
     return l
 
 
@@ -357,15 +357,15 @@ def run(boundary_file_name,
     boundary_length = get_boundary_length(boundary_file_name, island_file_names)
     boundary_step_length = boundary_length / config['num_boundary_points']
 
-    _boundary_points = read_points(boundary_file_name)
+    _boundary_points = read_points(boundary_file_name)[0]  # there is only one boundary (right?)
     boundary_points = interpolate_polygon(_boundary_points, boundary_step_length)
     view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
     for island_file in island_file_names:
-        _islands_points = read_points(island_file)
-        islands_points = interpolate_polygon(_islands_points, boundary_step_length)
-        view_vectors += compute_view_vectors(islands_points, scale=1.0)
-        all_points += islands_points
+        for _islands_points in read_points(island_file):
+            islands_points = interpolate_polygon(_islands_points, boundary_step_length)
+            view_vectors += compute_view_vectors(islands_points, scale=1.0)
+            all_points += islands_points
     num_points = len(all_points)
 
     # FIXME boundary can be confusing name
@@ -388,7 +388,7 @@ def run(boundary_file_name,
     boundary_context = polygons.new_context()
     islands_context = polygons.new_context()
 
-    _boundary_points = read_points(boundary_file_name)
+    _boundary_points = read_points(boundary_file_name)[0]  # there is only one boundary (right?)
     boundary_points = interpolate_polygon(_boundary_points, boundary_step_length)
     index_off = 0
     indices = list(range(index_off, index_off + len(boundary_points)))
@@ -400,16 +400,16 @@ def run(boundary_file_name,
 
     index_off_islands = 0
     for island_file in island_file_names:
-        _islands_points = read_points(island_file)
-        islands_points = interpolate_polygon(_islands_points, boundary_step_length)
-        indices = list(range(index_off, index_off + len(islands_points)))
-        index_off += len(islands_points)
-        polygons.add_polygon(all_polygons_context, islands_points, indices)
-        indices = list(range(index_off_islands, index_off_islands + len(islands_points)))
-        index_off_islands += len(islands_points)
-        polygons.add_polygon(islands_context, islands_points, indices)
-        counter += len(islands_points)
-        all_points += islands_points
+        for _islands_points in read_points(island_file):
+            islands_points = interpolate_polygon(_islands_points, boundary_step_length)
+            indices = list(range(index_off, index_off + len(islands_points)))
+            index_off += len(islands_points)
+            polygons.add_polygon(all_polygons_context, islands_points, indices)
+            indices = list(range(index_off_islands, index_off_islands + len(islands_points)))
+            index_off_islands += len(islands_points)
+            polygons.add_polygon(islands_context, islands_points, indices)
+            counter += len(islands_points)
+            all_points += islands_points
 
     def distance_function(points):
         return polygons.get_distances_edge(all_polygons_context, points)
@@ -508,13 +508,18 @@ def interpolate_polygon(points, step_length):
 
 
 def read_points(file_name):
-    points = []
+    polygons = []
     with open(file_name, 'r') as f:
         for line in f:
-            x = float(line.split()[0])
-            y = float(line.split()[1])
-            points.append([x, y])
-    return points
+            points = []
+            num_points = int(line)
+            for _ in range(num_points):
+                line = next(f)
+                x = float(line.split()[0])
+                y = float(line.split()[1])
+                points.append([x, y])
+            polygons.append(points)
+    return polygons
 
 
 def compute_view_vectors(points, scale):

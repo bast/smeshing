@@ -40,10 +40,7 @@ def matches_with_reference(ps, ts, file_name):
 def test_polygon():
     reference_file_name = 'data/happy-bear/result.txt'
     points, triangles = run(boundary_file_name='data/happy-bear/boundary.txt',
-                            island_file_names=['data/happy-bear/island1.txt',
-                                               'data/happy-bear/island2.txt',
-                                               'data/happy-bear/island3.txt',
-                                               'data/happy-bear/island4.txt'],
+                            island_file_names=['data/happy-bear/islands.txt'],
                             config_file_name='data/happy-bear/config.yml',
                             resolution_function_file_name='data/happy-bear/resolution_function.py')
     if os.getenv('GENERATE_TESTS', False):
