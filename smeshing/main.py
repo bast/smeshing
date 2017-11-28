@@ -467,28 +467,32 @@ def run(boundary_file_name,
 def interpolate_polygon(points, step_length):
     # what we do here below is to walk along the polygon and
     # create a point after a step of step_length
-    l_total = 0.0
-    lengths = [0.0]
-    for i in range(1, len(points)):
-        l_total += get_distance(points[i-1], points[i])
-        lengths.append(l_total)
-
+    l_total = get_polygon_length(points)
     if step_length > l_total:
         return points
 
-    step_points = [points[0]]
+    l = 0.0
+    lengths = [l]
+    for (p1, p2) in zip(points, points[1:]):
+        l += get_distance(p1, p2)
+        lengths.append(l)
+
+    interpolated_points = [points[0]]
     current_step = 0.0
     while True:
         current_step += step_length
         if current_step > l_total:
-            return step_points + [points[0]]
-        for i in range(1, len(points)):
+            break
+        i = 0
+        for (p1, p2) in zip(points, points[1:]):
+            i += 1
             if current_step < lengths[i]:
                 l = current_step - lengths[i-1]
-                vector = (points[i][0] - points[i-1][0], points[i][1] - points[i-1][1])
+                vector = (p2[0] - p1[0], p2[1] - p1[1])
                 vector = normalize(vector, 1.0)
-                step_points.append([points[i-1][0] + l*vector[0], points[i-1][1] + l*vector[1]])
+                interpolated_points.append([p1[0] + l*vector[0], p1[1] + l*vector[1]])
                 break
+    return interpolated_points + [points[0]]
 
 
 def read_points(file_name):
