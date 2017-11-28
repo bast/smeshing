@@ -465,8 +465,10 @@ def run(boundary_file_name,
 
 
 def interpolate_polygon(points, step_length):
-    # what we do here below is to walk along the polygon and
-    # create a point after a step of step_length
+    '''
+    Walk along the polygon and interpolate it with points
+    which are step_length apart.
+    '''
     l_total = get_polygon_length(points)
     if step_length > l_total:
         return points
