@@ -470,7 +470,7 @@ def interpolate_points(p1, p2, distance_from_p1):
     d2 = d - d1
     new_point = []
     for i in range(len(p1)):
-        x = d1/d*p2[i] + d2/d*p1[i]
+        x = d1 / d * p2[i] + d2 / d * p1[i]
         new_point.append(x)
     return new_point
 
