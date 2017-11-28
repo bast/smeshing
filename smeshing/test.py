@@ -38,10 +38,14 @@ def matches_with_reference(ps, ts, file_name):
 
 
 def test_polygon():
-    reference_file_name = 'data/fiction/result.txt'
-    points, triangles = run(boundary_file_name='data/fiction/boundary.txt',
-                            island_file_names=['data/fiction/island1.txt', 'data/fiction/island2.txt', 'data/fiction/island3.txt'],
-                            config_file_name='data/fiction/config.yml')
+    reference_file_name = 'data/happy-bear/result.txt'
+    points, triangles = run(boundary_file_name='data/happy-bear/boundary.txt',
+                            island_file_names=['data/happy-bear/island1.txt',
+                                               'data/happy-bear/island2.txt',
+                                               'data/happy-bear/island3.txt',
+                                               'data/happy-bear/island4.txt'],
+                            config_file_name='data/happy-bear/config.yml',
+                            resolution_function_file_name='data/happy-bear/resolution_function.py')
     if os.getenv('GENERATE_TESTS', False):
         write_data(points, triangles, reference_file_name)
     matches_with_reference(points, triangles, reference_file_name)
