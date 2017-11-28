@@ -93,8 +93,6 @@ Example config.yml
   num_boundary_points: 1000
   # number of iterations
   num_iterations: 100
-  # magic factor, needs documentation
-  scale_factor: 0.995792
   # view angle for nearest coastline point computations
   view_angle: 90.0
 

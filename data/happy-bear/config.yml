@@ -2,5 +2,4 @@ seeding_speed: 0.1
 num_grid_points: 4000
 num_boundary_points: 1000
 num_iterations: 50
-scale_factor: 0.995792
 view_angle: 90.0
