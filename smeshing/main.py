@@ -326,8 +326,8 @@ def distmesh2d(config,
 
 def get_polygon_length(polygon):
     l = 0.0
-    for i in range(1, len(polygon)):
-        l += get_distance(polygon[i-1], polygon[i])
+    for (p1, p2) in zip(polygon, polygon[1:]):
+        l += get_distance(p1, p2)
     return l
 
 
