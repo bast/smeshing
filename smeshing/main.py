@@ -355,7 +355,7 @@ def run(boundary_file_name,
             sys.exit(-1)
 
     boundary_length = get_boundary_length(boundary_file_name, island_file_names)
-    boundary_step_length = boundary_length/config['num_boundary_points']
+    boundary_step_length = boundary_length / config['num_boundary_points']
 
     _boundary_points = read_points(boundary_file_name)
     boundary_points = interpolate_polygon(_boundary_points, boundary_step_length)
@@ -489,10 +489,10 @@ def interpolate_polygon(points, step_length):
         for (p1, p2) in zip(points, points[1:]):
             i += 1
             if current_step < lengths[i]:
-                l = current_step - lengths[i-1]
+                l = current_step - lengths[i - 1]
                 vector = (p2[0] - p1[0], p2[1] - p1[1])
                 vector = normalize(vector, 1.0)
-                interpolated_points.append([p1[0] + l*vector[0], p1[1] + l*vector[1]])
+                interpolated_points.append([p1[0] + l * vector[0], p1[1] + l * vector[1]])
                 break
     return interpolated_points + [points[0]]
 
