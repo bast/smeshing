@@ -128,7 +128,7 @@ How to run the code
 Launching the code
 ------------------
 
-The code is launched using the ``smesh`` script::
+The code is launched using the ``smesh`` script. Example::
 
   $ smesh --boundary=/home/user/smeshing/data/happy-bear/boundary.txt \
           --islands=/home/user/smeshing/data/happy-bear/islands.txt \
@@ -141,6 +141,31 @@ For an explanation of the options try::
   $ smesh --help
 
 You can take the files here as a starting point: https://github.com/bast/smeshing/tree/master/data/happy-bear
+
+
+How to provide polygon data for the boundary and islands
+--------------------------------------------------------
+
+Boundary polygon data has to be in a separate file from island data but both are given
+in the same format. Island data polygons can be all in one file, or in multiple files.
+Each polygon starts with one line specifying the number of points, followed by the polygon points,
+each point in one line. First and last point of the polygon have the same coordinates.
+
+As an example, this file contains two polygons, one with 5 points, one with 4 points::
+
+  5
+  0.0 0.0
+  1.0 0.0
+  1.0 1.0
+  0.0 1.0
+  0.0 0.0
+  4
+  5.0 0.0
+  6.0 0.0
+  6.0 1.0
+  5.0 0.0
+
+It would be equally fine to split this file into two files if you prefer.
 
 
 Configuration
@@ -166,12 +191,6 @@ and you can add comments as in this example:
 
   # view angle for nearest coastline point computations
   view_angle: 90.0
-
-
-How to provide polygon data for the boundary and islands
---------------------------------------------------------
-
-Write me ...
 
 
 How to express the resolution function
