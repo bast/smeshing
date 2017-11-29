@@ -92,8 +92,8 @@ Installing dependencies for development
     pip install -r requirements.txt
 
 
-Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
------------------------------------------------------------------
+Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
+-------------------------------------------------------------------------------
 
 ::
 
@@ -125,6 +125,24 @@ How to run the code
 ===================
 
 
+Launching the code
+------------------
+
+The code is launched using the ``smesh`` script::
+
+  $ smesh --boundary=/home/user/smeshing/data/happy-bear/boundary.txt \
+          --islands=/home/user/smeshing/data/happy-bear/islands.txt \
+          --config=/home/user/smeshing/data/happy-bear/config.yml \
+          --resolution_function=/home/user/smeshing/data/happy-bear/resolution_function.py \
+          --output=data.txt
+
+For an explanation of the options try::
+
+  $ smesh --help
+
+You can take the files here as a starting point: https://github.com/bast/smeshing/tree/master/data/happy-bear
+
+
 Configuration
 -------------
 
@@ -150,8 +168,8 @@ and you can add comments as in this example:
   view_angle: 90.0
 
 
-How to provide polygon data for the bounday and islands
--------------------------------------------------------
+How to provide polygon data for the boundary and islands
+--------------------------------------------------------
 
 Write me ...
 
@@ -195,10 +213,6 @@ for the following reasons:
 
 Postprocessing
 ==============
-
-
-Plotting
---------
 
 The repository contains a tiny script which can be used to plot the generated
 grid::
