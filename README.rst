@@ -75,6 +75,9 @@ Example installation and run
 Example config.yml
 ------------------
 
+The order of keywords does not matter and you can add comments as in this
+example:
+
 .. code-block:: yaml
 
   # number of grid points
