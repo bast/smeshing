@@ -114,6 +114,18 @@ def get_random_points(num_points, xmin, xmax, ymin, ymax):
     return points
 
 
+def filter_points(points, resolutions, max_resolution, seeding_speed, max_num_filtered_points):
+    filtered_points = []
+    for point, resolution in zip(points, resolutions):
+        if random.uniform(0.0, 1.0) < seeding_speed * resolution / max_resolution:
+            filtered_points.append(point)
+    num_filtered_points = len(filtered_points)
+    if num_filtered_points > max_num_filtered_points:
+        return filtered_points[:max_num_filtered_points]
+    else:
+        return filtered_points
+
+
 def create_initial_distribution(seeding_speed, polygon_points, num_grid_points, within_bounds_function, resolution_function):
     """
     Create initial distribution in bounding box (equilateral triangles).
@@ -139,12 +151,14 @@ def create_initial_distribution(seeding_speed, polygon_points, num_grid_points, 
         resolutions = [1.0 / resolution_function_applied[i]**2.0 for i in range(len(points))]
         max_resolution = max(resolutions)
 
-        for point, resolution in zip(points, resolutions):
-            if random.uniform(0.0, 1.0) < seeding_speed*resolution / max_resolution:
-                grid_points.append(point)
-                count += 1
-                if count == num_grid_points:
-                    return grid_points
+        max_num_filtered_points = num_grid_points - count
+        filtered_points = filter_points(points, resolutions, max_resolution, seeding_speed, max_num_filtered_points)
+        count += len(filtered_points)
+        grid_points += filtered_points
+
+        if count == num_grid_points:
+            break
+    return grid_points
 
 
 def get_bar_lengths(p, bars, fh, Fscale):
