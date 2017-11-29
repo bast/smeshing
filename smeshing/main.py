@@ -114,33 +114,37 @@ def get_random_points(num_points, xmin, xmax, ymin, ymax):
     return points
 
 
-def create_initial_distribution(seeding_speed, points_polygon, num_points, within_bounds_function, fh):
+def create_initial_distribution(seeding_speed, polygon_points, num_grid_points, within_bounds_function, resolution_function):
     """
     Create initial distribution in bounding box (equilateral triangles).
     """
-    xmin, xmax, ymin, ymax = get_bbox(points_polygon)
+    xmin, xmax, ymin, ymax = get_bbox(polygon_points)
 
     random.seed(1)
 
     count = 0
 
-    _p = []
+    grid_points = []
     while True:
-        print('number of initial points {0} out of {1}'.format(count, num_points))
-        _points = get_random_points(min(num_points, 1000000), xmin, xmax, ymin, ymax)
-        within_bounds = within_bounds_function(_points)
-        _points = [point for i, point in enumerate(_points) if within_bounds[i]]
+        print('number of initial points {0} out of {1}'.format(count, num_grid_points))
 
-        fh_applied = fh(_points)
-        r0 = [1.0 / fh_applied[i]**2.0 for i in range(len(_points))]
-        r0_max = max(r0) / seeding_speed
+        # get a larger batch of points
+        points = get_random_points(min(num_grid_points, 1000000), xmin, xmax, ymin, ymax)
 
-        for i, point in enumerate(_points):
-            if random.uniform(0.0, 1.0) < r0[i] / r0_max:
-                _p.append(point)
+        # only keep those which are within bounds
+        within_bounds = within_bounds_function(points)
+        points = [point for i, point in enumerate(points) if within_bounds[i]]
+
+        resolution_function_applied = resolution_function(points)
+        resolutions = [1.0 / resolution_function_applied[i]**2.0 for i in range(len(points))]
+        max_resolution = max(resolutions)
+
+        for point, resolution in zip(points, resolutions):
+            if random.uniform(0.0, 1.0) < seeding_speed*resolution / max_resolution:
+                grid_points.append(point)
                 count += 1
-                if count == num_points:
-                    return _p
+                if count == num_grid_points:
+                    return grid_points
 
 
 def get_bar_lengths(p, bars, fh, Fscale):
