@@ -85,8 +85,6 @@ Example config.yml
 
 .. code-block:: yaml
 
-  # the smaller this number, the better starting grid
-  seeding_speed: 20.0
   # number of grid points
   num_grid_points: 5000
   # number of boundary points
@@ -136,12 +134,6 @@ Known issues
 -  Sometimes a step generates crazy meshes. Possibly there is a
    numerical instability for small forces or division by very small
    number.
--  One needs to set a ``seeding_speed``. This controls in how many steps
-   the initial point distribution is set up. The higher the number, the
-   fewer steps, and the more uniform distribution. The more steps, the
-   more time it takes, but also the more it will reflect the resolution
-   function. Currently it needs some experimentation. Later we need
-   something more black box.
 -  Coastline resolution is currently hard-coded to be inversely
    proportional to the distance to nearest neighbor in view divided by
    6. In future versions this will be read from input.
