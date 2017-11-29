@@ -28,17 +28,9 @@ GPL <../master/LICENSE>`__.
 Status and roadmap for this fork
 --------------------------------
 
-Under heavy development. The plan is to be able to do large grids. We
-wish to use the code to prepare grids for simulations on the Norwegian
-coast with thousands of islands (polygons).
-
 Prototyping work is currently done in Python. Later we will probably
 move to Fortran or C(++) and introduce parallelization but provide a
 Python interface.
-
-Currently the code is a bit hardcoded for islands and coastline and
-specific resolution functions but later the code will be generalized and
-the hardcoded aspects will be abstracted out.
 
 
 Installing dependencies for development
