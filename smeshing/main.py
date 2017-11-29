@@ -138,9 +138,8 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
 
     grid_points = []
     damping_factor_calibrated = False
+    print('\ngenerating starting grid:')
     while True:
-        print('number of initial points {0} out of {1}'.format(count, num_grid_points))
-
         # get a larger batch of points
         points = get_random_points(min(num_grid_points, 1000000), xmin, xmax, ymin, ymax)
 
@@ -172,6 +171,7 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
         count += len(filtered_points)
         grid_points += filtered_points
 
+        print('    generated {0} points out of {1}'.format(count, num_grid_points))
         if count == num_grid_points:
             break
     return grid_points
@@ -249,16 +249,12 @@ def distmesh2d(config,
     else:
         p, _ = read_data(restart_file_name)
 
-    print('number of grid points: {0}'.format(len(p)))
+    print('\nnumber of grid points: {0}'.format(len(p)))
 
     count = 0
+    print('\nrunning iterations:'.format(count))
     while True:
-        print('iteration: {0}'.format(count))
         t0_iter = time.time()
-        count += 1
-
-        if count > config['num_iterations']:
-            break
 
         t0 = time.time()
         bars, t = solve_delaunay(p, within_bounds_function)
@@ -296,7 +292,25 @@ def distmesh2d(config,
         if print_timing:
             print('time spent in iter: {0:.2f}'.format(time.time() - t0_iter))
 
-    print('num points: {0}, num triangles: {1}'.format(len(p), len(t)))
+        count += 1
+        num_iterations_left = config['num_iterations'] - count
+
+        # estimate the time left
+        time_spent_iteration = time.time() - t0_iter
+        time_left = time_spent_iteration * num_iterations_left
+        if time_left > 60.0:
+            time_left_string = '{0:.1f} minutes'.format(time_left / 60.0)
+        else:
+            time_left_string = '{0:.1f} seconds'.format(time_left)
+
+        print('    completed iteration {0} ({1} to go, approx. {2} left)'.format(count, num_iterations_left, time_left_string))
+
+        if num_iterations_left < 1:
+            break
+
+    print('\nnumber of points: {0}'.format(len(p)))
+    print('\nnumber of triangles: {0}'.format(len(t)))
+
     return p, t
 
 
@@ -352,7 +366,7 @@ def run(boundary_file_name,
             all_points += islands_points
     num_points = len(all_points)
 
-    print('number of boundary interpolation points: {0}'.format(len(all_points)))
+    print('\nnumber of boundary interpolation points: {0}'.format(len(all_points)))
 
     flanders_context = flanders.new_context(num_points, all_points)
     angles_deg = [config['view_angle'] for _ in range(num_points)]
