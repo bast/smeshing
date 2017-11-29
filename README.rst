@@ -127,25 +127,16 @@ Pros
 
 -  Individual components live in separate libraries.
 -  A lot of effort was invested in avoiding quadratic scaling.
--  Optimization is fully relaxed - no interpolation is done.
+-  Optimization is fully relaxed.
 -  Delaunay is performed at every step.
--  Good memory profile.
+-  Good memory profile (hopefully, please report if not).
 
 
 Known issues
 ------------
 
 -  Code uses shared-memory parallelization but the load leveling is not
-   optimal and the scaling on Stallo has not been studied.
--  Sometimes a step generates crazy meshes. Possibly there is a
-   numerical instability for small forces or division by very small
-   number.
--  Coastline resolution is currently hard-coded to be inversely
-   proportional to the distance to nearest neighbor in view divided by
-   6. In future versions this will be read from input.
--  Currently no lower and upper bounds on resolution can be set.
--  There is no stop criterion, it will run as many iterations as you ask
-   it to.
+   optimal and the scaling has not been studied in detail.
 
 
 Restart
