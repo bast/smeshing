@@ -189,11 +189,6 @@ def solve_delaunay(p, within_bounds_function):
     """
     Retriangulation by the Delaunay algorithm.
     """
-    # save current positions
-    pold = []
-    for _p in p:
-        pold.append([_p[0], _p[1]])
-
     _triangles = delaunay.solve(p)
 
     triangle_centroids = []
@@ -216,7 +211,7 @@ def solve_delaunay(p, within_bounds_function):
 
     bars = form_bars(t)
 
-    return pold, bars, t
+    return bars, t
 
 
 def distmesh2d(config,
@@ -260,18 +255,8 @@ def distmesh2d(config,
         p = create_initial_distribution(config['seeding_speed'], pv, config['num_grid_points'], within_bounds_function, fh)
         if print_timing:
             print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
-#       we do not add boundary points to the set of points
-#       p = [point for point in boundary_points] + [point for point in p]
     else:
         p, _ = read_data(restart_file_name)
-
-    # remove points which are on top of other points
-    p_tuples = [(point[0], point[1]) for point in p]
-    p = [[point[0], point[1]] for point in set(p_tuples)]
-
-    # this shift was chosen so that the first movement is large enough to trigger delaunay
-    shift = (100.0 * ttol * h0)**2.0
-    pold = [[point[0] + shift, point[1] + shift] for point in p]
 
     print('number of grid points: {0}'.format(len(p)))
 
@@ -285,7 +270,7 @@ def distmesh2d(config,
             break
 
         t0 = time.time()
-        pold, bars, t = solve_delaunay(p, within_bounds_function)
+        bars, t = solve_delaunay(p, within_bounds_function)
         if print_timing:
             print('time spent in delaunay: {0:.2f}'.format(time.time() - t0))
 
