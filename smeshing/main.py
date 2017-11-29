@@ -21,7 +21,7 @@ import flanders
 import delaunay
 
 from .bbox import get_bbox
-from .clockwise import edges_sum
+from .clockwise import polygon_is_clockwise
 from .file_io import read_data
 from .version import __version__
 
@@ -527,11 +527,10 @@ def compute_view_vectors(points, scale):
     If scale is negative, then view vectors are towards inside.
     """
 
-    # we figure out whether polygon is clockwise or anticlockwise
-    if edges_sum(points) < 0.0:
-        s = +1.0 * scale
-    else:
+    if polygon_is_clockwise(points):
         s = -1.0 * scale
+    else:
+        s = +1.0 * scale
 
     # we remove the last point since it repeats the first
     # we assume clock-wise closed loops

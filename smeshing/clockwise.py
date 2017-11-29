@@ -9,10 +9,14 @@ def edges_sum(points):
     return s
 
 
-def test_turn_polygon_clockwise():
+def test_edges_sum():
     points = [(5.0, 0.0),
               (6.0, 4.0),
               (4.0, 5.0),
               (1.0, 5.0),
               (1.0, 0.0)]
     assert edges_sum(points) == -44.0
+
+
+def polygon_is_clockwise(points):
+    return (edges_sum(points) > 0.0)
