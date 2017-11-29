@@ -87,13 +87,16 @@ Example config.yml
 
   # number of grid points
   num_grid_points: 5000
+
   # number of all boundary and coastline interpolation points
   # these will not be part of the grid points
   # instead of num_interpolation_points you can also provide
   # interpolation_step_length using the same units as the coordinates of your data
   num_interpolation_points: 1000
+
   # number of iterations
   num_iterations: 100
+
   # view angle for nearest coastline point computations
   view_angle: 90.0
 
