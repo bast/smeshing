@@ -18,12 +18,13 @@ import ntpath
 
 import polygons
 import flanders
-import delaunay
 
 from .bbox import get_bbox
 from .clockwise import polygon_is_clockwise
 from .file_io import read_data
 from .version import __version__
+from .triangulate import solve_delaunay
+from .view_vectors import compute_view_vectors
 
 
 def import_resolution_function(resolution_function_file_name):
@@ -137,25 +138,6 @@ def create_initial_distribution(seeding_speed, points_polygon, num_points, withi
                     return _p
 
 
-def form_bars(triangles):
-    bars = []
-    for triangle in triangles:
-        bars.append((triangle[0], triangle[1]))
-        bars.append((triangle[1], triangle[2]))
-        bars.append((triangle[2], triangle[0]))
-
-    _bars = []
-    for bar in bars:
-        if bar[1] < bar[0]:
-            _bars.append((bar[1], bar[0]))
-        else:
-            _bars.append(bar)
-    _bars = set(_bars)
-    _bars = list(_bars)
-    _bars = sorted(_bars)
-    return _bars
-
-
 def get_bar_lengths(p, bars, fh, Fscale):
     barvec = []
     for bar in bars:
@@ -183,35 +165,6 @@ def get_bar_lengths(p, bars, fh, Fscale):
         L0.append(hbars[i] * Fscale * math.sqrt(l2sum / hbars2sum))
 
     return L, L0, barvec
-
-
-def solve_delaunay(p, within_bounds_function):
-    """
-    Retriangulation by the Delaunay algorithm.
-    """
-    _triangles = delaunay.solve(p)
-
-    triangle_centroids = []
-    for triangle in _triangles:
-        x = 0.0
-        y = 0.0
-        for ip in triangle:
-            x += p[ip][0]
-            y += p[ip][1]
-        triangle_centroids.append((x / 3.0, y / 3.0))
-
-    # Keep interior triangles
-    # in contrast to original implementation we do not use a tolerance at boundary
-    # to avoid a distance computation
-    within_bounds = within_bounds_function(triangle_centroids)
-    t = []
-    for i, triangle in enumerate(_triangles):
-        if within_bounds[i]:
-            t.append(triangle)
-
-    bars = form_bars(t)
-
-    return bars, t
 
 
 def distmesh2d(config,
@@ -505,50 +458,6 @@ def read_points(file_name):
                 points.append([x, y])
             polygons.append(points)
     return polygons
-
-
-def compute_view_vectors(points, scale):
-    """
-    If scale is negative, then view vectors are towards inside.
-    """
-
-    if polygon_is_clockwise(points):
-        s = -1.0 * scale
-    else:
-        s = +1.0 * scale
-
-    # we remove the last point since it repeats the first
-    # we assume clock-wise closed loops
-    _points = [points[i] for i in range(len(points) - 1)]
-
-    if len(_points) > 2:
-        vectors = get_normal_vectors(_points, s)
-    else:
-        # this is a "linear" island consisting of two points
-        vectors = []
-        vector = (_points[1][0] - _points[0][0], _points[1][1] - _points[0][1])
-        vectors.append(normalize(vector, -s))
-        vectors.append(normalize(vector, s))
-
-    # we add the removed point again
-    return vectors + [vectors[0]]
-
-
-def get_normal_vectors(points, s):
-    num_points = len(points)
-    vectors = []
-    for i in range(num_points):
-        i_before = i - 1
-        i_after = (i + 1) % num_points
-        vector = (points[i_after][1] - points[i_before][1], -(points[i_after][0] - points[i_before][0]))
-        vector = normalize(vector, s)
-        vectors.append(vector)
-    return vectors
-
-
-def normalize(vector, s):
-    norm = math.sqrt(vector[0]**2.0 + vector[1]**2.0)
-    return (s * vector[0] / norm, s * vector[1] / norm)
 
 
 def get_distance(p1, p2):
