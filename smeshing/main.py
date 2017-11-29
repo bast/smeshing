@@ -105,6 +105,15 @@ def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_funct
     return p
 
 
+def get_random_points(num_points, xmin, xmax, ymin, ymax):
+    points = []
+    for _ in range(num_points):
+        x = random.uniform(xmin, xmax)
+        y = random.uniform(ymin, ymax)
+        points.append([x, y])
+    return points
+
+
 def create_initial_distribution(seeding_speed, points_polygon, num_points, within_bounds_function, fh):
     """
     Create initial distribution in bounding box (equilateral triangles).
@@ -118,11 +127,7 @@ def create_initial_distribution(seeding_speed, points_polygon, num_points, withi
     _p = []
     while True:
         print('number of initial points {0} out of {1}'.format(count, num_points))
-        _points = []
-        for _ in range(min(num_points, 1000000)):
-            x = random.uniform(xmin, xmax)
-            y = random.uniform(ymin, ymax)
-            _points.append([x, y])
+        _points = get_random_points(min(num_points, 1000000), xmin, xmax, ymin, ymax)
         within_bounds = within_bounds_function(_points)
         _points = [point for i, point in enumerate(_points) if within_bounds[i]]
 
