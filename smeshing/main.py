@@ -368,7 +368,9 @@ def run(boundary_file_name,
 
     print('\nnumber of boundary interpolation points: {0}'.format(len(all_points)))
 
-    flanders_context = flanders.new_context(num_points, all_points)
+    # pass only x and y coordinates and skip all the rest
+    all_points_xy = [[t[0], t[1]] for t in all_points]
+    flanders_context = flanders.new_context(num_points, all_points_xy)
     angles_deg = [config['view_angle'] for _ in range(num_points)]
     flanders_indices = flanders.search_neighbor(context=flanders_context,
                                                 ref_indices=list(range(num_points)),
@@ -390,8 +392,10 @@ def run(boundary_file_name,
     index_off = 0
     indices = list(range(index_off, index_off + len(boundary_points)))
     index_off += len(boundary_points)
-    polygons.add_polygon(all_polygons_context, boundary_points, indices)
-    polygons.add_polygon(boundary_context, boundary_points, indices)
+    # pass only x and y coordinates and skip all the rest
+    boundary_points_xy = [[t[0], t[1]] for t in boundary_points]
+    polygons.add_polygon(all_polygons_context, boundary_points_xy, indices)
+    polygons.add_polygon(boundary_context, boundary_points_xy, indices)
     counter = len(boundary_points)
     all_points = boundary_points
 
@@ -401,10 +405,12 @@ def run(boundary_file_name,
             islands_points = interpolate_polygon(_islands_points, interpolation_step_length)
             indices = list(range(index_off, index_off + len(islands_points)))
             index_off += len(islands_points)
-            polygons.add_polygon(all_polygons_context, islands_points, indices)
+            # pass only x and y coordinates and skip all the rest
+            islands_points_xy = [[t[0], t[1]] for t in islands_points]
+            polygons.add_polygon(all_polygons_context, islands_points_xy, indices)
             indices = list(range(index_off_islands, index_off_islands + len(islands_points)))
             index_off_islands += len(islands_points)
-            polygons.add_polygon(islands_context, islands_points, indices)
+            polygons.add_polygon(islands_context, islands_points_xy, indices)
             counter += len(islands_points)
             all_points += islands_points
 
@@ -430,6 +436,14 @@ def run(boundary_file_name,
 
     resolution_function = import_resolution_function(resolution_function_file_name)
 
+    keys = config['polygon_quantities']
+    polygon_quantities = []
+    for point in all_points:
+        d = {}
+        for key, quantity in zip(keys, point):
+            d[key] = quantity
+        polygon_quantities.append(d)
+
     def h_function(points):
         closest_vertices = polygons.get_closest_vertices(all_polygons_context, points)
 
@@ -437,10 +451,9 @@ def run(boundary_file_name,
         for point, closest_vertex in zip(points, closest_vertices):
             distance_to_nearest_vertex = get_distance(point, all_points[closest_vertex])
             nearest_distance_at_nearest_vertex = nearest_distance_at_coastline_point[closest_vertex]
-            r = 6.0  # FIXME hardcoded
             resolution = resolution_function(distance_to_nearest_vertex,
                                              nearest_distance_at_nearest_vertex,
-                                             r)
+                                             polygon_quantities[closest_vertex])
             resolutions.append(resolution)
 
         return resolutions
@@ -512,9 +525,8 @@ def read_points(file_name):
             num_points = int(line)
             for _ in range(num_points):
                 line = next(f)
-                x = float(line.split()[0])
-                y = float(line.split()[1])
-                points.append([x, y])
+                point = [float(element) for element in line.split()]
+                points.append(point)
             polygons.append(points)
     return polygons
 
