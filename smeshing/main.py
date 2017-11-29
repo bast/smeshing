@@ -162,7 +162,6 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
                 _filtered_points = filter_points(points, resolutions, max_resolution, damping_factor, max_num_filtered_points)
                 _num_filtered_points = len(_filtered_points)
                 _percentage = 100.0 * _num_filtered_points / num_grid_points
-                print(_percentage, damping_factor)
                 if _percentage < target_percentage:
                     damping_factor_calibrated = True
                     break
