@@ -74,12 +74,12 @@ Installation using virtualenv
 
 ::
 
-    virtualenv venv
-    source venv/bin/activate
+  virtualenv venv
+  source venv/bin/activate
 
-    pip install --process-dependency-links git+https://github.com/bast/smeshing.git
+  pip install --process-dependency-links git+https://github.com/bast/smeshing.git
 
-    smesh --help
+  smesh --help
 
 
 Installing dependencies for development
@@ -87,9 +87,9 @@ Installing dependencies for development
 
 ::
 
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+  virtualenv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
 
 
 Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
@@ -97,20 +97,22 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
 
 ::
 
-    module load foss/2016b
-    module load CMake/3.7.1-foss-2016b
-    module load libffi/3.2.1-foss-2016b
+  module purge
+  module load foss/2016b
+  module load Python/3.5.2-foss-2016b
+  module load CMake/3.7.1-foss-2016b
+  module load libffi/3.2.1-foss-2016b
 
-    cd ${SLURM_SUBMIT_DIR}
+  python3 -m venv venv
+  source venv/bin/activate
 
-    virtualenv venv
-    source venv/bin/activate
+  python --version
 
-    export CC=gcc
-    export CXX=g++
-    export FC=gfortran
+  export CC=gcc
+  export CXX=g++
+  export FC=gfortran
 
-    pip install --process-dependency-links git+https://github.com/bast/smeshing.git
+  pip install --process-dependency-links git+https://github.com/bast/smeshing.git
 
 
 Running tests
@@ -141,6 +143,40 @@ For an explanation of the options try::
   $ smesh --help
 
 You can take the files here as a starting point: https://github.com/bast/smeshing/tree/master/data/happy-bear
+
+
+Example run script for the `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
+------------------------------------------------------------------------------------------
+
+.. code-block:: bash
+
+  #!/bin/bash
+
+  #SBATCH --job-name=smesh
+  #SBATCH --nodes=1
+  #SBATCH --ntasks-per-node=20
+  #SBATCH --exclusive
+  #SBATCH --time=0-01:00:00
+  #SBATCH --partition short
+  #SBATCH --mem-per-cpu=500MB
+  #SBATCH --mail-type=ALL
+
+  module purge
+  module load foss/2016b
+  module load Python/3.5.2-foss-2016b
+  module load libffi/3.2.1-foss-2016b
+
+  source /home/user/smeshing/venv/bin/activate
+
+  export OMP_NUM_THREADS=${SLURM_TASKS_PER_NODE}
+
+  smesh --boundary=/home/user/smeshing/data/happy-bear/boundary.txt \
+        --islands=/home/user/smeshing/data/happy-bear/islands.txt \
+        --config=/home/user/smeshing/data/happy-bear/config.yml \
+        --resolution_function=/home/user/smeshing/data/happy-bear/resolution_function.py \
+        --output=/home/user/smeshing/data.txt
+
+  exit 0
 
 
 How to provide polygon data for the boundary and islands
@@ -196,7 +232,56 @@ and you can add comments as in this example:
 How to express the resolution function
 --------------------------------------
 
-Write me ...
+Grid points move depending on forces and forces depend on the resolution. You
+have to define the resolution yourself by defining a Python function which will
+be evaluated for each grid point. You get 3 input parameters (defined below)
+and it is up to you to construct the result. Here is an example:
+
+.. code-block:: python
+
+  def resolution_function(d_gp, d_pp, q):
+      '''
+      d_gp: distance from grid point
+            to nearest polygon point
+            (same units as polygon data)
+      d_pp: distance from nearest polygon point
+            to nearest polygon point across strait
+            taking into account the view vector
+            (same units as polygon data)
+      q: dictionary of quantities at nearest polygon point
+         keys are defined in the configuration file
+         (in other words, you define what these mean)
+      '''
+      s = 0.9
+
+      result = s*d_gp + d_pp/q['number of points across strait']
+
+      if result < 1.0:
+          result = 1.0
+
+      return result
+
+Where does the "number of points across strait" come from and what does it
+mean?  This was defined by the user in this particular example. Instead of
+providing only x- and y-coordinates for each polygon point, you can provide
+more than 2 floating point numbers per line and you can define for yourself
+what they mean. The first 2 are set for x- and y-coordinates but the third (or
+forth, fifth, etc.) can mean whatever you want it to mean. If you introduce
+additional coastline parameters, you need to name them in your configuration
+file so that you can reference them later in your code, for instance:
+
+.. code-block:: yaml
+
+  polygon_quantities:
+    - 'x coordinate'
+    - 'y coordinate'
+    - 'number of points across strait'
+
+What the resolution function does is to give you a Python dictionary of these
+quantities for the closest coastline point and you can refer to these like in
+the example above. This means that if you need a fourth parameter, you add
+these to the polygon data, you name the parameter in your configuration file,
+and you use the quantity inside the resolution function.
 
 
 Restart
