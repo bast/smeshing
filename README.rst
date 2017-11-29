@@ -33,34 +33,44 @@ move to Fortran or C(++) and introduce parallelization but provide a
 Python interface.
 
 
-Installing dependencies for development
----------------------------------------
+Nice things about this code
+---------------------------
 
-::
-
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-
-
-Running tests
--------------
-
-::
-
-    py.test -vv smeshing/*.py
+-  Individual components live in separate libraries.
+-  A lot of effort was invested in avoiding quadratic scaling.
+-  Optimization is fully relaxed.
+-  Delaunay is performed at every step.
+-  Good memory profile (hopefully, please report if not).
+-  Gives the user a lot of flexibility to define a distance-dependent resolution.
 
 
-Plotting
---------
+Known issues
+------------
 
-Example::
+-  Code uses shared-memory parallelization but the load leveling is not
+   optimal and the scaling has not been studied in detail.
 
-    python plot.py data/happy-bear/result.txt example.png
+
+References
+----------
+
+The DistMesh algorithm is described in the following two references. If
+you use the algorithm in a program or publication, please acknowledge
+its authors by adding a reference to the first paper below.
+
+-  `P.-O. Persson, G. Strang, A Simple Mesh Generator in MATLAB, SIAM
+   Review, Volume 46 (2), pp. 329-345, June
+   2004 <http://persson.berkeley.edu/distmesh/persson04mesh.pdf>`__
+-  `P.-O. Persson, Mesh Generation for Implicit Geometries, Ph.D.
+   thesis, Department of Mathematics, MIT, Dec
+   2004 <http://persson.berkeley.edu/thesis/persson-thesis-color.pdf>`__
 
 
-Example installation and run
-----------------------------
+Installation
+============
+
+Installation using virtualenv
+-----------------------------
 
 ::
 
@@ -72,28 +82,14 @@ Example installation and run
     smesh --help
 
 
-Example config.yml
-------------------
+Installing dependencies for development
+---------------------------------------
 
-The order of keywords does not matter and you can add comments as in this
-example:
+::
 
-.. code-block:: yaml
-
-  # number of grid points
-  num_grid_points: 5000
-
-  # number of all boundary and coastline interpolation points
-  # these will not be part of the grid points
-  # instead of num_interpolation_points you can also provide
-  # interpolation_step_length using the same units as the coordinates of your data
-  num_interpolation_points: 1000
-
-  # number of iterations
-  num_iterations: 100
-
-  # view angle for nearest coastline point computations
-  view_angle: 90.0
+    virtualenv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
 
 
 Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
@@ -117,29 +113,41 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
     pip install --process-dependency-links git+https://github.com/bast/smeshing.git
 
 
-Nice things about this code
----------------------------
+Running tests
+-------------
 
--  Individual components live in separate libraries.
--  A lot of effort was invested in avoiding quadratic scaling.
--  Optimization is fully relaxed.
--  Delaunay is performed at every step.
--  Good memory profile (hopefully, please report if not).
--  Gives the user a lot of flexibility to define a distance-dependent resolution.
+::
+
+    py.test -vv smeshing/*.py
 
 
-Known issues
-------------
-
--  Code uses shared-memory parallelization but the load leveling is not
-   optimal and the scaling has not been studied in detail.
+How to run the code
+===================
 
 
-Restart
--------
+Configuration
+-------------
 
-It is possible to restart a calculation if you provide
-``--restart=/path/to/restart/file``.
+Configuration is given in YAML format. You can name the configuration file as
+you like, for instance ``config.yml``.  The order of keywords does not matter
+and you can add comments as in this example:
+
+.. code-block:: yaml
+
+  # number of grid points
+  num_grid_points: 5000
+
+  # number of all boundary and coastline interpolation points
+  # these will not be part of the grid points
+  # instead of num_interpolation_points you can also provide
+  # interpolation_step_length using the same units as the coordinates of your data
+  num_interpolation_points: 1000
+
+  # number of iterations
+  num_iterations: 100
+
+  # view angle for nearest coastline point computations
+  view_angle: 90.0
 
 
 How to provide polygon data for the bounday and islands
@@ -152,6 +160,17 @@ How to express the resolution function
 --------------------------------------
 
 Write me ...
+
+
+Restart
+-------
+
+It is possible to restart a calculation if you provide
+``--restart=/path/to/restart/file``.
+
+
+Design choices
+==============
 
 
 Why do we need to provide islands and the boundary separately?
@@ -174,16 +193,14 @@ for the following reasons:
   latitude units of decimal degrees but operate on arbitrary units
 
 
-References
-----------
+Postprocessing
+==============
 
-The DistMesh algorithm is described in the following two references. If
-you use the algorithm in a program or publication, please acknowledge
-its authors by adding a reference to the first paper below.
 
--  `P.-O. Persson, G. Strang, A Simple Mesh Generator in MATLAB, SIAM
-   Review, Volume 46 (2), pp. 329-345, June
-   2004 <http://persson.berkeley.edu/distmesh/persson04mesh.pdf>`__
--  `P.-O. Persson, Mesh Generation for Implicit Geometries, Ph.D.
-   thesis, Department of Mathematics, MIT, Dec
-   2004 <http://persson.berkeley.edu/thesis/persson-thesis-color.pdf>`__
+Plotting
+--------
+
+The repository contains a tiny script which can be used to plot the generated
+grid::
+
+    python plot.py data/happy-bear/result.txt example.png
