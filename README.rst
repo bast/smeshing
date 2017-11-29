@@ -157,6 +157,17 @@ It is possible to restart a calculation if you provide
 ``--restart=/path/to/restart/file``.
 
 
+Why do we need to provide islands and the boundary separately?
+--------------------------------------------------------------
+
+For two reasons:
+
+- We compute view vectors for nearest neighbor polygon points in view. For the boundary
+  they point to the "inside". For islands they point to the "outside".
+- During the computation we need to figure out whether points are inside or outside of polygons.
+  We want grid points to be inside the boundary but outside islands.
+
+
 Why not using GeoJSON?
 ----------------------
 
