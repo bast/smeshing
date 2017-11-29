@@ -122,14 +122,15 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__
     pip install --process-dependency-links git+https://github.com/bast/smeshing.git
 
 
-Pros
-----
+Nice things about this code
+---------------------------
 
 -  Individual components live in separate libraries.
 -  A lot of effort was invested in avoiding quadratic scaling.
 -  Optimization is fully relaxed.
 -  Delaunay is performed at every step.
 -  Good memory profile (hopefully, please report if not).
+-  Gives the user a lot of flexibility to define a distance-dependent resolution.
 
 
 Known issues
@@ -146,10 +147,20 @@ It is possible to restart a calculation if you provide
 ``--restart=/path/to/restart/file``.
 
 
+How to provide polygon data for the bounday and islands
+-------------------------------------------------------
+
+Write me ...
+
+
+How to express the resolution function
+--------------------------------------
+
+Write me ...
+
+
 Why do we need to provide islands and the boundary separately?
 --------------------------------------------------------------
-
-For two reasons:
 
 - We compute view vectors for nearest neighbor polygon points in view. For the boundary
   they point to the "inside". For islands they point to the "outside".
