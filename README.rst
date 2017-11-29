@@ -64,7 +64,7 @@ Plotting
 
 Example::
 
-    python smeshing/plot.py data/fiction/result.txt example.png
+    python plot.py data/happy-bear/result.txt example.png
 
 
 Example installation and run
