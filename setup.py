@@ -34,7 +34,7 @@ setup(
         'delaunay==0.0.0',
     ],
     dependency_links=[
-        "git+https://github.com/bast/polygons.git@8afdb5fcdf203ddeacf754b232062a46d2ed220a#egg=polygons-0.0.0",
+        "git+https://github.com/bast/polygons.git@d7b2c7e706742e194014d3006267dfcf97f80d3e#egg=polygons-0.0.0",
         "git+https://github.com/bast/flanders.git@0e072e1566ce4b3fadca59609dd1ce03164dbedd#egg=flanders-0.0.0",
         "git+https://github.com/bast/delaunay.git@radovan/python-interface#egg=delaunay-0.0.0",
     ],
