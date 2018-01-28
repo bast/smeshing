@@ -1,6 +1,6 @@
 double h_function(const double coefficients[])
 {
-    return coefficients[0] + 0.5*coefficients[1];
+    return 0.1*coefficients[0];
 }
 
 double g_function(const double distance)

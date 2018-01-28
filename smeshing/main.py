@@ -27,21 +27,6 @@ from .triangulate import solve_delaunay
 from .view_vectors import compute_view_vectors
 
 
-def import_resolution_function(resolution_function_file_name):
-    '''
-    Imports the resolution function from file resolution_function_file_name
-    and returns it.
-    '''
-    only_path = os.path.dirname(resolution_function_file_name)
-    sys.path.append(only_path)
-
-    only_file = ntpath.basename(resolution_function_file_name)
-    only_file_no_suffix = os.path.splitext(only_file)[0]
-    resolution_function = __import__(only_file_no_suffix)
-
-    return resolution_function.resolution_function
-
-
 def density_control_unused(p, L, L0, bars, nfix):
     """
     Density control - remove points that are too close.
@@ -383,9 +368,9 @@ def run(boundary_file_name,
 
     flanders.free_context(flanders_context)
 
-    all_polygons_context = polygons.new_context()
-    boundary_context = polygons.new_context()
-    islands_context = polygons.new_context()
+    all_polygons_context = polygons.new_context(1)
+    boundary_context = polygons.new_context(0)
+    islands_context = polygons.new_context(0)
 
     _boundary_points = read_points(boundary_file_name)[0]  # there is only one boundary (right?)
     boundary_points = interpolate_polygon(_boundary_points, interpolation_step_length)
@@ -394,8 +379,13 @@ def run(boundary_file_name,
     index_off += len(boundary_points)
     # pass only x and y coordinates and skip all the rest
     boundary_points_xy = [[t[0], t[1]] for t in boundary_points]
-    polygons.add_polygon(all_polygons_context, boundary_points_xy, indices)
-    polygons.add_polygon(boundary_context, boundary_points_xy, indices)
+
+    # FIXME generalize to arbitrary number of coefficients
+    # now only one per line
+    coefficients = [t[2] for t in boundary_points]
+
+    polygons.add_polygon(all_polygons_context, boundary_points_xy, indices, coefficients)
+    polygons.add_polygon(boundary_context, boundary_points_xy, indices, [])
     counter = len(boundary_points)
     all_points = boundary_points
 
@@ -407,10 +397,15 @@ def run(boundary_file_name,
             index_off += len(islands_points)
             # pass only x and y coordinates and skip all the rest
             islands_points_xy = [[t[0], t[1]] for t in islands_points]
-            polygons.add_polygon(all_polygons_context, islands_points_xy, indices)
+
+            # FIXME generalize to arbitrary number of coefficients
+            # now only one per line
+            coefficients = [t[2] for t in islands_points]
+
+            polygons.add_polygon(all_polygons_context, islands_points_xy, indices, coefficients)
             indices = list(range(index_off_islands, index_off_islands + len(islands_points)))
             index_off_islands += len(islands_points)
-            polygons.add_polygon(islands_context, islands_points_xy, indices)
+            polygons.add_polygon(islands_context, islands_points_xy, indices, [])
             counter += len(islands_points)
             all_points += islands_points
 
@@ -434,8 +429,6 @@ def run(boundary_file_name,
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
     h0 = (xmax - xmin) / 500.0
 
-    resolution_function = import_resolution_function(resolution_function_file_name)
-
     keys = config['polygon_quantities']
     polygon_quantities = []
     for point in all_points:
@@ -445,18 +438,8 @@ def run(boundary_file_name,
         polygon_quantities.append(d)
 
     def h_function(points):
-        closest_vertices = polygons.get_closest_vertices(all_polygons_context, points)
-
-        resolutions = []
-        for point, closest_vertex in zip(points, closest_vertices):
-            distance_to_nearest_vertex = get_distance(point, all_points[closest_vertex])
-            nearest_distance_at_nearest_vertex = nearest_distance_at_coastline_point[closest_vertex]
-            resolution = resolution_function(distance_to_nearest_vertex,
-                                             nearest_distance_at_nearest_vertex,
-                                             polygon_quantities[closest_vertex])
-            resolutions.append(resolution)
-
-        return resolutions
+        _distances = polygons.get_distances_vertex_custom(all_polygons_context, points)
+        return [max(1.0, _d) for _d in _distances]
 
     points, triangles = distmesh2d(config,
                                    all_points,
