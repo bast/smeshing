@@ -17,7 +17,6 @@ import time
 import ntpath
 
 import polygons
-import flanders
 
 from .bbox import get_bbox
 from .clockwise import polygon_is_clockwise
@@ -355,18 +354,6 @@ def run(boundary_file_name,
 
     # pass only x and y coordinates and skip all the rest
     all_points_xy = [[t[0], t[1]] for t in all_points]
-    flanders_context = flanders.new_context(num_points, all_points_xy)
-    angles_deg = [config['view_angle'] for _ in range(num_points)]
-    flanders_indices = flanders.search_neighbor(context=flanders_context,
-                                                ref_indices=list(range(num_points)),
-                                                view_vectors=view_vectors,
-                                                angles_deg=angles_deg)
-
-    nearest_distance_at_coastline_point = []
-    for i in range(len(all_points)):
-        nearest_distance_at_coastline_point.append(get_distance(all_points[i], all_points[flanders_indices[i]]))
-
-    flanders.free_context(flanders_context)
 
     all_polygons_context = polygons.new_context(1)
     boundary_context = polygons.new_context(0)
@@ -428,14 +415,6 @@ def run(boundary_file_name,
 
     xmin, xmax, ymin, ymax = get_bbox(boundary_points)
     h0 = (xmax - xmin) / 500.0
-
-    keys = config['polygon_quantities']
-    polygon_quantities = []
-    for point in all_points:
-        d = {}
-        for key, quantity in zip(keys, point):
-            d[key] = quantity
-        polygon_quantities.append(d)
 
     def h_function(points):
         _distances = polygons.get_distances_vertex_custom(all_polygons_context, points)

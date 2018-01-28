@@ -225,63 +225,12 @@ and you can add comments as in this example:
   # number of iterations
   num_iterations: 100
 
-  # view angle for nearest coastline point computations
-  view_angle: 90.0
-
 
 How to express the resolution function
 --------------------------------------
 
 Grid points move depending on forces and forces depend on the resolution. You
-have to define the resolution yourself by defining a Python function which will
-be evaluated for each grid point. You get 3 input parameters (defined below)
-and it is up to you to construct the result. Here is an example:
-
-.. code-block:: python
-
-  def resolution_function(d_gp, d_pp, q):
-      '''
-      d_gp: distance from grid point
-            to nearest polygon point
-            (same units as polygon data)
-      d_pp: distance from nearest polygon point
-            to nearest polygon point across strait
-            taking into account the view vector
-            (same units as polygon data)
-      q: dictionary of quantities at nearest polygon point
-         keys are defined in the configuration file
-         (in other words, you define what these mean)
-      '''
-      s = 0.9
-
-      result = s*d_gp + d_pp/q['number of points across strait']
-
-      if result < 1.0:
-          result = 1.0
-
-      return result
-
-Where does the "number of points across strait" come from and what does it
-mean?  This was defined by the user in this particular example. Instead of
-providing only x- and y-coordinates for each polygon point, you can provide
-more than 2 floating point numbers per line and you can define for yourself
-what they mean. The first 2 are set for x- and y-coordinates but the third (or
-forth, fifth, etc.) can mean whatever you want it to mean. If you introduce
-additional coastline parameters, you need to name them in your configuration
-file so that you can reference them later in your code, for instance:
-
-.. code-block:: yaml
-
-  polygon_quantities:
-    - 'x coordinate'
-    - 'y coordinate'
-    - 'number of points across strait'
-
-What the resolution function does is to give you a Python dictionary of these
-quantities for the closest coastline point and you can refer to these like in
-the example above. This means that if you need a fourth parameter, you add
-these to the polygon data, you name the parameter in your configuration file,
-and you use the quantity inside the resolution function.
+have to define the resolution yourself by defining ...
 
 
 Restart

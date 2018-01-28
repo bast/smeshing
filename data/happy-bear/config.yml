@@ -1,8 +1,3 @@
 num_grid_points: 4000
 num_interpolation_points: 1000
 num_iterations: 50
-view_angle: 90.0
-polygon_quantities:
-  - 'x coordinate'
-  - 'y coordinate'
-  - 'number of points across strait'
