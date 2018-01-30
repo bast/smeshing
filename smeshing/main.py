@@ -19,11 +19,9 @@ import ntpath
 import polygons
 
 from .bbox import get_bbox
-from .clockwise import polygon_is_clockwise
 from .file_io import read_data
 from .version import __version__
 from .triangulate import solve_delaunay
-from .view_vectors import compute_view_vectors
 
 
 def density_control_unused(p, L, L0, bars, nfix):
@@ -340,12 +338,10 @@ def run(boundary_file_name,
 
     _boundary_points = read_points(boundary_file_name)[0]  # there is only one boundary (right?)
     boundary_points = interpolate_polygon(_boundary_points, interpolation_step_length)
-    view_vectors = compute_view_vectors(boundary_points, scale=-1.0)
     all_points = boundary_points
     for island_file in island_file_names:
         for _islands_points in read_points(island_file):
             islands_points = interpolate_polygon(_islands_points, interpolation_step_length)
-            view_vectors += compute_view_vectors(islands_points, scale=1.0)
             all_points += islands_points
     num_points = len(all_points)
 

@@ -8,7 +8,7 @@
 import sys
 import os
 
-from .main import run, read_points, compute_view_vectors, get_distance
+from .main import run, read_points, get_distance
 from .file_io import read_data, write_data
 from .bbox import get_bbox
 
