@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./smesh --boundary=/home/bast/tmp/smeshing/data/happy-bear/boundary.txt \
-        --islands=/home/bast/tmp/smeshing/data/happy-bear/islands.txt \
-        --config=/home/bast/tmp/smeshing/data/happy-bear/config.yml \
+./smesh --boundary=$PWD/data/happy-bear/boundary.txt \
+        --islands=$PWD/data/happy-bear/islands.txt \
+        --config=$PWD/data/happy-bear/config.yml \
         --output=data.txt
