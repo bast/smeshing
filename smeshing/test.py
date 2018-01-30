@@ -38,8 +38,7 @@ def test_polygon():
     reference_file_name = 'data/happy-bear/result.txt'
     points, triangles = run(boundary_file_name='data/happy-bear/boundary.txt',
                             island_file_names=['data/happy-bear/islands.txt'],
-                            config_file_name='data/happy-bear/config.yml',
-                            resolution_function_file_name='data/happy-bear/resolution_function.py')
+                            config_file_name='data/happy-bear/config.yml')
     if os.getenv('GENERATE_REFERENCES', False):
         write_data(points, triangles, reference_file_name)
     matches_with_reference(points, triangles, reference_file_name)

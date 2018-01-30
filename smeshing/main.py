@@ -318,7 +318,6 @@ def get_boundary_length(boundary_file_name, island_file_names):
 def run(boundary_file_name,
         island_file_names,
         config_file_name,
-        resolution_function_file_name,
         restart_file_name=None):
 
     with open(config_file_name, 'r') as f:
