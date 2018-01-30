@@ -40,6 +40,12 @@ install:
   - pip install -r requirements.txt
 
 script:
+  - mkdir -p preload/build
+  - cd preload/build
+  - cmake ..
+  - make
+  - cd ../..
+  - export LD_PRELOAD=$PWD/preload/build/libcustom_functions.so
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]];
     then py.test -vv smeshing/*.py --cov smeshing;
     else py.test -vv smeshing/*.py;
