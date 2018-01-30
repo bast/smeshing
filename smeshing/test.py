@@ -40,6 +40,6 @@ def test_polygon():
                             island_file_names=['data/happy-bear/islands.txt'],
                             config_file_name='data/happy-bear/config.yml',
                             resolution_function_file_name='data/happy-bear/resolution_function.py')
-    if os.getenv('GENERATE_TESTS', False):
+    if os.getenv('GENERATE_REFERENCES', False):
         write_data(points, triangles, reference_file_name)
     matches_with_reference(points, triangles, reference_file_name)
