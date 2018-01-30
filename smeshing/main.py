@@ -418,7 +418,7 @@ def run(boundary_file_name,
 
     def h_function(points):
         _distances = polygons.get_distances_vertex_custom(all_polygons_context, points)
-        return [max(1.0, _d) for _d in _distances]
+        return _distances
 
     points, triangles = distmesh2d(config,
                                    all_points,
