@@ -26,28 +26,6 @@ from .version import __version__
 from .triangulate import solve_delaunay
 
 
-def density_control_unused(p, L, L0, bars, nfix):
-    """
-    Density control - remove points that are too close.
-    """
-    apply_density_control = False
-    points_to_remove = []
-
-    for i in range(len(L0)):
-        if L0[i] > 2.0 * L[i]:
-            apply_density_control = True
-            for k in [0, 1]:
-                ip = bars[i][k]
-                if ip > nfix:
-                    points_to_remove.append(ip)
-
-    if apply_density_control:
-        points_to_remove = list(set(points_to_remove))
-        p = [p[ip] for ip in range(len(p)) if ip not in points_to_remove]
-
-    return apply_density_control, p
-
-
 def compute_forces(L0, L, bars, barvec, p):
     # Bar forces (scalars)
     F = [L0[i] - L[i] for i in range(len(L))]
