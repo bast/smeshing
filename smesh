@@ -9,15 +9,13 @@ import smeshing
 @click.option('--boundary', help='File containing boundary data.')
 @click.option('--islands', help='Island file names (OK to use wildcards).')
 @click.option('--config', help='Read configuration from this file.')
-@click.option('--resolution_function', help='Python module which defines the resolution function.')
 @click.option('--output', help='Write output to this file.')
 @click.option('--restart', help='Restart from this file.')
-def main(boundary, islands, config, resolution_function, output, restart):
+def main(boundary, islands, config, output, restart):
 
     points, triangles = smeshing.run(boundary_file_name=boundary,
                                      island_file_names=glob.glob(islands),
                                      config_file_name=config,
-                                     resolution_function_file_name=resolution_function,
                                      restart_file_name=restart)
 
     if output is not None:
