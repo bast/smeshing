@@ -416,14 +416,15 @@ def run(boundary_file_name,
     use_interpolation = False
     if use_interpolation:
         interpolation_step = h0
-        xs = [xmin + i*interpolation_step for i in range(int((xmax - xmin)/interpolation_step))]
-        ys = [ymin + i*interpolation_step for i in range(int((ymax - ymin)/interpolation_step))]
+        xs = [xmin + i * interpolation_step for i in range(int((xmax - xmin) / interpolation_step))]
+        ys = [ymin + i * interpolation_step for i in range(int((ymax - ymin) / interpolation_step))]
         ps = []
         zs = []
         for x in xs:
             ps = [(x, y) for y in ys]
             zs.append(polygons.get_distances_vertex_custom(all_polygons_context, ps))
         interp_spline = RectBivariateSpline(xs, ys, np.array(zs))
+
         def h_function(points):
             _distances = [interp_spline(x, y)[0][0] for (x, y) in points]
             return _distances
