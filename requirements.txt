@@ -1,6 +1,8 @@
 pycodestyle
 pytest
 pyyaml
+scipy
+numpy
 click
 pytest-cov
 python-coveralls
