@@ -7,15 +7,17 @@ import smeshing
 
 @click.command()
 @click.option('--boundary', help='File containing boundary data.')
-@click.option('--islands', help='Island file names (OK to use wildcards).')
+@click.option('--islands', help='Island file names (it is possible to use wildcards).')
+@click.option('--resolution-fields', help='File name(s) containing resolution fields (it is possible to use wildcards).')
 @click.option('--config', help='Read configuration from this file.')
 @click.option('--output', help='Write output to this file.')
 @click.option('--restart', help='Restart from this file.')
-def main(boundary, islands, config, output, restart):
+def main(boundary, islands, resolution_fields, config, output, restart):
 
     points, triangles = smeshing.run(boundary_file_name=boundary,
                                      island_file_names=glob.glob(islands),
                                      config_file_name=config,
+                                     resolution_file_names=glob.glob(resolution_fields),
                                      restart_file_name=restart)
 
     if output is not None:

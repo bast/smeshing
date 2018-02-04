@@ -16,7 +16,7 @@ import yaml
 import time
 import ntpath
 import numpy as np
-from scipy.interpolate import RectBivariateSpline
+from scipy.interpolate import RectBivariateSpline, SmoothBivariateSpline
 
 import polygons
 
@@ -65,6 +65,23 @@ def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_funct
             p[i][0] -= d0 * dgradx / dgrad2
             p[i][1] -= d0 * dgrady / dgrad2
     return p
+
+
+def minimize_over_resolution_fields(distance_fields,
+                                    distances,
+                                    points):
+    '''
+    Function receives distances and distance fields.
+    It will return an array of distances which minimize
+    distances and interpolated resolution fields.
+    '''
+    _distances = []
+    for i, (x, y) in enumerate(points):
+        d = distances[i]
+        for distance_field in distance_fields:
+            d = min(d, distance_field(x, y)[0][0])
+        _distances.append(d)
+    return _distances
 
 
 def get_random_points(num_points, xmin, xmax, ymin, ymax):
@@ -296,6 +313,7 @@ def get_boundary_length(boundary_file_name, island_file_names):
 def run(boundary_file_name,
         island_file_names,
         config_file_name,
+        resolution_file_names=None,
         restart_file_name=None):
 
     with open(config_file_name, 'r') as f:
@@ -341,6 +359,17 @@ def run(boundary_file_name,
     index_off += len(boundary_points)
     # pass only x and y coordinates and skip all the rest
     boundary_points_xy = [[t[0], t[1]] for t in boundary_points]
+
+    distance_fields = []
+    if resolution_file_names is not None:
+        for file_name in resolution_file_names:
+            xs, ys, zs = [], [], []
+            for points in read_points(file_name):
+                for (x, y, z) in points:
+                    xs.append(x)
+                    ys.append(y)
+                    zs.append(z)
+            distance_fields.append(SmoothBivariateSpline(xs, ys, zs))
 
     # FIXME generalize to arbitrary number of coefficients
     # now only one per line
@@ -405,10 +434,18 @@ def run(boundary_file_name,
 
         def h_function(points):
             _distances = [interp_spline(x, y)[0][0] for (x, y) in points]
+            if len(distance_fields) > 0:
+                _distances = minimize_over_resolution_fields(distance_fields,
+                                                             _distances,
+                                                             points)
             return _distances
     else:
         def h_function(points):
             _distances = polygons.get_distances_vertex_custom(all_polygons_context, points)
+            if len(distance_fields) > 0:
+                _distances = minimize_over_resolution_fields(distance_fields,
+                                                             _distances,
+                                                             points)
             return _distances
 
     points, triangles = distmesh2d(config,
