@@ -135,7 +135,6 @@ The code is launched using the ``smesh`` script. Example::
   $ smesh --boundary=/home/user/smeshing/data/happy-bear/boundary.txt \
           --islands=/home/user/smeshing/data/happy-bear/islands.txt \
           --config=/home/user/smeshing/data/happy-bear/config.yml \
-          --resolution_function=/home/user/smeshing/data/happy-bear/resolution_function.py \
           --output=data.txt
 
 For an explanation of the options try::
@@ -173,7 +172,6 @@ Example run script for the `Stallo <https://www.sigma2.no/content/stallo>`__ sup
   smesh --boundary=/home/user/smeshing/data/happy-bear/boundary.txt \
         --islands=/home/user/smeshing/data/happy-bear/islands.txt \
         --config=/home/user/smeshing/data/happy-bear/config.yml \
-        --resolution_function=/home/user/smeshing/data/happy-bear/resolution_function.py \
         --output=/home/user/smeshing/data.txt
 
   exit 0
