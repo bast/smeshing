@@ -153,6 +153,19 @@ For an explanation of the options try::
 
   $ smesh --help
 
+  Usage: smesh [OPTIONS]
+
+  Options:
+    --boundary TEXT           File containing boundary data.
+    --islands TEXT            Island file names (it is possible to use
+                              wildcards).
+    --resolution-fields TEXT  File name(s) containing resolution fields (it is
+                              possible to use wildcards).
+    --config TEXT             Read configuration from this file.
+    --output TEXT             Write output to this file.
+    --restart TEXT            Restart from this file.
+    --help                    Show this message and exit.
+
 You can take the files here as a starting point: https://github.com/bast/smeshing/tree/master/data/happy-bear
 
 
