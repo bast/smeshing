@@ -95,7 +95,7 @@ Installing dependencies for development
 Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
 -------------------------------------------------------------------------------
 
-.. code:: shell
+.. code-block:: bash
 
   #!/bin/bash
 
@@ -163,28 +163,40 @@ Example run script for the `Stallo <https://www.sigma2.no/content/stallo>`__ sup
 
   #!/bin/bash
 
+  #SBATCH --account=your-account
   #SBATCH --job-name=smesh
   #SBATCH --nodes=1
   #SBATCH --ntasks-per-node=20
   #SBATCH --exclusive
-  #SBATCH --time=0-01:00:00
+  #SBATCH --time=0-00:10:00
   #SBATCH --partition short
   #SBATCH --mem-per-cpu=500MB
   #SBATCH --mail-type=ALL
 
+  # load a couple of modules
   module purge
   module load foss/2016b
   module load Python/3.5.2-foss-2016b
   module load libffi/3.2.1-foss-2016b
 
-  source /home/user/smeshing/venv/bin/activate
-
+  # use all available threads for shared-memory parallelization
   export OMP_NUM_THREADS=${SLURM_TASKS_PER_NODE}
 
-  smesh --boundary=/home/user/smeshing/data/happy-bear/boundary.txt \
-        --islands=/home/user/smeshing/data/happy-bear/islands.txt \
-        --config=/home/user/smeshing/data/happy-bear/config.yml \
-        --output=/home/user/smeshing/data.txt
+  # compile the custom functions
+  cd ${SLURM_SUBMIT_DIR}
+  g++ -O3 -shared -fpic custom_functions.cpp -o libcustom_functions.so
+
+  # this will define the custom functions for the meshing code
+  export LD_PRELOAD=${SLURM_SUBMIT_DIR}/libcustom_functions.so
+
+  # load the virtual environment that contains the installation
+  source /home/user/smeshing/venv/bin/activate
+
+  # start the actual code
+  smesh --boundary=${SLURM_SUBMIT_DIR}/boundary.txt \
+        --islands=${SLURM_SUBMIT_DIR}/islands.txt \
+        --config=${SLURM_SUBMIT_DIR}/config.yml \
+        --output=${SLURM_SUBMIT_DIR}/data.txt
 
   exit 0
 
