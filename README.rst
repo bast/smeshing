@@ -92,8 +92,8 @@ Installing dependencies for development
   pip install -r requirements.txt
 
 
-Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
--------------------------------------------------------------------------------
+Installation on the `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
+-----------------------------------------------------------------------------------
 
 .. code-block:: bash
 
