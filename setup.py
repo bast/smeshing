@@ -31,6 +31,7 @@ setup(
         'pyyaml==3.12',
         'polygons==0.0.0',
         'delaunay==0.0.0',
+        'scipy',
     ],
     dependency_links=[
         "git+https://github.com/bast/polygons.git@d7b2c7e706742e194014d3006267dfcf97f80d3e#egg=polygons-0.0.0",

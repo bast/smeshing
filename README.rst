@@ -124,7 +124,7 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
   export CXX=g++
   export FC=gfortran
 
-  pip install --process-dependency-links git+https://github.com/bast/smeshing.git@31199bc73c720614709cdb8957285fa917bdaea1
+  pip install --process-dependency-links git+https://github.com/bast/smeshing.git@26589f6d5cbc19034ad101d30492b3c76c2cc56c
 
 
 Running tests
