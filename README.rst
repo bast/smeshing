@@ -17,7 +17,7 @@ Simple mesh generator in Python (fork of PyDistMesh)
 This version of the code is based on
 `PyDistMesh <https://github.com/bfroehle/pydistmesh>`__ developed by
 `Bradley M. Froehle <https://github.com/bfroehle>`__. This code
-generates unstructured triangular and tetrahedral meshes using signed
+generates unstructured triangular meshes using signed
 distance functions. Like
 `DistMesh <http://persson.berkeley.edu/distmesh/>`__ and
 `PyDistMesh <https://github.com/bfroehle/pydistmesh>`__ upon which this
