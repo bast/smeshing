@@ -14,10 +14,13 @@ import smeshing
 @click.option('--restart', help='Restart from this file.')
 def main(boundary, islands, resolution_fields, config, output, restart):
 
+    if resolution_fields is not None:
+         resolution_fields = glob.glob(resolution_fields)
+
     points, triangles = smeshing.run(boundary_file_name=boundary,
                                      island_file_names=glob.glob(islands),
                                      config_file_name=config,
-                                     resolution_file_names=glob.glob(resolution_fields),
+                                     resolution_file_names=resolution_fields,
                                      restart_file_name=restart)
 
     if output is not None:
