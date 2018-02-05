@@ -319,7 +319,21 @@ have a look at the run script example.
 Adding resolution fields
 ------------------------
 
-Document me ...
+Sometimes the resolution should not only be dependent on the distance and the boundary
+coefficients but also on local features. For this you can provide resolution fields
+with the ``--resolution-fields`` flag. Point it to a file or files that contain the following
+format::
+
+  N
+  x1 y1 r1
+  x2 y2 r2
+  ...
+  xN yN rN
+
+The code will then use this field to interpolate a local resolution for each of
+the resolution fields. The resolution for a grid point is then given as the
+minimum taken over all resolution fields and the distance-dependent resolution
+provided by ``g_function + h_function``.
 
 
 Restart
