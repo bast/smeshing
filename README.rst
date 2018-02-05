@@ -95,13 +95,25 @@ Installing dependencies for development
 Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
 -------------------------------------------------------------------------------
 
-::
+.. code:: shell
+
+  #!/bin/bash
+
+  #SBATCH --account=your-account
+  #SBATCH --job-name=install
+  #SBATCH --ntasks=1
+  #SBATCH --time=0-01:00:00
+  #SBATCH --partition short
+  #SBATCH --mem-per-cpu=1000MB
+  #SBATCH --mail-type=ALL
 
   module purge
   module load foss/2016b
   module load Python/3.5.2-foss-2016b
   module load CMake/3.7.1-foss-2016b
   module load libffi/3.2.1-foss-2016b
+
+  cd ${SLURM_SUBMIT_DIR}
 
   python3 -m venv venv
   source venv/bin/activate
@@ -112,7 +124,7 @@ Installation on `Stallo <https://www.sigma2.no/content/stallo>`__ supercomputer
   export CXX=g++
   export FC=gfortran
 
-  pip install --process-dependency-links git+https://github.com/bast/smeshing.git
+  pip install --process-dependency-links git+https://github.com/bast/smeshing.git@31199bc73c720614709cdb8957285fa917bdaea1
 
 
 Running tests
