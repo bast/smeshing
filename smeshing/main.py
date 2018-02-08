@@ -223,8 +223,7 @@ def distmesh2d(config,
     if restart_file_name is None:
         t0 = time.time()
         p = create_initial_distribution(pv, config['num_grid_points'], within_bounds_function, fh)
-        if print_timing:
-            print('time spent in create_initial_distribution: {0:.2f}'.format(time.time() - t0))
+        print('time spent in creating initial distribution: {0:.2f}'.format(time.time() - t0))
     else:
         p, _ = read_data(restart_file_name)
 
