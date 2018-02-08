@@ -117,7 +117,9 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
 
     grid_points = []
     damping_factor_calibrated = False
+    damping_factor = max(xmax - xmin, ymax - ymin)
     print('\ngenerating starting grid:')
+    _num_steps = 0
     while True:
         # get a larger batch of points
         points = get_random_points(min(num_grid_points, 1000000), xmin, xmax, ymin, ymax)
@@ -135,7 +137,6 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
         if not damping_factor_calibrated:
             # here we try to find a good enough damping factor
             target_percentage = 1.0
-            damping_factor = 1.0
             while True:
                 _filtered_points = filter_points(points, resolutions, max_resolution, damping_factor, max_num_filtered_points)
                 _num_filtered_points = len(_filtered_points)
@@ -151,8 +152,10 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
         grid_points += filtered_points
 
         print('    generated {0} points out of {1}'.format(count, num_grid_points))
+        _num_steps += 1
         if count == num_grid_points:
             break
+    print(f'\ngenerated initial distribution in {_num_steps} steps')
     return grid_points
 
 
