@@ -116,8 +116,11 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
     count = 0
 
     grid_points = []
-    damping_factor_calibrated = False
+
+    # consider taking the diagonal as starting point
     damping_factor = max(xmax - xmin, ymax - ymin)
+    damping_factor_calibrated = False
+
     print('\ngenerating starting grid:')
     _num_steps = 0
     while True:
