@@ -68,6 +68,7 @@ def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_funct
 
 
 def minimize_over_resolution_fields(distance_fields,
+                                    distance_field_bounds,
                                     distances,
                                     points):
     '''
@@ -78,9 +79,12 @@ def minimize_over_resolution_fields(distance_fields,
     _distances = []
     for i, (x, y) in enumerate(points):
         d = distances[i]
-        for distance_field in distance_fields:
-            d = min(d, distance_field(x, y)[0][0])
-        _distances.append(d)
+        for j, distance_field in enumerate(distance_fields):
+            d_interpolated = distance_field(x, y)[0][0]
+            max_bound, min_bound = distance_field_bounds[j]
+            d_interpolated = max(d_interpolated, min_bound)
+            d_interpolated = min(d_interpolated, max_bound)
+        _distances.append(min(d, d_interpolated))
     return _distances
 
 
@@ -366,6 +370,7 @@ def run(boundary_file_name,
     boundary_points_xy = [[t[0], t[1]] for t in boundary_points]
 
     distance_fields = []
+    distance_field_bounds = []
     if resolution_file_names is not None:
         for file_name in resolution_file_names:
             xs, ys, zs = [], [], []
@@ -374,6 +379,7 @@ def run(boundary_file_name,
                     xs.append(x)
                     ys.append(y)
                     zs.append(z)
+            distance_field_bounds.append((min(zs), max(zs)))
             distance_fields.append(SmoothBivariateSpline(xs, ys, zs))
 
     # FIXME generalize to arbitrary number of coefficients
@@ -441,6 +447,7 @@ def run(boundary_file_name,
             _distances = [interp_spline(x, y)[0][0] for (x, y) in points]
             if len(distance_fields) > 0:
                 _distances = minimize_over_resolution_fields(distance_fields,
+                                                             distance_field_bounds,
                                                              _distances,
                                                              points)
             return _distances
@@ -449,6 +456,7 @@ def run(boundary_file_name,
             _distances = polygons.get_distances_vertex_custom(all_polygons_context, points)
             if len(distance_fields) > 0:
                 _distances = minimize_over_resolution_fields(distance_fields,
+                                                             distance_field_bounds,
                                                              _distances,
                                                              points)
             return _distances
