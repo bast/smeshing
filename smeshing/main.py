@@ -162,7 +162,7 @@ def create_initial_distribution(polygon_points, num_grid_points, within_bounds_f
         _num_steps += 1
         if count == num_grid_points:
             break
-    print(f'\ngenerated initial distribution in {_num_steps} steps')
+    print('\ngenerated initial distribution in {0} steps'.format(_num_steps))
     return grid_points
 
 
