@@ -81,7 +81,7 @@ def minimize_over_resolution_fields(distance_fields,
         d = distances[i]
         for j, distance_field in enumerate(distance_fields):
             d_interpolated = distance_field(x, y)[0][0]
-            max_bound, min_bound = distance_field_bounds[j]
+            min_bound, max_bound = distance_field_bounds[j]
             d_interpolated = max(d_interpolated, min_bound)
             d_interpolated = min(d_interpolated, max_bound)
         _distances.append(min(d, d_interpolated))
