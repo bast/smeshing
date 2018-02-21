@@ -218,8 +218,6 @@ def distmesh2d(config,
     t:         Triangle indices (NTx3)
     """
 
-    dptol = 0.001
-    ttol = 0.1
     Fscale = 1.2
     delta_t = 0.2
     epsilon = sys.float_info.epsilon
