@@ -75,12 +75,11 @@ def minimize_over_resolution_fields(distance_fields,
     It will return an array of distances which minimize
     distances and interpolated resolution fields.
     '''
-    _distances = []
-    for i, (x, y) in enumerate(points):
-        d = distances[i]
-        for distance_field in distance_fields:
-            d = min(d, distance_field(x, y))
-        _distances.append(d)
+    xs, ys = zip(*points)
+    _distances = [d for d in distances]
+    for distance_field in distance_fields:
+        interpolated_distances = distance_field(xs, ys)
+        _distances = [min(pair) for pair in zip(_distances, interpolated_distances)]
     return _distances
 
 
