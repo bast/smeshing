@@ -16,7 +16,7 @@ import yaml
 import time
 import ntpath
 import numpy as np
-from scipy.interpolate import RectBivariateSpline, SmoothBivariateSpline
+from scipy.interpolate import RectBivariateSpline, NearestNDInterpolator
 
 import polygons
 
@@ -68,7 +68,6 @@ def bring_outside_points_back_to_boundary(p, within_bounds, deps, distance_funct
 
 
 def minimize_over_resolution_fields(distance_fields,
-                                    distance_field_bounds,
                                     distances,
                                     points):
     '''
@@ -79,12 +78,9 @@ def minimize_over_resolution_fields(distance_fields,
     _distances = []
     for i, (x, y) in enumerate(points):
         d = distances[i]
-        for j, distance_field in enumerate(distance_fields):
-            d_interpolated = distance_field(x, y)[0][0]
-            min_bound, max_bound = distance_field_bounds[j]
-            d_interpolated = max(d_interpolated, min_bound)
-            d_interpolated = min(d_interpolated, max_bound)
-        _distances.append(min(d, d_interpolated))
+        for distance_field in distance_fields:
+            d = min(d, distance_field(x, y))
+        _distances.append(d)
     return _distances
 
 
@@ -368,17 +364,16 @@ def run(boundary_file_name,
     boundary_points_xy = [[t[0], t[1]] for t in boundary_points]
 
     distance_fields = []
-    distance_field_bounds = []
     if resolution_file_names is not None:
         for file_name in resolution_file_names:
-            xs, ys, zs = [], [], []
+            _points = []
+            _values = []
             for points in read_points(file_name):
                 for (x, y, z) in points:
-                    xs.append(x)
-                    ys.append(y)
-                    zs.append(z)
-            distance_field_bounds.append((min(zs), max(zs)))
-            distance_fields.append(SmoothBivariateSpline(xs, ys, zs))
+                    _points.append([x, y])
+                    _values.append(z)
+            # TODO we could switch to own nearest-neighbor search code
+            distance_fields.append(NearestNDInterpolator(np.array(_points), np.array(_values)))
 
     # FIXME generalize to arbitrary number of coefficients
     # now only one per line
@@ -445,7 +440,6 @@ def run(boundary_file_name,
             _distances = [interp_spline(x, y)[0][0] for (x, y) in points]
             if len(distance_fields) > 0:
                 _distances = minimize_over_resolution_fields(distance_fields,
-                                                             distance_field_bounds,
                                                              _distances,
                                                              points)
             return _distances
@@ -454,7 +448,6 @@ def run(boundary_file_name,
             _distances = polygons.get_distances_vertex_custom(all_polygons_context, points)
             if len(distance_fields) > 0:
                 _distances = minimize_over_resolution_fields(distance_fields,
-                                                             distance_field_bounds,
                                                              _distances,
                                                              points)
             return _distances
