@@ -373,4 +373,4 @@ Postprocessing
 The repository contains a tiny script which can be used to plot the generated
 grid::
 
-    python plot.py data/happy-bear/result.txt example.png
+    python smeshing/plot.py data/happy-bear/result.txt example.png
