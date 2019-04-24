@@ -1,4 +1,4 @@
-from file_io import read_data
+from .file_io import read_data
 
 
 def parse_command_line():
