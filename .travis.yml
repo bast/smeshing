@@ -37,7 +37,7 @@ matrix:
 
 install:
   - pip install --upgrade pip setuptools wheel  # https://github.com/travis-ci/travis-ci/issues/2650#issuecomment-266721196
-  - pip install -r requirements.txt
+  - pip install --upgrade -r requirements.txt
 
 script:
   - mkdir -p preload/build
