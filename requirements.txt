@@ -1,6 +1,6 @@
 pycodestyle
 pytest
-pyyaml
+pyyaml==4.2b4
 scipy
 numpy
 click
