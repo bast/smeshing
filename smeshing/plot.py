@@ -26,7 +26,7 @@ def generate_plot(points, triangles, out_file_name):
             if not -1 < t < len(points):
                 keep_triangle = False
         if keep_triangle:
-                _triangles.append(triple)
+            _triangles.append(triple)
 
     x, y = zip(*points)
 
