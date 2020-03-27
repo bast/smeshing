@@ -261,6 +261,17 @@ and you can add comments as in this example:
   num_iterations: 100
 
 
+Restart
+-------
+
+It is possible to restart a calculation if you provide
+``--restart=/path/to/restart/file``.
+
+
+How is the resolution computed?
+===============================
+
+
 How to express the resolution function
 --------------------------------------
 
@@ -334,13 +345,6 @@ The code will then use this field to interpolate a local resolution for each of
 the resolution fields. The resolution for a grid point is then given as the
 minimum taken over all resolution fields and the distance-dependent resolution
 provided by ``g_function + h_function``.
-
-
-Restart
--------
-
-It is possible to restart a calculation if you provide
-``--restart=/path/to/restart/file``.
 
 
 Design choices
