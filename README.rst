@@ -277,12 +277,14 @@ so let's start simple:
 
 One approach would be to define the resolution as the distance to islands and the boundary
 but this would lead to a couple of problems:
+
 -  Resolution would decrease to zero close to polygons and lead to numerical problems.
 -  We would see many grid points at the boundary.
 -  We would treat the entire coastline and all islands on the same footing but perhaps some portions
    are scientifically more interesting and require a finer mesh than others?
 
 So we decided to make two improvements:
+
 -  We wanted to be able to make some polygon points more "attractive" for a finer mesh than others. For this we
    made it possible to define islands not only as points with x and y coordinates but also to give a coefficient
    which we can use in the resolution function. For this we introduced function *g*. This function also allows
