@@ -271,6 +271,38 @@ It is possible to restart a calculation if you provide
 How is the resolution computed?
 ===============================
 
+The resolution is computed as minimum of the resolution function and the
+optional resolution field (below). But this needs some explanation and background
+so let's start simple:
+
+One approach would be to define the resolution as the distance to islands and the boundary
+but this would lead to a couple of problems:
+-  Resolution would decrease to zero close to polygons and lead to numerical problems.
+-  We would see many grid points at the boundary.
+-  We would treat the entire coastline and all islands on the same footing but perhaps some portions
+   are scientifically more interesting and require a finer mesh than others?
+
+So we decided to make two improvements:
+-  We wanted to be able to make some polygon points more "attractive" for a finer mesh than others. For this we
+   made it possible to define islands not only as points with x and y coordinates but also to give a coefficient
+   which we can use in the resolution function. For this we introduced function *g*. This function also allows
+   to cap the minimum to avoid zero resolution.
+-  We wanted to make it possible for the resolution function to depend non-linearly on the distance to the nearest
+   coastal point. For this we introduced function *h*.
+
+User has the possibility to express *g* and *h* and the resolution is defined
+as the sum of both (see below).
+
+One problem remains: this approach does not allow to have finer grid depending
+on local features which are not related to the coastline, such as water depth
+or other local data. For this we introduced the optional resolution field (see
+below).
+
+If the resolution field is provided, the code will take the resolution field
+value in the closest point to the reference point, the code will also compute
+*g + h* at the reference point, and use the minimum of both values as
+resolution.
+
 
 How to express the resolution function
 --------------------------------------
