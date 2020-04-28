@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'cffi==1.11.2',
         'click==6.7',
-        'pyyaml==3.12',
+        'pyyaml>=4.2b1',
         'polygons==0.0.0',
         'delaunay==0.0.0',
         'scipy',
