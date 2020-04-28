@@ -25,12 +25,11 @@ work is based, this code is distributed under the `GNU
 GPL <../master/LICENSE>`__.
 
 
-Status and roadmap for this fork
---------------------------------
+A rewrite of this code is in progress
+-------------------------------------
 
-Prototyping work is currently done in Python. Later we will probably
-move to Fortran or C(++) and introduce parallelization but provide a
-Python interface.
+I am in the process of rewriting this code to Rust:
+https://github.com/bast/smeshing-rs
 
 
 Nice things about this code
