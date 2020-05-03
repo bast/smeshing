@@ -13,6 +13,9 @@ Simple mesh generator in Python (fork of PyDistMesh)
 .. image:: https://img.shields.io/badge/license-%20GPL--v3.0-blue.svg
    :target: https://github.com/bast/smeshing/blob/master/LICENSE
 
+.. image:: https://zenodo.org/badge/88661878.svg
+   :target: https://zenodo.org/badge/latestdoi/88661878
+
 
 This version of the code is based on
 `PyDistMesh <https://github.com/bfroehle/pydistmesh>`__ developed by
@@ -47,19 +50,41 @@ Known issues
    optimal and the scaling has not been studied in detail.
 
 
+Recommended citation
+--------------------
+
+If you use this code in a program or publication, please cite the following references:
+
+The algorithm:
+- `P.-O. Persson, G. Strang, A Simple Mesh Generator in MATLAB, SIAM
+  Review, Volume 46 (2), pp. 329-345, June
+  2004 <http://persson.berkeley.edu/distmesh/persson04mesh.pdf>`__
+
+The present code::
+
+  @misc{smeshing,
+    author    = {Bast, Radovan},
+    title     = {Smeshing: Mesh generator for unstructured triangular grids},
+    month     = {4},
+    year      = {2020},
+    publisher = {Zenodo},
+    version   = {v0.2.0},
+    doi       = {10.5281/zenodo.3774421},
+    url       = {https://doi.org/10.5281/zenodo.3774421}
+  }
+
+
 References
 ----------
 
-The DistMesh algorithm is described in the following two references. If
-you use the algorithm in a program or publication, please acknowledge
-its authors by adding a reference to the first paper below.
+The DistMesh algorithm is described in the following two references:
 
--  `P.-O. Persson, G. Strang, A Simple Mesh Generator in MATLAB, SIAM
-   Review, Volume 46 (2), pp. 329-345, June
-   2004 <http://persson.berkeley.edu/distmesh/persson04mesh.pdf>`__
--  `P.-O. Persson, Mesh Generation for Implicit Geometries, Ph.D.
-   thesis, Department of Mathematics, MIT, Dec
-   2004 <http://persson.berkeley.edu/thesis/persson-thesis-color.pdf>`__
+- `P.-O. Persson, G. Strang, A Simple Mesh Generator in MATLAB, SIAM
+  Review, Volume 46 (2), pp. 329-345, June
+  2004 <http://persson.berkeley.edu/distmesh/persson04mesh.pdf>`__
+- `P.-O. Persson, Mesh Generation for Implicit Geometries, Ph.D.
+  thesis, Department of Mathematics, MIT, Dec
+  2004 <http://persson.berkeley.edu/thesis/persson-thesis-color.pdf>`__
 
 
 Installation
