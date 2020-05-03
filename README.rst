@@ -24,7 +24,7 @@ distance functions. Like
 work is based, this code is distributed under the `GNU
 GPL <../master/LICENSE>`__.
 
-.. warning:: I am in the process of rewriting this code to Rust: https://github.com/bast/smeshing-rs
+**I am in the process of rewriting this code to Rust**: https://github.com/bast/smeshing-rs
 
 .. contents:: Table of contents
 
