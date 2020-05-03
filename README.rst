@@ -26,6 +26,8 @@ GPL <../master/LICENSE>`__.
 
 .. warning:: I am in the process of rewriting this code to Rust: https://github.com/bast/smeshing-rs
 
+.. contents:: Table of contents
+
 
 Nice things about this code
 ---------------------------
