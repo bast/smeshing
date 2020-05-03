@@ -1,9 +1,3 @@
-.. image:: img/example.jpg
-
-
-Simple mesh generator in Python (fork of PyDistMesh)
-====================================================
-
 .. image:: https://travis-ci.org/bast/smeshing.svg?branch=master
    :target: https://travis-ci.org/bast/smeshing/builds
 
@@ -16,6 +10,11 @@ Simple mesh generator in Python (fork of PyDistMesh)
 .. image:: https://zenodo.org/badge/88661878.svg
    :target: https://zenodo.org/badge/latestdoi/88661878
 
+
+Simple mesh generator in Python (fork of PyDistMesh)
+====================================================
+
+.. image:: img/example.jpg
 
 This version of the code is based on
 `PyDistMesh <https://github.com/bfroehle/pydistmesh>`__ developed by
