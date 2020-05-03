@@ -390,17 +390,6 @@ Why do we need to provide islands and the boundary separately?
   We want grid points to be inside the boundary but outside islands.
 
 
-Why not using GeoJSON?
-----------------------
-
-GeoJSON is a nice and standard format but the choice was to prefer a custom format
-for the following reasons:
-
-- Meshing should not be restricted to geospatial data
-- Meshing should not be restricted to longitude and
-  latitude units of decimal degrees but operate on arbitrary units
-
-
 Postprocessing
 ==============
 
